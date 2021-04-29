@@ -17,6 +17,82 @@ namespace AccessData
 			ConnectionString = connectionString;
 		}
 
+		#region Clients
+
+        /// <summary>
+        /// Charge tous les clients
+        /// </summary>
+        /// <returns></returns>
+		public async Task<IEnumerable<Client>> LoadClients()
+		{
+            var commandText = @"SELECT IdClient, NomClient FROM Clients;";
+
+            Func<MySqlCommand, Task<List<Client>>> funcCmd = async (cmd) =>
+            {
+                List<Client> clients = new List<Client>();
+
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (reader.Read())
+                    {
+                        var client = new Client()
+                        {
+                            IdClient = reader.GetInt32(0),
+                            NomClient = reader.GetString(1)
+                        };
+
+                        clients.Add(client);
+                    }
+                }
+
+                return clients;
+            };
+
+            List<Client> clients = new List<Client>();
+
+            try
+            {
+                clients = await GetCoreAsync(commandText, funcCmd);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            return clients;
+		}
+
+        /// <summary>
+		/// Ajout d'un nouveau client
+		/// </summary>
+		/// <param name="nomClient"></param>
+		/// <returns></returns>
+		public async Task AddClient(string nomClient)
+        {
+            try
+            {
+                using (var conn = new MySqlConnection(ConnectionString))
+                {
+                    string command = "INSERT INTO Clients (NomClient)"
+                                    + " VALUES(@client);";
+
+                    using (var cmd = new MySqlCommand(command, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@client", nomClient);
+
+                        conn.Open();
+                        int result = await cmd.ExecuteNonQueryAsync();
+                        conn.Close();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        #endregion
 
         /// <summary>
         /// Ajout une session en base de donné.

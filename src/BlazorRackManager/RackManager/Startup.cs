@@ -17,6 +17,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Radzen;
+using RackManager.ViewModels;
+using MatBlazor;
 
 namespace RackManager
 {
@@ -61,6 +64,16 @@ namespace RackManager
 			services.AddServerSideBlazor();
 			services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
 			services.AddDatabaseDeveloperPageExceptionFilter();
+
+			services.AddScoped<DialogService>();
+			services.AddScoped<NotificationService>();
+			services.AddScoped<TooltipService>();
+			services.AddScoped<ContextMenuService>();
+
+			services.AddMatBlazor();
+
+			services.AddScoped<IClientViewModel, ClientViewModel>();
+			services.AddScoped<INewClientViewModel, NewClientViewModel>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

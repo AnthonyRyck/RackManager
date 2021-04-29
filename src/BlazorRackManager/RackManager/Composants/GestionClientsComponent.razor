@@ -1,0 +1,50 @@
+﻿@inject IClientViewModel ViewModel
+
+@inject DialogService DialogService
+
+<h3>Gestion des clients</h3>
+
+@if (ViewModel.IsLoaded)
+{
+<div>
+	<div class="padding-10">
+		<RadzenButton Text="Nouveau client"
+					  Icon="add_circle"
+					  ButtonStyle="ButtonStyle.Secondary"
+					  Click="ViewModel.OpenPageNewClient"/>
+	</div>
+</div>
+
+	@*Pour voir la liste des salles*@
+	<div>
+		<RadzenGrid AllowFiltering="true"
+					FilterCaseSensitivity="FilterCaseSensitivity.Default"
+					AllowPaging="true"
+					PageSize="30"
+					AllowSorting="true"
+					Data="@ViewModel.AllClients"
+					TItem="Client"
+					EmptyText="Aucun client">
+			@*@ref="ViewModel.SallesViewGrid"*@
+			<Columns>
+				<RadzenGridColumn TItem="Client"
+								  Property="IdClient"
+								  Title="ID Client"
+								  Width="50px" />
+
+				<RadzenGridColumn TItem="Client"
+								  Property="NomClient"
+								  Title="Nom"/>
+			</Columns>
+		</RadzenGrid>
+
+	</div>
+}
+else
+{
+	<div>Chargement en cours ...</div>
+}
+
+@code {
+
+}
