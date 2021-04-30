@@ -1,6 +1,7 @@
 ﻿using AccessData;
 using AccessData.Models;
 using RackManager.ValidationModels;
+using Radzen;
 using Radzen.Blazor;
 using System;
 using System.Collections.Generic;
@@ -27,12 +28,14 @@ namespace RackManager.ViewModels
 		public RadzenGrid<Rack> RackGrid { get; set; }
 
 		private SqlContext SqlContext;
+		private NotificationService NotificationService;
 
-		public RackViewModel(SqlContext sqlContext)
+		public RackViewModel(SqlContext sqlContext, NotificationService notificationService)
 		{
 			IsLoaded = false;
 			SqlContext = sqlContext;
 			DialogIsOpenNewRack = false;
+			NotificationService = notificationService;
 
 			NouveauRack = new RackValidation();
 			LoadRacks().GetAwaiter().GetResult();
@@ -70,6 +73,16 @@ namespace RackManager.ViewModels
 
 				AllRacks.Add(nouveauRack);
 				await RackGrid.Reload();
+
+				string message = $"Nouveau rack : {nouveauRack.Gisement} ajouté";
+				NotificationMessage messNotif = new NotificationMessage()
+				{
+					Summary = "Sauvegarde OK",
+					Detail = message,
+					Duration = 3000,
+					Severity = NotificationSeverity.Success
+				};
+				NotificationService.Notify(messNotif);
 
 				NouveauRack = new RackValidation();
 			}

@@ -29,13 +29,15 @@ namespace RackManager.ViewModels
 		/// <see cref="IClientViewModel.ClientGrid"/>
 		public RadzenGrid<Client> ClientGrid { get; set; }
 
-		private SqlContext SqlContext;				
+		private SqlContext SqlContext;
+		private NotificationService NotificationService;
 
-		public ClientViewModel(SqlContext sqlContext)
+		public ClientViewModel(SqlContext sqlContext, NotificationService notificationService)
 		{
 			IsLoaded = false;
 			SqlContext = sqlContext;
 			DialogIsOpenNewClient = false;
+			NotificationService = notificationService;
 
 			NouveauClient = new ClientValidation();
 
@@ -70,9 +72,19 @@ namespace RackManager.ViewModels
 					IdClient = idClient,
 					NomClient = NouveauClient.NomClient
 				};
-
+				
 				AllClients.Add(nouveauClient);
 				await ClientGrid.Reload();
+
+				string message = $"Nouveau client : {nouveauClient.NomClient} ajouté";
+				NotificationMessage messNotif = new NotificationMessage()
+				{
+					Summary = "Sauvegarde OK",
+					Detail = message,
+					Duration = 3000,
+					Severity = NotificationSeverity.Success
+				};
+				NotificationService.Notify(messNotif);
 
 				NouveauClient = new ClientValidation();
 			}

@@ -1,4 +1,5 @@
 ﻿using AccessData.Models;
+using AccessData.Views;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
@@ -16,8 +17,6 @@ namespace AccessData
 		{
 			ConnectionString = connectionString;
 		}
-
-
 
 		#region Clients
 
@@ -98,6 +97,90 @@ namespace AccessData
                 throw;
             }
         }
+
+        #endregion
+
+        #region Commandes
+
+        /// <summary>
+        /// Ajoute une commande
+        /// </summary>
+        /// <param name="cmd"></param>
+        /// <returns></returns>
+        public async Task AddCommande(SuiviCommande commande)
+        {
+			try
+			{
+                using (var conn = new MySqlConnection(ConnectionString))
+                {
+                    string command = "INSERT INTO SuiviCommande (IdCommande, ClientId, DescriptionCmd)"
+                                    + " VALUES(@idcmd, @idclient, @descriptionCmd);";
+
+                    using (var cmd = new MySqlCommand(command, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@idcmd", commande.IdCommande);
+                        cmd.Parameters.AddWithValue("@idclient", commande.ClientId);
+                        cmd.Parameters.AddWithValue("@descriptionCmd", commande.DescriptionCmd);
+
+                        conn.Open();
+                        int result = await cmd.ExecuteNonQueryAsync();
+                        conn.Close();
+                    }
+                }
+            }
+			catch (Exception)
+			{
+				throw;
+			}
+        }
+
+        /// <summary>
+        /// Charge tous les clients
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<CommandeView>> LoadCommandes()
+        {
+            var commandText = @"SELECT cmd.IdCommande, cli.IdClient, cli.NomClient, cmd.DescriptionCmd"
+                                + " FROM suivicommande cmd"
+                                + " INNER JOIN clients cli ON cli.IdClient = cmd.ClientId;";
+
+            Func<MySqlCommand, Task<List<CommandeView>>> funcCmd = async (cmd) =>
+            {
+                List<CommandeView> commandes = new List<CommandeView>();
+
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (reader.Read())
+                    {
+                        var commande = new CommandeView()
+                        {
+                            IdCommande = reader.GetInt32(0),
+                            IdClient = reader.GetInt32(1),
+                            NomClient = reader.GetString(2),
+                            DescriptionCmd = reader.GetString(3)
+                        };
+
+                        commandes.Add(commande);
+                    }
+                }
+
+                return commandes;
+            };
+
+            List<CommandeView> commandes = new List<CommandeView>();
+
+            try
+            {
+                commandes = await GetCoreAsync(commandText, funcCmd);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            return commandes;
+        }
+
 
         #endregion
 
