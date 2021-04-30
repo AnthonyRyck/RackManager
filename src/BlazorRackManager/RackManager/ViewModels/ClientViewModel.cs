@@ -2,7 +2,9 @@
 using AccessData.Models;
 using Microsoft.AspNetCore.Components;
 using RackManager.Composants;
+using RackManager.ValidationModels;
 using Radzen;
+using Radzen.Blazor;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,32 +17,69 @@ namespace RackManager.ViewModels
 		/// <see cref="IClientViewModel.AllClients"/>
 		public List<Client> AllClients { get; set; }
 
+		/// <see cref="IClientViewModel.NouveauClient"/>
+		public ClientValidation NouveauClient { get; set; }
+
 		/// <see cref="IClientViewModel.IsLoaded"/>
 		public bool IsLoaded { get; set; }
 
 		/// <see cref="IClientViewModel.DialogIsOpenNewClient"/>
 		public bool DialogIsOpenNewClient { get; set; }
 
-		private SqlContext SqlContext;
-		private NavigationManager NavigationManager;
+		/// <see cref="IClientViewModel.ClientGrid"/>
+		public RadzenGrid<Client> ClientGrid { get; set; }
 
-		
+		private SqlContext SqlContext;				
 
-		public ClientViewModel(SqlContext sqlContext, NavigationManager navigationManager)
+		public ClientViewModel(SqlContext sqlContext)
 		{
 			IsLoaded = false;
 			SqlContext = sqlContext;
-			NavigationManager = navigationManager;
+			DialogIsOpenNewClient = false;
+
+			NouveauClient = new ClientValidation();
 
 			LoadClients().GetAwaiter().GetResult();
 		}
 
 		#region Public methods
 
-		/// <see cref="IClientViewModel.OpenPageNewClient"/>
-		public void OpenPageNewClient()
+		/// <see cref="IClientViewModel.OpenNewClient"/>
+		public void OpenNewClient()
 		{
-			NavigationManager.NavigateTo("nouveauclient");
+			DialogIsOpenNewClient = true;
+		}
+
+		/// <see cref="IClientViewModel.CloseNouveauClient"/>
+		public void CloseNouveauClient()
+		{
+			DialogIsOpenNewClient = false;
+			NouveauClient = new ClientValidation();
+		}
+
+		/// <see cref="IClientViewModel.OnValidSubmit"/>
+		public async void OnValidSubmit()
+		{
+			try
+			{
+				// Ajout dans la base de donnée.
+				int idClient = await SqlContext.AddClient(NouveauClient.NomClient);
+
+				Client nouveauClient = new Client()
+				{
+					IdClient = idClient,
+					NomClient = NouveauClient.NomClient
+				};
+
+				AllClients.Add(nouveauClient);
+				await ClientGrid.Reload();
+
+				NouveauClient = new ClientValidation();
+			}
+			catch (Exception ex)
+			{
+				throw;
+			}
 		}
 
 		#endregion
@@ -58,8 +97,6 @@ namespace RackManager.ViewModels
 		}
 
 		#endregion
-
-
 
 	}
 }

@@ -73,7 +73,6 @@ namespace RackManager
 			services.AddMatBlazor();
 
 			services.AddScoped<IClientViewModel, ClientViewModel>();
-			services.AddScoped<INewClientViewModel, NewClientViewModel>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

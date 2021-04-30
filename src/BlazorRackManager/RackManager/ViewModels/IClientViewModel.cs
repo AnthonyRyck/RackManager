@@ -1,4 +1,6 @@
 ﻿using AccessData.Models;
+using RackManager.ValidationModels;
+using Radzen.Blazor;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,11 +26,29 @@ namespace RackManager.ViewModels
 		bool DialogIsOpenNewClient { get; set; }
 
 		/// <summary>
-		/// Change de page pour créer un nouveau client
+		/// Model de validation pour un nouveau client
 		/// </summary>
-		void OpenPageNewClient();
+		ClientValidation NouveauClient { get; set; }
 
+		/// <summary>
+		/// Référence au tableau Radzen
+		/// </summary>
+		RadzenGrid<Client> ClientGrid { get; set; }
 
+		/// <summary>
+		/// Méthode pour valider le nouveau client
+		/// </summary>
+		void OnValidSubmit();
+
+		/// <summary>
+		/// Pour créer un nouveau client
+		/// </summary>
+		void OpenNewClient();
+
+		/// <summary>
+		/// Ferme la vue du nouveau client
+		/// </summary>
+		void CloseNouveauClient();
 
 	}
 }

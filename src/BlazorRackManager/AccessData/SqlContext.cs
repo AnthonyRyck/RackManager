@@ -67,7 +67,7 @@ namespace AccessData
 		/// </summary>
 		/// <param name="nomClient"></param>
 		/// <returns></returns>
-		public async Task AddClient(string nomClient)
+		public async Task<int> AddClient(string nomClient)
         {
             try
             {
@@ -85,6 +85,11 @@ namespace AccessData
                         conn.Close();
                     }
                 }
+
+                string commandId = " SELECT LAST_INSERT_ID();";
+                int idClient = await GetIntCore(commandId);
+
+                return idClient;
             }
             catch (Exception ex)
             {

@@ -8,15 +8,47 @@
 {
 <div>
 	<div class="padding-10">
-		<RadzenButton Text="Nouveau client"
-					  Icon="add_circle"
-					  ButtonStyle="ButtonStyle.Secondary"
-					  Click="ViewModel.OpenPageNewClient"/>
+		@if (!ViewModel.DialogIsOpenNewClient)
+		{
+			<RadzenButton Text="Nouveau client"
+						  Icon="add_circle"
+						  ButtonStyle="ButtonStyle.Secondary"
+						  Click="ViewModel.OpenNewClient" />
+		}
+		else
+		{
+			<div class="col-xl-6">
+				<EditForm OnValidSubmit="@ViewModel.OnValidSubmit"
+						  Model="@ViewModel.NouveauClient">
+					<RadzenCard>
+						@* Super IMPORTANT !!! *@
+						<DataAnnotationsValidator />
+
+						<div>
+							<ValidationMessage For="@(() => ViewModel.NouveauClient.NomClient)" />
+						</div>
+						<RadzenTextBox Placeholder="Nom..."
+									   @bind-Value="ViewModel.NouveauClient.NomClient"
+									   Style="width 300px" />
+					</RadzenCard>
+
+					<span class="margin-10px">
+						<button type="submit" class="padding-5">Ajouter</button>
+
+						<button type="reset"
+								class="padding-5"
+								@onclick="ViewModel.CloseNouveauClient">
+							Terminer
+						</button>
+					</span>
+				</EditForm>
+			</div>
+		}
 	</div>
 </div>
 
 	@*Pour voir la liste des salles*@
-	<div>
+	<div class="col-6">
 		<RadzenGrid AllowFiltering="true"
 					FilterCaseSensitivity="FilterCaseSensitivity.Default"
 					AllowPaging="true"
@@ -24,17 +56,17 @@
 					AllowSorting="true"
 					Data="@ViewModel.AllClients"
 					TItem="Client"
-					EmptyText="Aucun client">
-			@*@ref="ViewModel.SallesViewGrid"*@
+					EmptyText="Aucun client"
+					@ref="ViewModel.ClientGrid">
 			<Columns>
 				<RadzenGridColumn TItem="Client"
 								  Property="IdClient"
 								  Title="ID Client"
-								  Width="50px" />
+								  Width="100px" />
 
 				<RadzenGridColumn TItem="Client"
 								  Property="NomClient"
-								  Title="Nom"/>
+								  Title="Nom" />
 			</Columns>
 		</RadzenGrid>
 
