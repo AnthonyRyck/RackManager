@@ -400,7 +400,7 @@ namespace AccessData
                             Gisement = reader.GetString(3),
                             PosRack = reader.GetString(4),
                             IdCommande = reader.GetInt32(5),
-                            DescriptionCmd = reader.GetString(6),
+                            DescriptionCmd = ConvertFromDBVal<string?>(reader.GetValue(6)),
                             DateEntree = reader.GetDateTime(7)
                         };
                     }
@@ -452,7 +452,7 @@ namespace AccessData
                             Gisement = reader.GetString(3),
                             PosRack = reader.GetString(4),
                             IdCommande = reader.GetInt32(5),
-                            DescriptionCmd = reader.GetString(6),
+                            DescriptionCmd = ConvertFromDBVal<string?>(reader.GetValue(6)),
                             DateEntree = reader.GetDateTime(7)
                         };
 
