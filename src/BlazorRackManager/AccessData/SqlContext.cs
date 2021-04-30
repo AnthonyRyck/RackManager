@@ -166,8 +166,8 @@ namespace AccessData
                             IdCommande = reader.GetInt32(0),
                             IdClient = reader.GetInt32(1),
                             NomClient = reader.GetString(2),
-                            DescriptionCmd = reader.GetString(3)
-                        };
+                            DescriptionCmd = ConvertFromDBVal<string?>(reader.GetValue(3))
+                    };
 
                         commandes.Add(commande);
                     }
@@ -210,7 +210,7 @@ namespace AccessData
                         SuiviCommande commande = new SuiviCommande();
                         commande.IdCommande = reader.GetInt32(0);
                         commande.ClientId = reader.GetInt32(1);
-                        commande.DescriptionCmd = reader.GetString(2);
+                        commande.DescriptionCmd = ConvertFromDBVal<string?>(reader.GetValue(2));
                         commandes.Add(commande);
                     }
                 }
