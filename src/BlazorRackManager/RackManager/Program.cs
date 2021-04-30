@@ -1,3 +1,4 @@
+using AccessData;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,11 +38,15 @@ namespace RackManager
 					var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 					var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 					var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+					var sqlContext = scope.ServiceProvider.GetRequiredService<SqlContext>();
 
 					// Vrai si la base de données est créée, false si elle existait déjà.
 					if (db.Database.EnsureCreated())
 					{
 						DataInitializer.InitData(roleManager, userManager).Wait();
+
+						// créer le reste de la base
+						DataInitializer.CreateTables(sqlContext).Wait();
 					}
 				}
 

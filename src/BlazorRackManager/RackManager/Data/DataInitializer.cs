@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AccessData;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -41,6 +43,20 @@ namespace RackManager.Data
 				{
 					await userManager.AddToRoleAsync(poweruser, Role.Admin.ToString());
 				}
+			}
+		}
+
+
+		internal static async Task CreateTables(SqlContext sqlContext)
+		{
+			try
+			{
+				string pathSql = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Scripts", "CreateDb.sql");
+				await sqlContext.CreateTables(pathSql);
+			}
+			catch (Exception ex)
+			{
+				//Log.Error(ex, "Erreur sur la création de la base de donnée.");
 			}
 		}
 

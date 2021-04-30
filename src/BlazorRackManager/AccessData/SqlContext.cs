@@ -3,6 +3,7 @@ using AccessData.Views;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -65,12 +66,13 @@ namespace AccessData
 
 
 
-		/// <summary>
-		/// Ajout d'un nouveau client
-		/// </summary>
-		/// <param name="nomClient"></param>
-		/// <returns></returns>
-		public async Task<int> AddClient(string nomClient)
+
+        /// <summary>
+        /// Ajout d'un nouveau client
+        /// </summary>
+        /// <param name="nomClient"></param>
+        /// <returns></returns>
+        public async Task<int> AddClient(string nomClient)
         {
             try
             {
@@ -508,6 +510,23 @@ namespace AccessData
         }
 
         #endregion
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public async Task CreateTables(string pathSql)
+        {
+            try
+            {
+                string cmd = await File.ReadAllTextAsync(pathSql);
+                await ExecuteCoreAsync(cmd);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
 
         #region Private Methods
 

@@ -104,9 +104,7 @@ namespace RackManager.ViewModels
 		/// <see cref="ICommandeViewModel.OnSelectClient"/>
 		public void OnSelectClient(object client)
 		{
-			string nomClient = client.ToString();
-
-			var clientSelected = AllClients.FirstOrDefault(x => x.NomClient == nomClient);
+			Client clientSelected = client as Client;
 
 			if (clientSelected != null)
 			{

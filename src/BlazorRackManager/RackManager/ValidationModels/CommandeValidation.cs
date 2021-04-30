@@ -18,7 +18,8 @@ namespace RackManager.ValidationModels
 		[StringLength(250, ErrorMessage = "La description est trop long, 250 caractères max")]
 		public string DescriptionCmd { get; set; }
 
-
+		[Required(ErrorMessage = "Il faut un client")]
+		[MinLength(1, ErrorMessage = "Il faut un client")]
 		public string NomClient { get; set; }
 
 

@@ -35,12 +35,20 @@
 
 							<div class="margin-5px">
 								<div>
-									<ValidationMessage For="@(() => ViewModel.NouvelleCommande.IdClient)" />
+									<ValidationMessage For="@(() => ViewModel.NouvelleCommande.NomClient)" />
 								</div>
-								<RadzenAutoComplete Placeholder="Choisir un client..."
-													Data=@ViewModel.AllClients
-													TextProperty="NomClient"
-													Change=@(args => ViewModel.OnSelectClient(args)) />
+
+								<RadzenDropDown AllowClear="true"
+												TValue="string"
+												FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+												FilterOperator="StringFilterOperator.StartsWith"
+												AllowFiltering="true"
+												Data=@ViewModel.AllClients
+												TextProperty="NomClient"
+												ValueProperty="NomClient"
+												Placeholder="Choisir un client"
+												@bind-Value="ViewModel.NouvelleCommande.NomClient"
+												SelectedItemChanged=@(args => ViewModel.OnSelectClient(args)) />
 							</div>
 
 							<div class="margin-5px">
