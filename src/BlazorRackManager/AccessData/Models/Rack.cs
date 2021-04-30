@@ -7,14 +7,11 @@ namespace AccessData.Models
 {
 	public class Rack
 	{
-		public string NomDuRack { get; set; }
+		public int IdRack { get; set; }
 
-		public string Position { get; set; }
+		public string Gisement { get; set; }
 
-		public string NomClient { get; set; }
+		public string PosRack { get; set; }
 
-		public int NumeroCommande { get; set; }
-
-		public DateTime Date { get; set; }
 	}
 }

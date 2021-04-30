@@ -1,7 +1,5 @@
 ﻿@inject IClientViewModel ViewModel
 
-@inject DialogService DialogService
-
 <h3>Gestion des clients</h3>
 
 @if (ViewModel.IsLoaded)
@@ -24,12 +22,14 @@
 						@* Super IMPORTANT !!! *@
 						<DataAnnotationsValidator />
 
-						<div>
-							<ValidationMessage For="@(() => ViewModel.NouveauClient.NomClient)" />
+						<div class="margin-5px">
+							<div>
+								<ValidationMessage For="@(() => ViewModel.NouveauClient.NomClient)" />
+							</div>
+							<RadzenTextBox Placeholder="Nom..."
+										   @bind-Value="ViewModel.NouveauClient.NomClient"
+										   Style="width 300px" />
 						</div>
-						<RadzenTextBox Placeholder="Nom..."
-									   @bind-Value="ViewModel.NouveauClient.NomClient"
-									   Style="width 300px" />
 					</RadzenCard>
 
 					<span class="margin-10px">

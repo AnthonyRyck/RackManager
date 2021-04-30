@@ -17,6 +17,8 @@ namespace AccessData
 			ConnectionString = connectionString;
 		}
 
+
+
 		#region Clients
 
         /// <summary>
@@ -62,7 +64,7 @@ namespace AccessData
             return clients;
 		}
 
-        /// <summary>
+		/// <summary>
 		/// Ajout d'un nouveau client
 		/// </summary>
 		/// <param name="nomClient"></param>
@@ -99,6 +101,91 @@ namespace AccessData
 
         #endregion
 
+        #region Rack
+
+        /// <summary>
+        /// Charge tous les racks
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<Rack>> LoadRacks()
+        {
+            var commandText = @"SELECT IdRack, Gisement, PosRack FROM Rack;";
+
+            Func<MySqlCommand, Task<List<Rack>>> funcCmd = async (cmd) =>
+            {
+                List<Rack> racks = new List<Rack>();
+
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (reader.Read())
+                    {
+                        var rack = new Rack()
+                        {
+                            IdRack = reader.GetInt32(0),
+                            Gisement = reader.GetString(1),
+                            PosRack = reader.GetString(2)
+                        };
+
+                        racks.Add(rack);
+                    }
+                }
+
+                return racks;
+            };
+
+            List<Rack> racks = new List<Rack>();
+
+            try
+            {
+                racks = await GetCoreAsync(commandText, funcCmd);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            return racks;
+        }
+
+        /// <summary>
+        /// Ajoute un nouveau Rack
+        /// </summary>
+        /// <param name="gisement"></param>
+        /// <param name="position"></param>
+        /// <returns></returns>
+        public async Task<int> AddRack(string gisement, string position)
+        {
+            try
+            {
+                using (var conn = new MySqlConnection(ConnectionString))
+                {
+                    string command = "INSERT INTO Rack (Gisement, PosRack)"
+                                    + " VALUES(@gisement, @position);";
+
+                    using (var cmd = new MySqlCommand(command, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@gisement", gisement);
+                        cmd.Parameters.AddWithValue("@position", position);
+
+                        conn.Open();
+                        int result = await cmd.ExecuteNonQueryAsync();
+                        conn.Close();
+                    }
+                }
+
+                string commandId = " SELECT LAST_INSERT_ID();";
+                int idRack = await GetIntCore(commandId);
+
+                return idRack;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        #endregion
+
         /// <summary>
         /// Ajout une session en base de donné.
         /// </summary>
@@ -120,11 +207,11 @@ namespace AccessData
 
                     using (var cmd = new MySqlCommand(command, conn))
                     {
-                        cmd.Parameters.AddWithValue("@gisement", nouveauRack.NomDuRack);
-                        cmd.Parameters.AddWithValue("@position", nouveauRack.Position);
-                        cmd.Parameters.AddWithValue("@client", nouveauRack.NomClient);
-                        cmd.Parameters.AddWithValue("@commande", nouveauRack.NumeroCommande);
-                        cmd.Parameters.AddWithValue("@date", nouveauRack.Date);
+                        cmd.Parameters.AddWithValue("@gisement", nouveauRack.Gisement);
+                        cmd.Parameters.AddWithValue("@position", nouveauRack.PosRack);
+                        //cmd.Parameters.AddWithValue("@client", nouveauRack.NomClient);
+                        //cmd.Parameters.AddWithValue("@commande", nouveauRack.NumeroCommande);
+                        //cmd.Parameters.AddWithValue("@date", nouveauRack.Date);
 
                         conn.Open();
                         int result = await cmd.ExecuteNonQueryAsync();
@@ -158,11 +245,11 @@ namespace AccessData
                     {
                         var rack = new Rack()
                         {
-                            NomDuRack = reader.GetString(0),
-                            Position = reader.GetString(1),
-                            NomClient = reader.GetString(2),
-                            NumeroCommande = reader.GetInt32(3),
-                            Date = reader.GetDateTime(4)
+                            Gisement = reader.GetString(0),
+                            PosRack = reader.GetString(1),
+                            //NomClient = reader.GetString(2),
+                            //NumeroCommande = reader.GetInt32(3),
+                            //Date = reader.GetDateTime(4)
                         };
 
                         racks.Add(rack);
