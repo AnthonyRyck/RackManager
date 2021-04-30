@@ -1,11 +1,72 @@
 ﻿@page "/hangar"
+@inject IHangarViewModel ViewModel
 
 <h1>Hangar</h1>
 
-<div>
-	
+@if (ViewModel.IsLoaded)
+{
+	<div>
+		<div class="padding-10">
+			@if (!ViewModel.DialogNouvelleEntre)
+			{
+				<RadzenButton Text="Nouvelle entrée"
+							  Icon="add_circle"
+							  ButtonStyle="ButtonStyle.Secondary"
+							  Click="ViewModel.OpenNouvelleEntre" />
+			}
+			else
+			{
+				<div class="col-xl-6">
+				</div>
+			}
+		</div>
+	</div>
 
-</div>
+	<div>
+		<RadzenGrid AllowFiltering="true"
+					FilterCaseSensitivity="FilterCaseSensitivity.Default"
+					AllowPaging="true"
+					PageSize="30"
+					AllowSorting="true"
+					Data="@ViewModel.AllHangar"
+					TItem="HangarView"
+					EmptyText="Le hangar est vide"
+					@ref="ViewModel.HangarGrid">
+			<Columns>
+				<RadzenGridColumn TItem="HangarView"
+								  Property="NomClient"
+								  Title="Client"
+								  Width="150px" />
+
+				<RadzenGridColumn TItem="HangarView"
+								  Property="Gisement"
+								  Title="Gisement"
+								  Width="150px" />
+
+				<RadzenGridColumn TItem="HangarView"
+								  Property="PosRack"
+								  Title="Position"
+								  Sortable="false"
+								  Filterable="false"
+								  Width="80px" />
+
+				<RadzenGridColumn TItem="HangarView"
+								  Property="IdCommande"
+								  Title="Numéro commande"
+								  Width="150px" />
+
+				<RadzenGridColumn TItem="HangarView"
+								  Property="DescriptionCmd"
+								  Title="Description" />
+			</Columns>
+		</RadzenGrid>
+	</div>
+}
+else
+{
+	<div>Chargement en cours ...</div>
+}
+
 
 @code {
 

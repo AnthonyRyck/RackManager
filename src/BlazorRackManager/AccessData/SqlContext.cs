@@ -269,103 +269,62 @@ namespace AccessData
 
         #endregion
 
-        /// <summary>
-        /// Ajout une session en base de donné.
-        /// </summary>
-        /// <param name="idFormation"></param>
-        /// <param name="idFormateur"></param>
-        /// <param name="idSalle"></param>
-        /// <param name="dateFormation"></param>
-        /// <param name="nbrePlace"></param>
-        /// <returns></returns>
-        public async Task AddToRack(Rack nouveauRack)
-        {
-            try
-            {
-                using (var conn = new MySqlConnection(ConnectionString))
-                {
-                    string command = "INSERT INTO Rack (Gisement, Position, NomClient, Commande, DateEntre)"
-                                    + " VALUES(@gisement, @position, @client, @commande, @date);";
-
-
-                    using (var cmd = new MySqlCommand(command, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@gisement", nouveauRack.Gisement);
-                        cmd.Parameters.AddWithValue("@position", nouveauRack.PosRack);
-                        //cmd.Parameters.AddWithValue("@client", nouveauRack.NomClient);
-                        //cmd.Parameters.AddWithValue("@commande", nouveauRack.NumeroCommande);
-                        //cmd.Parameters.AddWithValue("@date", nouveauRack.Date);
-
-                        conn.Open();
-                        int result = await cmd.ExecuteNonQueryAsync();
-                        conn.Close();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
+        #region Hangar
 
         /// <summary>
         /// Récupère les formations par rapport à un titre de formation.
         /// </summary>
         /// <param name="nomFormation"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<Rack>> GetRackByCommande(int numeroCommande)
+        public async Task<List<HangarView>> GetHangar()
         {
-            var commandText = @"SELECT Gisement, Position, NomClient, Commande, DateEntre"
-                            + $" WHERE Commande LIKE '%{numeroCommande}%';";
+            var commandText = @"SELECT cli.IdClient, cli.NomClient, rac.IdRack, rac.Gisement, rac.PosRack, cmd.IdCommande, cmd.DescriptionCmd"
+                                + " FROM geocommande geo"
+                                + " INNER JOIN suivicommande cmd ON cmd.IdCommande = geo.CommandeId"
+                                + " INNER JOIN clients cli ON cli.IdClient = cmd.ClientId"
+                                + " INNER JOIN rack rac ON rac.IdRack = geo.RackId;";
 
-            Func<MySqlCommand, Task<List<Rack>>> funcCmd = async (cmd) =>
+            Func<MySqlCommand, Task<List<HangarView>>> funcCmd = async (cmd) =>
             {
-                List<Rack> racks = new List<Rack>();
+                List<HangarView> hangar = new List<HangarView>();
 
                 using (var reader = await cmd.ExecuteReaderAsync())
                 {
                     while (reader.Read())
                     {
-                        var rack = new Rack()
+                        var infoHangar = new HangarView()
                         {
-                            Gisement = reader.GetString(0),
-                            PosRack = reader.GetString(1),
-                            //NomClient = reader.GetString(2),
-                            //NumeroCommande = reader.GetInt32(3),
-                            //Date = reader.GetDateTime(4)
+                            IdClient = reader.GetInt32(0),
+                            NomClient = reader.GetString(1),
+                            IdRack = reader.GetInt32(2),
+                            Gisement = reader.GetString(3),
+                            PosRack = reader.GetString(4),
+                            IdCommande = reader.GetInt32(5),
+                            DescriptionCmd = reader.GetString(6)
                         };
 
-                        racks.Add(rack);
+                        hangar.Add(infoHangar);
                     }
                 }
 
-                return racks;
+                return hangar;
             };
 
-            List<Rack> racks = new List<Rack>();
+            List<HangarView> hangar = new List<HangarView>();
 
             try
             {
-                racks = await GetCoreAsync(commandText, funcCmd);
+                hangar = await GetCoreAsync(commandText, funcCmd);
             }
             catch (Exception ex)
             {
                 var exs = ex.Message;
             }
 
-            return racks;
+            return hangar;
         }
 
-        /// <summary>
-        /// Supprime la formation du catalogue.
-        /// </summary>
-        /// <param name="currentFormation"></param>
-        /// <returns></returns>
-        public async Task DeleteByCommande(int numeroCommande)
-        {
-            string commandDelete = $"DELETE FROM rack WHERE Commande={numeroCommande};";
-            await ExecuteCoreAsync(commandDelete);
-        }
+        #endregion
 
         #region Private Methods
 
