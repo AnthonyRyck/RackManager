@@ -21,4 +21,5 @@ CREATE TABLE GeoCommande
 CommandeId int NOT NULL,
 DateEntre datetime NOT NULL,
 FOREIGN KEY(RackId) REFERENCES Rack(IdRack),
-FOREIGN KEY(CommandeId) REFERENCES SuiviCommande(IdCommande));
+FOREIGN KEY(CommandeId) REFERENCES SuiviCommande(IdCommande),
+PRIMARY KEY(RackId, CommandeId));

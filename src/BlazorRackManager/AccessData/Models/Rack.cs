@@ -13,5 +13,7 @@ namespace AccessData.Models
 
 		public string PosRack { get; set; }
 
+
+		public string GisementPos { get { return Gisement + "-" + PosRack; } }
 	}
 }

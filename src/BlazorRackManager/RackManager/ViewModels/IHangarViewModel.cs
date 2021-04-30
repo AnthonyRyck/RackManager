@@ -1,4 +1,6 @@
-﻿using AccessData.Views;
+﻿using AccessData.Models;
+using AccessData.Views;
+using RackManager.ValidationModels;
 using Radzen.Blazor;
 using System;
 using System.Collections.Generic;
@@ -17,8 +19,22 @@ namespace RackManager.ViewModels
 
 		RadzenGrid<HangarView> HangarGrid { get; set; }
 
+		EntreHangarValidation EntreHangarValidation { get; set; }
+
+		IEnumerable<Rack> Racks { get; set; }
+
+		IEnumerable<SuiviCommande> Commandes { get; set; }
+
+
+		void OnSelectedRack(object selected);
+
+		void OnSelectCommande(object selected);
 
 
 		void OpenNouvelleEntre();
+
+		void CloseEntre();
+
+		void OnValidSubmit();
 	}
 }

@@ -20,8 +20,9 @@ namespace AccessData.Views
 
 		public int IdCommande { get; set; }
 
-		public int ClientId { get; set; }
-
 		public string DescriptionCmd { get; set; }
+		
+		public DateTime DateEntree { get; set; }
+
 	}
 }
