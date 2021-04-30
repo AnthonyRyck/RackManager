@@ -16,6 +16,7 @@ namespace RackManager.ValidationModels
 		public DateTime? DateEntree { get; set; }
 
 		[Required(ErrorMessage = "Il faut un numéro de commande")]
-		public int? CommandeId { get; set; }
+		[MinLength(1)]
+		public string CommandeId { get; set; }
 	}
 }

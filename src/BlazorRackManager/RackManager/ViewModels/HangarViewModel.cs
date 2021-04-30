@@ -92,6 +92,9 @@ namespace RackManager.ViewModels
 
 				AllHangar.Add(newEntry);
 				await HangarGrid.Reload();
+
+				// Recharger les racks vide.
+				Racks = await SqlContext.GetRackEmpty();
 			}
 			catch (Exception ex)
 			{

@@ -47,13 +47,13 @@
 						<ValidationMessage For="@(() => ViewModel.EntreHangarValidation.CommandeId)" />
 					</div>
 					<RadzenDropDown AllowClear="true"
-									TValue="int?"
-									FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+									TValue="string"
+									FilterCaseSensitivity="FilterCaseSensitivity.Default"
 									FilterOperator="StringFilterOperator.StartsWith"
 									AllowFiltering="true"
 									Data=@ViewModel.Commandes
-									TextProperty="IdCommande"
-									ValueProperty="IdCommande"
+									TextProperty="IdCommandeStr"
+									ValueProperty="IdCommandeStr"
 									@bind-Value="ViewModel.EntreHangarValidation.CommandeId"
 									Placeholder="Choisir un numéro de commande"
 									SelectedItemChanged=@(args => ViewModel.OnSelectCommande(args)) />
