@@ -17,6 +17,8 @@ namespace RackManager.ViewModels
 
 		bool DialogSortie { get; set; }
 
+		bool DeplacerPalette { get; set; }
+
 		List<HangarView> AllHangar { get; set; }
 
 		IEnumerable<Client> AllClients { get; set; }
@@ -27,9 +29,23 @@ namespace RackManager.ViewModels
 
 		SortieHangarValidation SortieHangarValidation { get; set; }
 
+		TransfertRackValidation TransfertRackValidation { get; set; }
+
 		IEnumerable<Rack> Racks { get; set; }
 
 		IEnumerable<Rack> RacksFull { get; set; }
+
+		CommandeView ClientTransfert { get; set; }
+
+
+
+
+
+
+
+
+
+
 
 		void OnSelectedRack(object selected);
 
@@ -39,6 +55,10 @@ namespace RackManager.ViewModels
 
 		void OpenSortie();
 
+		void OpenTransfert();
+
+		void CloseTransfert();
+
 		void CloseEntre();
 
 		void CloseSortie();
@@ -47,6 +67,14 @@ namespace RackManager.ViewModels
 
 		void OnValidSortieSubmit();
 
+		void OnValidTransfert();
+
 		void OnSelectClient(object client);
+
+
+
+		void OnSelectedRackPartant(object rackPartant);
+
+		void OnSelectedRackArrivant(object rackArrivant);
 	}
 }

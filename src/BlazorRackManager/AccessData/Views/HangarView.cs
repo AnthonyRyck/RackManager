@@ -23,6 +23,6 @@ namespace AccessData.Views
 		public string DescriptionCmd { get; set; }
 		
 		public DateTime DateEntree { get; set; }
-
 	}
+
 }

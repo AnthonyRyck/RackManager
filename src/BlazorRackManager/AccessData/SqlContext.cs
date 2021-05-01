@@ -64,9 +64,6 @@ namespace AccessData
             return clients;
 		}
 
-
-
-
         /// <summary>
         /// Ajout d'un nouveau client
         /// </summary>
@@ -101,11 +98,6 @@ namespace AccessData
                 throw;
             }
         }
-
-
-
-
-
 
 		#endregion
 
@@ -161,15 +153,58 @@ namespace AccessData
             }
         }
 
-        #endregion
 
-        #region Rack
+        public async Task<CommandeView> GetCommandeByIdRack(int idRack)
+		{
+            string cmd = "SELECT sc.IdCommande, sc.ClientId, cli.NomClient, sc.DescriptionCmd"
+                            + " FROM geocommande geo"
+                            + " INNER JOIN suivicommande sc"
+                            + " ON geo.CommandeId = sc.IdCommande"
+                            + " INNER JOIN clients cli"
+                            + " ON sc.ClientId = cli.IdClient"
+                            + $" WHERE geo.RackId = {idRack};";
 
-        /// <summary>
-        /// Charge tous les racks
-        /// </summary>
-        /// <returns></returns>
-        public async Task<List<Rack>> LoadRacks()
+            Func<MySqlCommand, Task<CommandeView>> funcCmd = async (cmd) =>
+            {
+                CommandeView commande = new CommandeView();
+
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (reader.Read())
+                    {
+                        commande.IdCommande = reader.GetInt32(0);
+                        commande.IdClient = reader.GetInt32(1);
+                        commande.NomClient = reader.GetString(2);
+                        commande.DescriptionCmd = ConvertFromDBVal<string?>(reader.GetValue(3));
+                    }
+                }
+
+                return commande;
+            };
+
+            CommandeView commandeView = new CommandeView();
+
+            try
+            {
+                commandeView = await GetCoreAsync(cmd, funcCmd);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            return commandeView;
+        }
+
+		#endregion
+
+		#region Rack
+
+		/// <summary>
+		/// Charge tous les racks
+		/// </summary>
+		/// <returns></returns>
+		public async Task<List<Rack>> LoadRacks()
         {
             var commandText = @"SELECT IdRack, Gisement, PosRack FROM Rack;";
 
@@ -505,6 +540,27 @@ namespace AccessData
 			{
 				throw;
 			};
+        }
+
+        /// <summary>
+        /// Change de place une palette d'un rack à un autre.
+        /// </summary>
+        /// <param name="idrackPartant"></param>
+        /// <param name="idrackArrivant"></param>
+        /// <returns></returns>
+        public async Task TransfertRackTo(int idrackPartant, int idrackArrivant)
+        {
+			try
+			{
+                string cmdUpdate = $"UPDATE GeoCommande SET RackId={idrackArrivant}"
+                                   + $" WHERE RackId={idrackPartant};";
+
+                await ExecuteCoreAsync(cmdUpdate);
+            }
+			catch (Exception)
+			{
+				throw;
+			}
         }
 
         #endregion

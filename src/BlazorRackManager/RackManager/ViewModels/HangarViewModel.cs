@@ -18,6 +18,8 @@ namespace RackManager.ViewModels
 
 		public bool DialogSortie { get; set; }
 
+		public bool DeplacerPalette { get; set; }
+
 		public List<HangarView> AllHangar { get; set; }
 
 		public RadzenGrid<HangarView> HangarGrid { get; set; }
@@ -32,6 +34,11 @@ namespace RackManager.ViewModels
 
 		public SortieHangarValidation SortieHangarValidation { get; set; }
 
+		public TransfertRackValidation TransfertRackValidation { get; set; }
+
+		public CommandeView ClientTransfert { get; set; }
+
+
 		private SqlContext SqlContext;
 		private NotificationService Notification;
 
@@ -45,10 +52,20 @@ namespace RackManager.ViewModels
 			IsLoaded = false;
 			DialogNouvelleEntre = false;
 			DialogSortie = false;
+			DeplacerPalette = false;
 
+			TransfertRackValidation = new TransfertRackValidation();
 			EntreHangarValidation = new EntreHangarValidation();
 			SortieHangarValidation = new SortieHangarValidation();
 			nouvelleEntreHangar = new GeoCommande();
+
+			ClientTransfert = new CommandeView() 
+			{ 
+				NomClient = "Aucune sélection",
+				DescriptionCmd = "aucune",
+				IdClient = 0,
+				IdCommande = 0
+			};
 
 			AllHangar = LoadDatas().GetAwaiter().GetResult();
 
@@ -60,12 +77,14 @@ namespace RackManager.ViewModels
 		public void OpenNouvelleEntre()
 		{
 			DialogSortie = false;
+			DeplacerPalette = false;
 			DialogNouvelleEntre = true;
 		}
 
 		public void OpenSortie()
 		{
 			DialogNouvelleEntre = false;
+			DeplacerPalette = false;
 			DialogSortie = true;
 		}
 
@@ -74,6 +93,19 @@ namespace RackManager.ViewModels
 			DialogNouvelleEntre = false;
 			EntreHangarValidation = new EntreHangarValidation();
 			nouvelleEntreHangar = new GeoCommande();
+		}
+
+		public void OpenTransfert()
+		{
+			DialogSortie = false;
+			DialogNouvelleEntre = false;
+			DeplacerPalette = true;
+		}
+
+		public void CloseTransfert()
+		{
+			DeplacerPalette = false;
+			TransfertRackValidation = new TransfertRackValidation();
 		}
 
 		public void CloseSortie()
@@ -158,6 +190,34 @@ namespace RackManager.ViewModels
 			}
 		}
 
+
+		public async void OnValidTransfert()
+		{
+			try
+			{
+				await SqlContext.TransfertRackTo(TransfertRackValidation.IdRackPartant, TransfertRackValidation.IdRackArrivant);
+
+				// Recharger les racks.
+				Racks = await SqlContext.GetRackEmpty();
+				RacksFull = await SqlContext.GetRackFull();
+
+				AllHangar.RemoveAll(x => x.IdRack == TransfertRackValidation.IdRackPartant);
+				HangarView hangar = await SqlContext.GetHangar(ClientTransfert.IdCommande, TransfertRackValidation.IdRackArrivant);
+				AllHangar.Add(hangar);
+				await HangarGrid.Reload();
+
+				Notification.Notify(NotificationSeverity.Success, "Transfert OK", "Transfert effectué");
+
+				// Remise à zéro
+				TransfertRackValidation = new TransfertRackValidation();
+				ClientTransfert = new CommandeView();
+			}
+			catch (Exception ex)
+			{
+				Notification.Notify(NotificationSeverity.Success, "Error", "Erreur sur le transfert");
+			}
+		}
+
 		public void OnSelectClient(object client)
 		{
 			Client clientSelected = client as Client;
@@ -167,6 +227,24 @@ namespace RackManager.ViewModels
 				EntreHangarValidation.IdClient = clientSelected.IdClient;
 				EntreHangarValidation.NomClient = clientSelected.NomClient;
 			}
+		}
+
+
+		public async void OnSelectedRackPartant(object rackPartant)
+		{
+			var rackSelected = rackPartant as Rack;
+			if (rackSelected != null)
+			{
+				TransfertRackValidation.IdRackPartant = rackSelected.IdRack;
+				ClientTransfert = await SqlContext.GetCommandeByIdRack(rackSelected.IdRack);
+			}
+		}
+
+		public void OnSelectedRackArrivant(object rackArrivant)
+		{
+			var rackSelected = rackArrivant as Rack;
+			if (rackSelected != null)
+				TransfertRackValidation.IdRackArrivant = rackSelected.IdRack;
 		}
 
 		#endregion
