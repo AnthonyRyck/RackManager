@@ -16,7 +16,7 @@
 		}
 		else
 		{
-		<div class="col-xl-6">
+		<div class="col-xl-3">
 			<EditForm OnValidSubmit="@ViewModel.OnValidSubmit"
 					  Model="@ViewModel.EntreHangarValidation">
 				<RadzenCard>
@@ -41,23 +41,35 @@
 										SelectedItemChanged=@(args => ViewModel.OnSelectedRack(args)) />
 					</div>
 
-					@*Choisir un Numero de commande*@
-				<div class="margin-5px">
-					<div>
-						<ValidationMessage For="@(() => ViewModel.EntreHangarValidation.CommandeId)" />
+					@*Choix du client*@
+					<div class="margin-5px">
+						<div>
+							<ValidationMessage For="@(() => ViewModel.EntreHangarValidation.IdCommande)" />
+						</div>
+						<RadzenNumeric ShowUpDown="false"
+									   TValue="int?"
+									   @bind-Value=@ViewModel.EntreHangarValidation.IdCommande
+									   Placeholder="Numéro de commande"
+									   Style="width 300px" />
 					</div>
-					<RadzenDropDown AllowClear="true"
-									TValue="string"
-									FilterCaseSensitivity="FilterCaseSensitivity.Default"
-									FilterOperator="StringFilterOperator.StartsWith"
-									AllowFiltering="true"
-									Data=@ViewModel.Commandes
-									TextProperty="IdCommandeStr"
-									ValueProperty="IdCommandeStr"
-									@bind-Value="ViewModel.EntreHangarValidation.CommandeId"
-									Placeholder="Choisir un numéro de commande"
-									SelectedItemChanged=@(args => ViewModel.OnSelectCommande(args)) />
-				</div>
+
+					<div class="margin-5px">
+						<div>
+							<ValidationMessage For="@(() => ViewModel.EntreHangarValidation.NomClient)" />
+						</div>
+
+						<RadzenDropDown AllowClear="true"
+										TValue="string"
+										FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+										FilterOperator="StringFilterOperator.StartsWith"
+										AllowFiltering="true"
+										Data=@ViewModel.AllClients
+										TextProperty="NomClient"
+										ValueProperty="NomClient"
+										Placeholder="Choisir un client"
+										@bind-Value="ViewModel.EntreHangarValidation.NomClient"
+										SelectedItemChanged=@(args => ViewModel.OnSelectClient(args)) />
+					</div>
 
 					@*Date d'entrée*@
 					<div class="margin-5px">

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AccessData.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -16,7 +17,22 @@ namespace RackManager.ValidationModels
 		public DateTime? DateEntree { get; set; }
 
 		[Required(ErrorMessage = "Il faut un numéro de commande")]
-		[MinLength(1)]
-		public string CommandeId { get; set; }
+		public int? IdCommande { get; set; }
+
+		[Required(ErrorMessage = "Il faut un client")]
+		public int? IdClient { get; set; }
+
+		[Required(ErrorMessage = "Il faut un client")]
+		[MinLength(1, ErrorMessage = "Il faut un client")]
+		public string NomClient { get; set; }
+
+		internal SuiviCommande ToSuiviCommande()
+		{
+			return new SuiviCommande()
+			{
+				ClientId = IdClient.Value,
+				IdCommande = IdCommande.Value
+			};
+		}
 	}
 }

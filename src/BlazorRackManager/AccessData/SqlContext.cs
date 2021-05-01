@@ -122,7 +122,7 @@ namespace AccessData
 			{
                 using (var conn = new MySqlConnection(ConnectionString))
                 {
-                    string command = "INSERT INTO SuiviCommande (IdCommande, ClientId, DescriptionCmd)"
+                    string command = "INSERT IGNORE INTO SuiviCommande (IdCommande, ClientId, DescriptionCmd)"
                                     + " VALUES(@idcmd, @idclient, @descriptionCmd);";
 
                     using (var cmd = new MySqlCommand(command, conn))

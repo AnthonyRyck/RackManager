@@ -74,7 +74,6 @@ namespace RackManager
 
 			services.AddScoped<IClientViewModel, ClientViewModel>();
 			services.AddScoped<IRackViewModel, RackViewModel>();
-			services.AddScoped<ICommandeViewModel, CommandeViewModel>();
 			services.AddScoped<IHangarViewModel, HangarViewModel>();
 		}
 

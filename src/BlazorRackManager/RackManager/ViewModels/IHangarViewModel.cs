@@ -17,6 +17,8 @@ namespace RackManager.ViewModels
 
 		List<HangarView> AllHangar { get; set; }
 
+		IEnumerable<Client> AllClients { get; set; }
+
 		RadzenGrid<HangarView> HangarGrid { get; set; }
 
 		EntreHangarValidation EntreHangarValidation { get; set; }
@@ -28,13 +30,13 @@ namespace RackManager.ViewModels
 
 		void OnSelectedRack(object selected);
 
-		void OnSelectCommande(object selected);
-
 
 		void OpenNouvelleEntre();
 
 		void CloseEntre();
 
 		void OnValidSubmit();
+
+		void OnSelectClient(object client);
 	}
 }

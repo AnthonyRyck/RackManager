@@ -22,6 +22,8 @@ namespace RackManager.ViewModels
 
 		public IEnumerable<Rack> Racks { get; set; }
 
+		public IEnumerable<Client> AllClients { get; set; }
+
 		public IEnumerable<SuiviCommande> Commandes { get; set; }
 
 		public EntreHangarValidation EntreHangarValidation { get; set; }
@@ -69,36 +71,49 @@ namespace RackManager.ViewModels
 				nouvelleEntreHangar.RackId = rackSelected.IdRack;
 		}
 
-		public void OnSelectCommande(object selected)
-		{
-			var commande = selected as SuiviCommande;
-			if(commande != null)
-				nouvelleEntreHangar.CommandeId = commande.IdCommande;
-		}
-
 		public async void OnValidSubmit()
 		{
 			try
 			{
 				nouvelleEntreHangar.DateEntree = EntreHangarValidation.DateEntree.Value;
 
+				// Sauvegarde de la commande
+				SuiviCommande cmd = EntreHangarValidation.ToSuiviCommande();
+				await SqlContext.AddCommande(cmd);
+
+				nouvelleEntreHangar.CommandeId = cmd.IdCommande;
+
+				// Sauvegarde dans le hangar
 				await SqlContext.AddToHangar(nouvelleEntreHangar);
 				HangarView newEntry = await SqlContext.GetHangar(nouvelleEntreHangar.CommandeId, nouvelleEntreHangar.RackId);
 
 				Notification.Notify(NotificationSeverity.Success, "Sauvegarde OK", "Sauvegarde OK");
 				
+				// remise à zéro
 				nouvelleEntreHangar = new GeoCommande();
 				EntreHangarValidation = new EntreHangarValidation();
 
 				AllHangar.Add(newEntry);
 				await HangarGrid.Reload();
 
-				// Recharger les racks vide.
+				// Recharger les racks vides.
 				Racks = await SqlContext.GetRackEmpty();
 			}
 			catch (Exception ex)
 			{
 				Notification.Notify(NotificationSeverity.Success, "Error", "Erreur sur la sauvegarde");
+			}
+		}
+
+
+		public void OnSelectClient(object client)
+		{
+			Client clientSelected = client as Client;
+
+			if (clientSelected != null)
+			{
+				EntreHangarValidation.IdClient = clientSelected.IdClient;
+				EntreHangarValidation.NomClient = clientSelected.NomClient;
 			}
 		}
 
@@ -111,12 +126,14 @@ namespace RackManager.ViewModels
 			List<HangarView> hangarViews = new List<HangarView>();
 			Racks = new List<Rack>();
 			Commandes = new List<SuiviCommande>();
+			AllClients = new List<Client>();
 
 			try
 			{
 				hangarViews = await SqlContext.GetHangar();
 				Racks = await SqlContext.GetRackEmpty();
 				Commandes = await SqlContext.GetCommandes();
+				AllClients = await SqlContext.LoadClients();
 			}
 			catch (Exception ex)
 			{
