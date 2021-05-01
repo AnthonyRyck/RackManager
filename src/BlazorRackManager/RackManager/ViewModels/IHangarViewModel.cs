@@ -15,6 +15,8 @@ namespace RackManager.ViewModels
 
 		bool DialogNouvelleEntre { get; set; }
 
+		bool DialogSortie { get; set; }
+
 		List<HangarView> AllHangar { get; set; }
 
 		IEnumerable<Client> AllClients { get; set; }
@@ -23,16 +25,27 @@ namespace RackManager.ViewModels
 
 		EntreHangarValidation EntreHangarValidation { get; set; }
 
+		SortieHangarValidation SortieHangarValidation { get; set; }
+
 		IEnumerable<Rack> Racks { get; set; }
+
+		IEnumerable<Rack> RacksFull { get; set; }
 
 		void OnSelectedRack(object selected);
 
+		void OnSelectedRackSortie(object rack);
 
 		void OpenNouvelleEntre();
 
+		void OpenSortie();
+
 		void CloseEntre();
 
+		void CloseSortie();
+
 		void OnValidSubmit();
+
+		void OnValidSortieSubmit();
 
 		void OnSelectClient(object client);
 	}

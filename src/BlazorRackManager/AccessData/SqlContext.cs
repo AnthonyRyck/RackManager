@@ -143,6 +143,24 @@ namespace AccessData
 			}
         }
 
+        public async Task UpdateSortieCommande(int idcommande, DateTime dateSortie)
+        {
+            using (var conn = new MySqlConnection(ConnectionString))
+            {
+                var commandUpdateCompetence = @$"UPDATE SuiviCommande SET DateSortie=@date"
+                                      + $" WHERE IdCommande={idcommande};";
+
+                using (var cmd = new MySqlCommand(commandUpdateCompetence, conn))
+                {
+                    cmd.Parameters.AddWithValue("@date", dateSortie);
+
+                    conn.Open();
+                    await cmd.ExecuteNonQueryAsync();
+                    conn.Close();
+                }
+            }
+        }
+
         #endregion
 
         #region Rack
@@ -229,7 +247,7 @@ namespace AccessData
         }
 
         /// <summary>
-        /// 
+        /// Récupère les racks qui sont vides.
         /// </summary>
         /// <returns></returns>
         public async Task<IEnumerable<Rack>> GetRackEmpty()
@@ -239,6 +257,54 @@ namespace AccessData
                                 + " LEFT OUTER JOIN geocommande geo"
 	                            + " ON rac.IdRack = geo.RackId"
                                 + " WHERE geo.RackId IS NULL;";
+
+            Func<MySqlCommand, Task<List<Rack>>> funcCmd = async (cmd) =>
+            {
+                List<Rack> racks = new List<Rack>();
+
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (reader.Read())
+                    {
+                        var rack = new Rack()
+                        {
+                            IdRack = reader.GetInt32(0),
+                            Gisement = reader.GetString(1),
+                            PosRack = reader.GetString(2)
+                        };
+
+                        racks.Add(rack);
+                    }
+                }
+
+                return racks;
+            };
+
+            List<Rack> racks = new List<Rack>();
+
+            try
+            {
+                racks = await GetCoreAsync(commandText, funcCmd);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            return racks;
+        }
+
+        /// <summary>
+        /// Récupère les racks qui sont pleins.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<Rack>> GetRackFull()
+		{
+            var commandText = @"SELECT rac.IdRack, rac.Gisement, rac.PosRack"
+                                + " FROM rack rac"
+                                + " LEFT OUTER JOIN geocommande geo"
+                                + " ON rac.IdRack = geo.RackId"
+                                + " WHERE geo.RackId IS NOT NULL;";
 
             Func<MySqlCommand, Task<List<Rack>>> funcCmd = async (cmd) =>
             {
@@ -418,6 +484,27 @@ namespace AccessData
             {
                 throw;
             }
+        }
+
+        /// <summary>
+        /// Supprime de ce rack une commande.
+        /// </summary>
+        /// <param name="idRack"></param>
+        /// <param name="idCommande"></param>
+        /// <returns></returns>
+        public async Task DeleteToHangar(int idRack, int idCommande)
+        {
+			try
+			{
+                string commandDelete = $"DELETE FROM GeoCommande"
+                                   + $" WHERE RackId={idRack} AND CommandeId={idCommande};";
+
+                await ExecuteCoreAsync(commandDelete);
+            }
+			catch (Exception)
+			{
+				throw;
+			};
         }
 
         #endregion

@@ -16,15 +16,21 @@ namespace RackManager.ViewModels
 
 		public bool DialogNouvelleEntre { get; set; }
 
+		public bool DialogSortie { get; set; }
+
 		public List<HangarView> AllHangar { get; set; }
 
 		public RadzenGrid<HangarView> HangarGrid { get; set; }
 
 		public IEnumerable<Rack> Racks { get; set; }
 
+		public IEnumerable<Rack> RacksFull { get; set; }
+
 		public IEnumerable<Client> AllClients { get; set; }
 
 		public EntreHangarValidation EntreHangarValidation { get; set; }
+
+		public SortieHangarValidation SortieHangarValidation { get; set; }
 
 		private SqlContext SqlContext;
 		private NotificationService Notification;
@@ -38,8 +44,10 @@ namespace RackManager.ViewModels
 			Notification = notification;
 			IsLoaded = false;
 			DialogNouvelleEntre = false;
+			DialogSortie = false;
 
 			EntreHangarValidation = new EntreHangarValidation();
+			SortieHangarValidation = new SortieHangarValidation();
 			nouvelleEntreHangar = new GeoCommande();
 
 			AllHangar = LoadDatas().GetAwaiter().GetResult();
@@ -51,7 +59,14 @@ namespace RackManager.ViewModels
 
 		public void OpenNouvelleEntre()
 		{
+			DialogSortie = false;
 			DialogNouvelleEntre = true;
+		}
+
+		public void OpenSortie()
+		{
+			DialogNouvelleEntre = false;
+			DialogSortie = true;
 		}
 
 		public void CloseEntre()
@@ -61,12 +76,23 @@ namespace RackManager.ViewModels
 			nouvelleEntreHangar = new GeoCommande();
 		}
 
+		public void CloseSortie()
+		{
+			DialogSortie = false;
+		}
 
 		public void OnSelectedRack(object selected)
 		{
 			var rackSelected = selected as Rack;
 			if (rackSelected != null)
 				nouvelleEntreHangar.RackId = rackSelected.IdRack;
+		}
+
+		public void OnSelectedRackSortie(object rack)
+		{
+			var rackSelected = rack as Rack;
+			if (rackSelected != null)
+				SortieHangarValidation.IdRack = rackSelected.IdRack;
 		}
 
 		public async void OnValidSubmit()
@@ -104,6 +130,34 @@ namespace RackManager.ViewModels
 		}
 
 
+		public async void OnValidSortieSubmit()
+		{
+			try
+			{
+				// enlever de geocommande, la palette
+				await SqlContext.DeleteToHangar(SortieHangarValidation.IdRack, SortieHangarValidation.IdCommande.Value);
+
+				// mettre la commande avec une date de sortie
+				await SqlContext.UpdateSortieCommande(SortieHangarValidation.IdCommande.Value, SortieHangarValidation.DateSortie.Value);
+
+				AllHangar.RemoveAll(x => x.IdCommande == SortieHangarValidation.IdCommande.Value
+										&& x.IdRack == SortieHangarValidation.IdRack);
+				await HangarGrid.Reload();
+
+				Notification.Notify(NotificationSeverity.Success, "Sortie OK", "Sortie OK");
+				// remise à zéro
+				SortieHangarValidation = new SortieHangarValidation();
+
+				// Recharger les racks.
+				Racks = await SqlContext.GetRackEmpty();
+				RacksFull = await SqlContext.GetRackFull();
+			}
+			catch (Exception ex)
+			{
+				Notification.Notify(NotificationSeverity.Success, "Error", "Erreur sur la sauvegarde");
+			}
+		}
+
 		public void OnSelectClient(object client)
 		{
 			Client clientSelected = client as Client;
@@ -124,11 +178,13 @@ namespace RackManager.ViewModels
 			List<HangarView> hangarViews = new List<HangarView>();
 			Racks = new List<Rack>();
 			AllClients = new List<Client>();
+			RacksFull = new List<Rack>();
 
 			try
 			{
 				hangarViews = await SqlContext.GetHangar();
 				Racks = await SqlContext.GetRackEmpty();
+				RacksFull = await SqlContext.GetRackFull();
 				AllClients = await SqlContext.LoadClients();
 			}
 			catch (Exception ex)

@@ -12,7 +12,8 @@ PRIMARY KEY(IdClient));
 CREATE TABLE SuiviCommande
 (IdCommande int NOT NULL,
 ClientId int NOT NULL,
-DescriptionCmd VARCHAR(250), 
+DescriptionCmd VARCHAR(250),
+DateSortie DATETIME,
 FOREIGN KEY(ClientId) REFERENCES Clients(IdClient),
 PRIMARY KEY(IdCommande));
 
