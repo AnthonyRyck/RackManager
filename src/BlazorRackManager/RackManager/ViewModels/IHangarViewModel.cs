@@ -25,9 +25,6 @@ namespace RackManager.ViewModels
 
 		IEnumerable<Rack> Racks { get; set; }
 
-		IEnumerable<SuiviCommande> Commandes { get; set; }
-
-
 		void OnSelectedRack(object selected);
 
 

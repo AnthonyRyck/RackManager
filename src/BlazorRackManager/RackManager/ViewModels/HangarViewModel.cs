@@ -24,8 +24,6 @@ namespace RackManager.ViewModels
 
 		public IEnumerable<Client> AllClients { get; set; }
 
-		public IEnumerable<SuiviCommande> Commandes { get; set; }
-
 		public EntreHangarValidation EntreHangarValidation { get; set; }
 
 		private SqlContext SqlContext;
@@ -125,14 +123,12 @@ namespace RackManager.ViewModels
 		{
 			List<HangarView> hangarViews = new List<HangarView>();
 			Racks = new List<Rack>();
-			Commandes = new List<SuiviCommande>();
 			AllClients = new List<Client>();
 
 			try
 			{
 				hangarViews = await SqlContext.GetHangar();
 				Racks = await SqlContext.GetRackEmpty();
-				Commandes = await SqlContext.GetCommandes();
 				AllClients = await SqlContext.LoadClients();
 			}
 			catch (Exception ex)

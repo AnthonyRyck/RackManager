@@ -1,4 +1,6 @@
-﻿namespace AccessData.Models
+﻿using System;
+
+namespace AccessData.Models
 {
 	public class SuiviCommande
 	{
@@ -8,7 +10,6 @@
 
 		public string DescriptionCmd { get; set; }
 
-		public string IdCommandeStr { get { return IdCommande.ToString(); } }
-
+		public DateTime? DateSortie { get; set; }
 	}
 }

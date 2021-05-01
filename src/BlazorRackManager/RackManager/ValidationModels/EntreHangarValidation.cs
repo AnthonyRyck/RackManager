@@ -26,12 +26,15 @@ namespace RackManager.ValidationModels
 		[MinLength(1, ErrorMessage = "Il faut un client")]
 		public string NomClient { get; set; }
 
+		public string Description { get; set; }
+
 		internal SuiviCommande ToSuiviCommande()
 		{
 			return new SuiviCommande()
 			{
 				ClientId = IdClient.Value,
-				IdCommande = IdCommande.Value
+				IdCommande = IdCommande.Value,
+				DescriptionCmd = Description
 			};
 		}
 	}

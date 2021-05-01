@@ -54,6 +54,13 @@
 					</div>
 
 					<div class="margin-5px">
+						<RadzenTextBox @bind-Value=@ViewModel.EntreHangarValidation.Description
+									   Placeholder="Description (optionnelle)"
+									   Style="width 300px" />
+						<div style="font-size:small"><u>Note</u> : si commande déjà en base de données, la description ne sera pas prise en compte.</div>
+					</div>
+
+					<div class="margin-5px">
 						<div>
 							<ValidationMessage For="@(() => ViewModel.EntreHangarValidation.NomClient)" />
 						</div>
