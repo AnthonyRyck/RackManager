@@ -1,6 +1,8 @@
 ﻿using AccessData;
 using AccessData.Models;
 using AccessData.Views;
+using Microsoft.AspNetCore.Components;
+using RackManager.Composants;
 using RackManager.ValidationModels;
 using Radzen;
 using Radzen.Blazor;
@@ -19,6 +21,10 @@ namespace RackManager.ViewModels
 		public bool DialogSortie { get; set; }
 
 		public bool DeplacerPalette { get; set; }
+
+		public Action StateChange { get; set; }
+
+		public RenderFragment DisplayRenderFragment { get; set; }
 
 		public List<HangarView> AllHangar { get; set; }
 
@@ -78,7 +84,33 @@ namespace RackManager.ViewModels
 		{
 			DialogSortie = false;
 			DeplacerPalette = false;
-			DialogNouvelleEntre = true;
+
+			RenderFragment CreateCompo() => builder =>
+			{
+				builder.OpenComponent(0, typeof(AjouterEntreHangar));
+				builder.AddAttribute(1, "EntreHangarValidation", EntreHangarValidation);
+				builder.AddAttribute(2, "AllClients", AllClients);
+				builder.AddAttribute(3, "Racks", Racks);
+
+				// Ajout pour EventCallBack
+				var eventTerminerEntre = EventCallback.Factory.Create(this, CloseEntre);
+				builder.AddAttribute(4, "OnTerminerClick", eventTerminerEntre);
+
+				Action<Client> retourAction = OnSelectClient;
+				var eventOnSelectClient = EventCallback.Factory.Create(this, retourAction);
+				builder.AddAttribute(5, "OnSelectClient", eventOnSelectClient);
+
+				Action<Rack> retourRack = OnSelectedRack;
+				var eventOnSelectRack = EventCallback.Factory.Create(this, retourRack);
+				builder.AddAttribute(6, "OnSelectedRack", eventOnSelectRack);
+
+				var eventOnValidSubmitEntre = EventCallback.Factory.Create(this, OnValidSubmit);
+				builder.AddAttribute(7, "OnValidSubmit", eventOnValidSubmitEntre);
+
+				builder.CloseComponent();
+			};
+
+			DisplayRenderFragment = CreateCompo();
 		}
 
 		public void OpenSortie()
@@ -90,6 +122,9 @@ namespace RackManager.ViewModels
 
 		public void CloseEntre()
 		{
+			DisplayRenderFragment = null;
+			StateChange.Invoke();
+
 			DialogNouvelleEntre = false;
 			EntreHangarValidation = new EntreHangarValidation();
 			nouvelleEntreHangar = new GeoCommande();
@@ -113,12 +148,7 @@ namespace RackManager.ViewModels
 			DialogSortie = false;
 		}
 
-		public void OnSelectedRack(object selected)
-		{
-			var rackSelected = selected as Rack;
-			if (rackSelected != null)
-				nouvelleEntreHangar.RackId = rackSelected.IdRack;
-		}
+
 
 		public void OnSelectedRackSortie(object rack)
 		{
@@ -127,40 +157,12 @@ namespace RackManager.ViewModels
 				SortieHangarValidation.IdRack = rackSelected.IdRack;
 		}
 
-		public async void OnValidSubmit()
+		
+
+		public void SetStateHasChanged(Action stateHasChange)
 		{
-			try
-			{
-				nouvelleEntreHangar.DateEntree = EntreHangarValidation.DateEntree.Value;
-
-				// Sauvegarde de la commande
-				SuiviCommande cmd = EntreHangarValidation.ToSuiviCommande();
-				await SqlContext.AddCommande(cmd);
-
-				nouvelleEntreHangar.CommandeId = cmd.IdCommande;
-
-				// Sauvegarde dans le hangar
-				await SqlContext.AddToHangar(nouvelleEntreHangar);
-				HangarView newEntry = await SqlContext.GetHangar(nouvelleEntreHangar.CommandeId, nouvelleEntreHangar.RackId);
-
-				Notification.Notify(NotificationSeverity.Success, "Sauvegarde OK", "Sauvegarde OK");
-				
-				// remise à zéro
-				nouvelleEntreHangar = new GeoCommande();
-				EntreHangarValidation = new EntreHangarValidation();
-
-				AllHangar.Add(newEntry);
-				await HangarGrid.Reload();
-
-				// Recharger les racks vides.
-				Racks = await SqlContext.GetRackEmpty();
-			}
-			catch (Exception ex)
-			{
-				Notification.Notify(NotificationSeverity.Success, "Error", "Erreur sur la sauvegarde");
-			}
+			StateChange = stateHasChange;
 		}
-
 
 		public async void OnValidSortieSubmit()
 		{
@@ -218,18 +220,6 @@ namespace RackManager.ViewModels
 			}
 		}
 
-		public void OnSelectClient(object client)
-		{
-			Client clientSelected = client as Client;
-
-			if (clientSelected != null)
-			{
-				EntreHangarValidation.IdClient = clientSelected.IdClient;
-				EntreHangarValidation.NomClient = clientSelected.NomClient;
-			}
-		}
-
-
 		public async void OnSelectedRackPartant(object rackPartant)
 		{
 			var rackSelected = rackPartant as Rack;
@@ -246,6 +236,64 @@ namespace RackManager.ViewModels
 			if (rackSelected != null)
 				TransfertRackValidation.IdRackArrivant = rackSelected.IdRack;
 		}
+
+
+		#region Nouvelle entrée
+		
+		public async void OnValidSubmit()
+		{
+			try
+			{
+				nouvelleEntreHangar.DateEntree = EntreHangarValidation.DateEntree.Value;
+
+				// Sauvegarde de la commande
+				SuiviCommande cmd = EntreHangarValidation.ToSuiviCommande();
+				await SqlContext.AddCommande(cmd);
+
+				nouvelleEntreHangar.CommandeId = cmd.IdCommande;
+
+				// Sauvegarde dans le hangar
+				await SqlContext.AddToHangar(nouvelleEntreHangar);
+				HangarView newEntry = await SqlContext.GetHangar(nouvelleEntreHangar.CommandeId, nouvelleEntreHangar.RackId);
+
+				Notification.Notify(NotificationSeverity.Success, "Sauvegarde OK", "Sauvegarde OK");
+
+				// remise à zéro
+				nouvelleEntreHangar = new GeoCommande();
+				EntreHangarValidation = new EntreHangarValidation();
+				StateChange.Invoke();
+
+				AllHangar.Add(newEntry);
+				await HangarGrid.Reload();
+
+				// Recharger les racks vides.
+				Racks = await SqlContext.GetRackEmpty();
+
+				StateChange.Invoke();
+			}
+			catch (Exception ex)
+			{
+				Notification.Notify(NotificationSeverity.Success, "Error", "Erreur sur la sauvegarde");
+			}
+		}
+
+		public void OnSelectClient(Client client)
+		{
+			if (client != null)
+			{
+				EntreHangarValidation.IdClient = client.IdClient;
+				EntreHangarValidation.NomClient = client.NomClient;
+			}
+		}
+
+		public void OnSelectedRack(Rack rack)
+		{
+			if (rack != null)
+				nouvelleEntreHangar.RackId = rack.IdRack;
+		}
+
+		#endregion
+
 
 		#endregion
 

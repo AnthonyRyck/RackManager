@@ -1,5 +1,6 @@
 ﻿using AccessData.Models;
 using AccessData.Views;
+using Microsoft.AspNetCore.Components;
 using RackManager.ValidationModels;
 using Radzen.Blazor;
 using System;
@@ -37,17 +38,17 @@ namespace RackManager.ViewModels
 
 		CommandeView ClientTransfert { get; set; }
 
+		RenderFragment DisplayRenderFragment { get; set; }
+
+
+		Action StateChange { get; set; }
+
+		void SetStateHasChanged(Action stateHasChange);
 
 
 
 
-
-
-
-
-
-
-		void OnSelectedRack(object selected);
+		void OnSelectedRack(Rack rack);
 
 		void OnSelectedRackSortie(object rack);
 
@@ -69,7 +70,7 @@ namespace RackManager.ViewModels
 
 		void OnValidTransfert();
 
-		void OnSelectClient(object client);
+		void OnSelectClient(Client client);
 
 
 
