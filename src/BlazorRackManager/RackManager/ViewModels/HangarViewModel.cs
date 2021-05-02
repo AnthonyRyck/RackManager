@@ -16,10 +16,6 @@ namespace RackManager.ViewModels
 	{
 		public bool IsLoaded { get; set; }
 
-		public bool DialogNouvelleEntre { get; set; }
-
-		public bool DialogSortie { get; set; }
-
 		public bool DeplacerPalette { get; set; }
 
 		public Action StateChange { get; set; }
@@ -56,8 +52,6 @@ namespace RackManager.ViewModels
 			SqlContext = sqlContext;
 			Notification = notification;
 			IsLoaded = false;
-			DialogNouvelleEntre = false;
-			DialogSortie = false;
 			DeplacerPalette = false;
 
 			TransfertRackValidation = new TransfertRackValidation();
@@ -80,60 +74,8 @@ namespace RackManager.ViewModels
 
 		#region Public methods
 
-		public void OpenNouvelleEntre()
-		{
-			DialogSortie = false;
-			DeplacerPalette = false;
-
-			RenderFragment CreateCompo() => builder =>
-			{
-				builder.OpenComponent(0, typeof(AjouterEntreHangar));
-				builder.AddAttribute(1, "EntreHangarValidation", EntreHangarValidation);
-				builder.AddAttribute(2, "AllClients", AllClients);
-				builder.AddAttribute(3, "Racks", Racks);
-
-				// Ajout pour EventCallBack
-				var eventTerminerEntre = EventCallback.Factory.Create(this, CloseEntre);
-				builder.AddAttribute(4, "OnTerminerClick", eventTerminerEntre);
-
-				Action<Client> retourAction = OnSelectClient;
-				var eventOnSelectClient = EventCallback.Factory.Create(this, retourAction);
-				builder.AddAttribute(5, "OnSelectClient", eventOnSelectClient);
-
-				Action<Rack> retourRack = OnSelectedRack;
-				var eventOnSelectRack = EventCallback.Factory.Create(this, retourRack);
-				builder.AddAttribute(6, "OnSelectedRack", eventOnSelectRack);
-
-				var eventOnValidSubmitEntre = EventCallback.Factory.Create(this, OnValidSubmit);
-				builder.AddAttribute(7, "OnValidSubmit", eventOnValidSubmitEntre);
-
-				builder.CloseComponent();
-			};
-
-			DisplayRenderFragment = CreateCompo();
-		}
-
-		public void OpenSortie()
-		{
-			DialogNouvelleEntre = false;
-			DeplacerPalette = false;
-			DialogSortie = true;
-		}
-
-		public void CloseEntre()
-		{
-			DisplayRenderFragment = null;
-			StateChange.Invoke();
-
-			DialogNouvelleEntre = false;
-			EntreHangarValidation = new EntreHangarValidation();
-			nouvelleEntreHangar = new GeoCommande();
-		}
-
 		public void OpenTransfert()
 		{
-			DialogSortie = false;
-			DialogNouvelleEntre = false;
 			DeplacerPalette = true;
 		}
 
@@ -143,55 +85,10 @@ namespace RackManager.ViewModels
 			TransfertRackValidation = new TransfertRackValidation();
 		}
 
-		public void CloseSortie()
-		{
-			DialogSortie = false;
-		}
-
-
-
-		public void OnSelectedRackSortie(object rack)
-		{
-			var rackSelected = rack as Rack;
-			if (rackSelected != null)
-				SortieHangarValidation.IdRack = rackSelected.IdRack;
-		}
-
-		
-
 		public void SetStateHasChanged(Action stateHasChange)
 		{
 			StateChange = stateHasChange;
 		}
-
-		public async void OnValidSortieSubmit()
-		{
-			try
-			{
-				// enlever de geocommande, la palette
-				await SqlContext.DeleteToHangar(SortieHangarValidation.IdRack, SortieHangarValidation.IdCommande.Value);
-
-				// mettre la commande avec une date de sortie
-				await SqlContext.UpdateSortieCommande(SortieHangarValidation.IdCommande.Value, SortieHangarValidation.DateSortie.Value);
-
-				AllHangar.RemoveAll(x => x.IdCommande == SortieHangarValidation.IdCommande.Value
-										&& x.IdRack == SortieHangarValidation.IdRack);
-				await HangarGrid.Reload();
-
-				Notification.Notify(NotificationSeverity.Success, "Sortie OK", "Sortie OK");
-				// remise à zéro
-				SortieHangarValidation = new SortieHangarValidation();
-
-				// Recharger les racks.
-				Racks = await SqlContext.GetRackEmpty();
-				RacksFull = await SqlContext.GetRackFull();
-			}
-			catch (Exception ex)
-			{
-				Notification.Notify(NotificationSeverity.Success, "Error", "Erreur sur la sauvegarde");
-			}
-		}
-
 
 		public async void OnValidTransfert()
 		{
@@ -239,7 +136,37 @@ namespace RackManager.ViewModels
 
 
 		#region Nouvelle entrée
-		
+
+		public void OpenNouvelleEntre()
+		{
+			RenderFragment CreateCompo() => builder =>
+			{
+				builder.OpenComponent(0, typeof(AjouterEntreHangar));
+				builder.AddAttribute(1, "EntreHangarValidation", EntreHangarValidation);
+				builder.AddAttribute(2, "AllClients", AllClients);
+				builder.AddAttribute(3, "Racks", Racks);
+
+				// Ajout pour EventCallBack
+				var eventTerminerEntre = EventCallback.Factory.Create(this, CloseEntre);
+				builder.AddAttribute(4, "OnTerminerClick", eventTerminerEntre);
+
+				Action<Client> retourAction = OnSelectClient;
+				var eventOnSelectClient = EventCallback.Factory.Create(this, retourAction);
+				builder.AddAttribute(5, "OnSelectClient", eventOnSelectClient);
+
+				Action<Rack> retourRack = OnSelectedRack;
+				var eventOnSelectRack = EventCallback.Factory.Create(this, retourRack);
+				builder.AddAttribute(6, "OnSelectedRack", eventOnSelectRack);
+
+				var eventOnValidSubmitEntre = EventCallback.Factory.Create(this, OnValidSubmit);
+				builder.AddAttribute(7, "OnValidSubmit", eventOnValidSubmitEntre);
+
+				builder.CloseComponent();
+			};
+
+			DisplayRenderFragment = CreateCompo();
+		}
+
 		public async void OnValidSubmit()
 		{
 			try
@@ -261,7 +188,6 @@ namespace RackManager.ViewModels
 				// remise à zéro
 				nouvelleEntreHangar = new GeoCommande();
 				EntreHangarValidation = new EntreHangarValidation();
-				StateChange.Invoke();
 
 				AllHangar.Add(newEntry);
 				await HangarGrid.Reload();
@@ -292,8 +218,89 @@ namespace RackManager.ViewModels
 				nouvelleEntreHangar.RackId = rack.IdRack;
 		}
 
+		public void CloseEntre()
+		{
+			DisplayRenderFragment = null;
+			StateChange.Invoke();
+
+			EntreHangarValidation = new EntreHangarValidation();
+			nouvelleEntreHangar = new GeoCommande();
+		}
+
 		#endregion
 
+		#region Sortie Hangar
+
+		public void OpenSortie()
+		{
+			RenderFragment CreateCompo() => builder =>
+			{
+				builder.OpenComponent(0, typeof(SortieHangar));
+				builder.AddAttribute(1, "RacksFull", RacksFull);
+				builder.AddAttribute(2, "SortieHangarValidation", SortieHangarValidation);
+				
+				// Ajout pour EventCallBack
+				var eventTerminerSortie = EventCallback.Factory.Create(this, CloseSortie);
+				builder.AddAttribute(3, "CloseSortieHangar", eventTerminerSortie);
+
+				Action<Rack> retourRack = OnSelectedRackSortie;
+				var eventOnSelectRack = EventCallback.Factory.Create(this, retourRack);
+				builder.AddAttribute(6, "OnSelectRackSortie", eventOnSelectRack);
+
+				var eventOnValidSubmitSortie = EventCallback.Factory.Create(this, OnValidSortieSubmit);
+				builder.AddAttribute(7, "OnValidSortieSubmit", eventOnValidSubmitSortie);
+
+				builder.CloseComponent();
+			};
+
+			DisplayRenderFragment = CreateCompo();
+		}
+
+		public async void OnValidSortieSubmit()
+		{
+			try
+			{
+				// enlever de geocommande, la palette
+				await SqlContext.DeleteToHangar(SortieHangarValidation.IdRack, SortieHangarValidation.IdCommande.Value);
+
+				// mettre la commande avec une date de sortie
+				await SqlContext.UpdateSortieCommande(SortieHangarValidation.IdCommande.Value, SortieHangarValidation.DateSortie.Value);
+
+				AllHangar.RemoveAll(x => x.IdCommande == SortieHangarValidation.IdCommande.Value
+										&& x.IdRack == SortieHangarValidation.IdRack);
+				await HangarGrid.Reload();
+
+				Notification.Notify(NotificationSeverity.Success, "Sortie OK", "Sortie OK");
+				// remise à zéro
+				SortieHangarValidation = new SortieHangarValidation();
+
+				// Recharger les racks.
+				Racks = await SqlContext.GetRackEmpty();
+				RacksFull = await SqlContext.GetRackFull();
+
+				StateChange.Invoke();
+			}
+			catch (Exception ex)
+			{
+				Notification.Notify(NotificationSeverity.Success, "Error", "Erreur sur la sauvegarde");
+			}
+		}
+
+		public void OnSelectedRackSortie(Rack rackSelected)
+		{
+			if (rackSelected != null)
+				SortieHangarValidation.IdRack = rackSelected.IdRack;
+		}
+
+		public void CloseSortie()
+		{
+			DisplayRenderFragment = null;
+			StateChange.Invoke();
+
+			SortieHangarValidation = new SortieHangarValidation();
+		}
+
+		#endregion
 
 		#endregion
 

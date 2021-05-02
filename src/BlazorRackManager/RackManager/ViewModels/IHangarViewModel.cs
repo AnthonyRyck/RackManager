@@ -14,10 +14,6 @@ namespace RackManager.ViewModels
 	{
 		bool IsLoaded { get; set; }
 
-		bool DialogNouvelleEntre { get; set; }
-
-		bool DialogSortie { get; set; }
-
 		bool DeplacerPalette { get; set; }
 
 		List<HangarView> AllHangar { get; set; }
@@ -50,7 +46,7 @@ namespace RackManager.ViewModels
 
 		void OnSelectedRack(Rack rack);
 
-		void OnSelectedRackSortie(object rack);
+		void OnSelectedRackSortie(Rack rackSelected);
 
 		void OpenNouvelleEntre();
 

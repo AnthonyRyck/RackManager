@@ -1,0 +1,77 @@
+﻿<div class="col-xl-3">
+	<EditForm OnValidSubmit="@OnValidSortieSubmit"
+			  Model="@SortieHangarValidation">
+		<RadzenCard>
+			@* Super IMPORTANT !!! *@
+			<DataAnnotationsValidator />
+
+			<div>
+				<ValidationMessage For="@(() => SortieHangarValidation.IdCommande)" />
+			</div>
+			<RadzenNumeric ShowUpDown="false"
+						   TValue="int?"
+						   @bind-Value=@SortieHangarValidation.IdCommande
+						   Placeholder="Commande à sortir"
+						   Style="width 300px" />
+			<div>
+				<ValidationMessage For="@(() => SortieHangarValidation.GisementRack)" />
+			</div>
+			<RadzenDropDown AllowClear="true"
+							TValue="string"
+							FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+							FilterOperator="StringFilterOperator.StartsWith"
+							AllowFiltering="true"
+							Data=@RacksFull
+							TextProperty="GisementPos"
+							ValueProperty="GisementPos"
+							Placeholder="Choisir un Gisement"
+							@bind-Value="SortieHangarValidation.GisementRack"
+							SelectedItemChanged="OnSelectedRackSortie" />
+
+			@*Date de sortie*@
+			<div class="margin-5px">
+				<div>
+					<ValidationMessage For="@(() => SortieHangarValidation.DateSortie)" />
+				</div>
+				<RadzenDatePicker @bind-Value=@SortieHangarValidation.DateSortie
+								  DateFormat="d" />
+			</div>
+
+			<span class="margin-10px">
+				<button type="submit" class="padding-5">Sortir</button>
+
+				<button type="reset"
+						class="padding-5"
+						@onclick="CloseSortieHangar">
+					Terminer
+				</button>
+			</span>
+		</RadzenCard>
+	</EditForm>
+</div>
+
+@code {
+
+	[Parameter]
+	public IEnumerable<Rack> RacksFull { get; set; }
+
+	[Parameter]
+	public SortieHangarValidation SortieHangarValidation { get; set; }
+
+	[Parameter]
+	public EventCallback CloseSortieHangar { get; set; }
+
+	[Parameter]
+	public EventCallback<Rack> OnSelectRackSortie { get; set; }
+
+	[Parameter]
+	public EventCallback OnValidSortieSubmit { get; set; }
+
+
+	private void OnSelectedRackSortie(object rack)
+	{
+		var rackSelected = rack as Rack;
+		if (rackSelected != null)
+			OnSelectRackSortie.InvokeAsync(rackSelected);
+	}
+}
