@@ -14,8 +14,6 @@ namespace RackManager.ViewModels
 	{
 		bool IsLoaded { get; set; }
 
-		bool DeplacerPalette { get; set; }
-
 		List<HangarView> AllHangar { get; set; }
 
 		IEnumerable<Client> AllClients { get; set; }

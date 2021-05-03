@@ -16,7 +16,6 @@ namespace RackManager.ViewModels
 	{
 		public bool IsLoaded { get; set; }
 
-		public bool DeplacerPalette { get; set; }
 
 		public Action StateChange { get; set; }
 
@@ -52,7 +51,6 @@ namespace RackManager.ViewModels
 			SqlContext = sqlContext;
 			Notification = notification;
 			IsLoaded = false;
-			DeplacerPalette = false;
 
 			TransfertRackValidation = new TransfertRackValidation();
 			EntreHangarValidation = new EntreHangarValidation();
@@ -74,66 +72,12 @@ namespace RackManager.ViewModels
 
 		#region Public methods
 
-		public void OpenTransfert()
-		{
-			DeplacerPalette = true;
-		}
-
-		public void CloseTransfert()
-		{
-			DeplacerPalette = false;
-			TransfertRackValidation = new TransfertRackValidation();
-		}
+		
 
 		public void SetStateHasChanged(Action stateHasChange)
 		{
 			StateChange = stateHasChange;
 		}
-
-		public async void OnValidTransfert()
-		{
-			try
-			{
-				await SqlContext.TransfertRackTo(TransfertRackValidation.IdRackPartant, TransfertRackValidation.IdRackArrivant);
-
-				// Recharger les racks.
-				Racks = await SqlContext.GetRackEmpty();
-				RacksFull = await SqlContext.GetRackFull();
-
-				AllHangar.RemoveAll(x => x.IdRack == TransfertRackValidation.IdRackPartant);
-				HangarView hangar = await SqlContext.GetHangar(ClientTransfert.IdCommande, TransfertRackValidation.IdRackArrivant);
-				AllHangar.Add(hangar);
-				await HangarGrid.Reload();
-
-				Notification.Notify(NotificationSeverity.Success, "Transfert OK", "Transfert effectué");
-
-				// Remise à zéro
-				TransfertRackValidation = new TransfertRackValidation();
-				ClientTransfert = new CommandeView();
-			}
-			catch (Exception ex)
-			{
-				Notification.Notify(NotificationSeverity.Success, "Error", "Erreur sur le transfert");
-			}
-		}
-
-		public async void OnSelectedRackPartant(object rackPartant)
-		{
-			var rackSelected = rackPartant as Rack;
-			if (rackSelected != null)
-			{
-				TransfertRackValidation.IdRackPartant = rackSelected.IdRack;
-				ClientTransfert = await SqlContext.GetCommandeByIdRack(rackSelected.IdRack);
-			}
-		}
-
-		public void OnSelectedRackArrivant(object rackArrivant)
-		{
-			var rackSelected = rackArrivant as Rack;
-			if (rackSelected != null)
-				TransfertRackValidation.IdRackArrivant = rackSelected.IdRack;
-		}
-
 
 		#region Nouvelle entrée
 
@@ -298,6 +242,100 @@ namespace RackManager.ViewModels
 			StateChange.Invoke();
 
 			SortieHangarValidation = new SortieHangarValidation();
+		}
+
+		#endregion
+
+		#region Déplacer palette
+
+		public void OpenTransfert()
+		{
+			RenderFragment CreateCompo() => builder =>
+			{
+				builder.OpenComponent(0, typeof(DeplacerPalette));
+
+				var eventOnValidSubmitDeplacer = EventCallback.Factory.Create(this, OnValidTransfert);
+				builder.AddAttribute(1, "OnValidTransfert", eventOnValidSubmitDeplacer);
+				builder.AddAttribute(2, "TransfertRackValidation", TransfertRackValidation);
+				builder.AddAttribute(3, "RackFull", RacksFull);
+				builder.AddAttribute(4, "RackEmpty", Racks);
+
+				var eventTerminerTransfert = EventCallback.Factory.Create(this, CloseTransfert);
+				builder.AddAttribute(5, "CloseTransfert", eventTerminerTransfert);
+
+				builder.AddAttribute(6, "ClientTransfert", ClientTransfert);
+
+				Action<Rack> rackArrivantAction = OnSelectedRackArrivant;
+				var eventOnSelectRackArrivant = EventCallback.Factory.Create(this, rackArrivantAction);
+				builder.AddAttribute(7, "SelectRackArrivant", eventOnSelectRackArrivant);
+
+				Action<Rack> rackPartantAction = OnSelectedRackPartant;
+				var eventOnSelectRackPartant = EventCallback.Factory.Create(this, rackPartantAction);
+				builder.AddAttribute(8, "SelectRackPartant", eventOnSelectRackPartant);
+
+				builder.CloseComponent();
+			};
+
+			DisplayRenderFragment = CreateCompo();
+		}
+
+		public void CloseTransfert()
+		{
+			DisplayRenderFragment = null;
+			TransfertRackValidation = new TransfertRackValidation();
+			
+			StateChange.Invoke();
+		}
+
+		public async void OnValidTransfert()
+		{
+			try
+			{
+				await SqlContext.TransfertRackTo(TransfertRackValidation.IdRackPartant, TransfertRackValidation.IdRackArrivant);
+
+				// Recharger les racks.
+				Racks = await SqlContext.GetRackEmpty();
+				RacksFull = await SqlContext.GetRackFull();
+
+				AllHangar.RemoveAll(x => x.IdRack == TransfertRackValidation.IdRackPartant);
+				HangarView hangar = await SqlContext.GetHangar(ClientTransfert.IdCommande, TransfertRackValidation.IdRackArrivant);
+				AllHangar.Add(hangar);
+				await HangarGrid.Reload();
+
+				Notification.Notify(NotificationSeverity.Success, "Transfert OK", "Transfert effectué");
+
+				// Remise à zéro
+				TransfertRackValidation = new TransfertRackValidation();
+				ClientTransfert = new CommandeView();
+
+				StateChange.Invoke();
+			}
+			catch (Exception ex)
+			{
+				Notification.Notify(NotificationSeverity.Success, "Error", "Erreur sur le transfert");
+			}
+		}
+
+		public async void OnSelectedRackPartant(object rackPartant)
+		{
+			var rackSelected = rackPartant as Rack;
+			if (rackSelected != null)
+			{
+				TransfertRackValidation.IdRackPartant = rackSelected.IdRack;
+				var temp = await SqlContext.GetCommandeByIdRack(rackSelected.IdRack);
+
+				ClientTransfert.NomClient = temp.NomClient;
+				ClientTransfert.DescriptionCmd = temp.DescriptionCmd;
+				ClientTransfert.IdClient = temp.IdClient;
+				ClientTransfert.IdCommande = temp.IdCommande;
+			}
+		}
+
+		public void OnSelectedRackArrivant(object rackArrivant)
+		{
+			var rackSelected = rackArrivant as Rack;
+			if (rackSelected != null)
+				TransfertRackValidation.IdRackArrivant = rackSelected.IdRack;
 		}
 
 		#endregion
