@@ -5,6 +5,8 @@
 			@* Super IMPORTANT !!! *@
 			<DataAnnotationsValidator />
 
+			<h4>Ajouter une entrée</h4>
+
 			@*Choisir un gisement*@
 			<div class="margin-5px">
 				<div>
@@ -20,7 +22,7 @@
 								ValueProperty="GisementPos"
 								Placeholder="Choisir un Gisement"
 								@bind-Value="EntreHangarValidation.GisementRack"
-								SelectedItemChanged="OnActionSelectRack"/>
+								SelectedItemChanged="OnActionSelectRack" />
 			</div>
 
 			@*Choix du client*@

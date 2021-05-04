@@ -563,6 +563,29 @@ namespace AccessData
 			}
         }
 
+        /// <summary>
+        /// Change de place une palette d'un rack à un autre.
+        /// </summary>
+        /// <param name="idrackPartant"></param>
+        /// <param name="idrackArrivant"></param>
+        /// <param name="idCommande"></param>
+        /// <returns></returns>
+        public async Task IntervertirRackTo(int idrackPartant, int idrackArrivant, int idCommande)
+        {
+            try
+            {
+                string cmdUpdate = $"UPDATE GeoCommande SET RackId={idrackArrivant}"
+                                   + $" WHERE RackId={idrackPartant}" 
+                                   + $" AND CommandeId={idCommande};";
+
+                await ExecuteCoreAsync(cmdUpdate);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         #endregion
 
         /// <summary>

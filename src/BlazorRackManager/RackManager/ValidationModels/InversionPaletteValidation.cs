@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace RackManager.ValidationModels
 {
-	public class TransfertRackValidation
+	public class InversionPaletteValidation
 	{
 		[Required(ErrorMessage = "Il faut choisir un emplacement")]
 		[MinLength(1, ErrorMessage = "Il faut choisir un emplacement")]
@@ -21,5 +17,9 @@ namespace RackManager.ValidationModels
 
 		public int IdRackArrivant { get; set; }
 
+
+		public int IdCommandeArrivant { get; set; }
+
+		public int IdCommandePartant { get; set; }
 	}
 }

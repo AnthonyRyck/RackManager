@@ -52,12 +52,6 @@ namespace RackManager.ViewModels
 
 		void OpenTransfert();
 
-		void CloseTransfert();
-
-		void CloseEntre();
-
-		void CloseSortie();
-
 		void OnValidSubmit();
 
 		void OnValidSortieSubmit();
@@ -71,5 +65,9 @@ namespace RackManager.ViewModels
 		void OnSelectedRackPartant(object rackPartant);
 
 		void OnSelectedRackArrivant(object rackArrivant);
+
+
+
+		void OpenIntervertir();
 	}
 }

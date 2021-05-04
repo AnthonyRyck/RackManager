@@ -37,6 +37,8 @@ namespace RackManager.ViewModels
 
 		public TransfertRackValidation TransfertRackValidation { get; set; }
 
+		private InversionPaletteValidation IntervertirValidation;
+
 		public CommandeView ClientTransfert { get; set; }
 
 
@@ -56,6 +58,7 @@ namespace RackManager.ViewModels
 			EntreHangarValidation = new EntreHangarValidation();
 			SortieHangarValidation = new SortieHangarValidation();
 			nouvelleEntreHangar = new GeoCommande();
+			IntervertirValidation = new InversionPaletteValidation();
 
 			ClientTransfert = new CommandeView() 
 			{ 
@@ -111,6 +114,15 @@ namespace RackManager.ViewModels
 			DisplayRenderFragment = CreateCompo();
 		}
 
+		public void CloseEntre()
+		{
+			DisplayRenderFragment = null;
+			StateChange.Invoke();
+
+			EntreHangarValidation = new EntreHangarValidation();
+			nouvelleEntreHangar = new GeoCommande();
+		}
+
 		public async void OnValidSubmit()
 		{
 			try
@@ -162,14 +174,6 @@ namespace RackManager.ViewModels
 				nouvelleEntreHangar.RackId = rack.IdRack;
 		}
 
-		public void CloseEntre()
-		{
-			DisplayRenderFragment = null;
-			StateChange.Invoke();
-
-			EntreHangarValidation = new EntreHangarValidation();
-			nouvelleEntreHangar = new GeoCommande();
-		}
 
 		#endregion
 
@@ -199,6 +203,15 @@ namespace RackManager.ViewModels
 
 			DisplayRenderFragment = CreateCompo();
 		}
+
+		public void CloseSortie()
+		{
+			DisplayRenderFragment = null;
+			StateChange.Invoke();
+
+			SortieHangarValidation = new SortieHangarValidation();
+		}
+
 
 		public async void OnValidSortieSubmit()
 		{
@@ -236,13 +249,7 @@ namespace RackManager.ViewModels
 				SortieHangarValidation.IdRack = rackSelected.IdRack;
 		}
 
-		public void CloseSortie()
-		{
-			DisplayRenderFragment = null;
-			StateChange.Invoke();
 
-			SortieHangarValidation = new SortieHangarValidation();
-		}
 
 		#endregion
 
@@ -279,13 +286,16 @@ namespace RackManager.ViewModels
 			DisplayRenderFragment = CreateCompo();
 		}
 
-		public void CloseTransfert()
+
+		private void CloseTransfert()
 		{
 			DisplayRenderFragment = null;
-			TransfertRackValidation = new TransfertRackValidation();
-			
 			StateChange.Invoke();
+
+			TransfertRackValidation = new TransfertRackValidation();
+			ClientTransfert = new CommandeView();
 		}
+
 
 		public async void OnValidTransfert()
 		{
@@ -340,6 +350,98 @@ namespace RackManager.ViewModels
 
 		#endregion
 
+		#region Intervertir palette
+
+		public void OpenIntervertir()
+		{
+			RenderFragment CreateCompo() => builder =>
+			{
+				builder.OpenComponent(0, typeof(IntervertirPalettes));
+
+				var eventOnValidSubmitIntervertir = EventCallback.Factory.Create(this, OnValidIntervertir);
+				builder.AddAttribute(1, "OnValidSubmitInvertion", eventOnValidSubmitIntervertir);
+
+				builder.AddAttribute(2, "InversionPaletteValidation", IntervertirValidation);
+				builder.AddAttribute(3, "RackFull", RacksFull);
+
+				var eventOnValidCloseIntervertir = EventCallback.Factory.Create(this, CloseIntervertir);
+				builder.AddAttribute(4, "CloseInvertion", eventOnValidCloseIntervertir);
+
+				Action<Rack> rackArrivantAction = OnSelectedRackArrivantIntervertir;
+				var eventOnSelectRackArrivant = EventCallback.Factory.Create(this, rackArrivantAction);
+				builder.AddAttribute(5, "SelectRackArrivant", eventOnSelectRackArrivant);
+
+				Action<Rack> rackPartantAction = OnSelectedRackPartantIntervertir;
+				var eventOnSelectRackPartant = EventCallback.Factory.Create(this, rackPartantAction);
+				builder.AddAttribute(6, "SelectRackPartant", eventOnSelectRackPartant);
+
+				builder.CloseComponent();
+			};
+
+			DisplayRenderFragment = CreateCompo();
+		}
+
+		private void OnSelectedRackPartantIntervertir(object rackPartant)
+		{
+			var rackSelected = rackPartant as Rack;
+			if (rackSelected != null)
+			{
+				IntervertirValidation.IdRackPartant = rackSelected.IdRack;
+				IntervertirValidation.IdCommandePartant = AllHangar.Find(x => x.IdRack == rackSelected.IdRack).IdCommande;
+			}
+		}
+
+		private void OnSelectedRackArrivantIntervertir(object rackArrivant)
+		{
+			var rackSelected = rackArrivant as Rack;
+			if (rackSelected != null)
+			{
+				IntervertirValidation.IdRackArrivant = rackSelected.IdRack;
+				IntervertirValidation.IdCommandeArrivant = AllHangar.Find(x => x.IdRack == rackSelected.IdRack).IdCommande;
+			}
+		}
+
+		private async void OnValidIntervertir()
+		{
+			try
+			{
+				await SqlContext.IntervertirRackTo(IntervertirValidation.IdRackPartant, 
+													IntervertirValidation.IdRackArrivant, 
+													IntervertirValidation.IdCommandePartant);
+
+				await SqlContext.IntervertirRackTo(IntervertirValidation.IdRackArrivant,
+													IntervertirValidation.IdRackPartant,
+													IntervertirValidation.IdCommandeArrivant);
+
+				// Recharger
+				RacksFull = await SqlContext.GetRackFull();
+				AllHangar = await SqlContext.GetHangar();
+
+				await HangarGrid.Reload();
+
+				Notification.Notify(NotificationSeverity.Success, "Inversion OK", "Inversion effectuée");
+
+				// Remise à zéro
+				IntervertirValidation = new InversionPaletteValidation();
+
+				StateChange.Invoke();
+			}
+			catch (Exception ex)
+			{
+				Notification.Notify(NotificationSeverity.Success, "Error", "Erreur sur l'inversion");
+			}
+		}
+
+		private void CloseIntervertir()
+		{
+			DisplayRenderFragment = null;
+			StateChange.Invoke();
+
+			IntervertirValidation = new InversionPaletteValidation();
+		}
+
+		#endregion
+
 		#endregion
 
 		#region Private methods
@@ -367,5 +469,6 @@ namespace RackManager.ViewModels
 		}
 
 		#endregion
+
 	}
 }
