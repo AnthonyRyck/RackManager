@@ -95,9 +95,9 @@ else
 
 
 @code {
-	protected override void OnInitialized()
+	protected override async Task OnInitializedAsync()
 	{
 		ViewModel.SetStateHasChanged(StateHasChanged);
-		base.OnInitialized();
+		await ViewModel.LoadDatas();
 	}
 }

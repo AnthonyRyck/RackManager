@@ -39,7 +39,7 @@ namespace RackManager.ViewModels
 
 		void SetStateHasChanged(Action stateHasChange);
 
-
+		Task LoadDatas();
 
 
 		void OnSelectedRack(Rack rack);

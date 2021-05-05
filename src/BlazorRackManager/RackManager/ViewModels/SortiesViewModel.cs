@@ -12,8 +12,6 @@ namespace RackManager.ViewModels
 
 		public IEnumerable<CommandeSortieView> Sorties { get; set; }
 
-		public RadzenGrid<CommandeSortieView> SortieGrid { get; set; }
-
 
 		private SqlContext SqlContext;
 

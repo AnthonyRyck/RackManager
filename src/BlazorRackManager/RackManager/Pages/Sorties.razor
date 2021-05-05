@@ -14,8 +14,7 @@
 					AllowSorting="true"
 					Data="@ViewModel.Sorties"
 					TItem="CommandeSortieView"
-					EmptyText="Aucune sortie"
-					@ref="ViewModel.SortieGrid">
+					EmptyText="Aucune sortie">
 			<Columns>
 				<RadzenGridColumn TItem="CommandeSortieView"
 								  Property="IdCommande"
@@ -23,21 +22,9 @@
 								  Width="150px" />
 
 				<RadzenGridColumn TItem="CommandeSortieView"
-								  Property="DescriptionCmd"
-								  Title="Description"
-								  Width="150px" />
-
-				<RadzenGridColumn TItem="CommandeSortieView"
 								  Property="NomClient"
 								  Title="Client"
 								  Width="150px" />
-
-				<RadzenGridColumn TItem="CommandeSortieView"
-								  Property="PosRack"
-								  Title="Position"
-								  Sortable="false"
-								  Filterable="false"
-								  Width="80px" />
 
 				<RadzenGridColumn TItem="CommandeSortieView"
 								  Property="DateSortie"
@@ -49,6 +36,10 @@
 						@String.Format("{0:d}", sortie.DateSortie)
 					</Template>
 				</RadzenGridColumn>
+
+				<RadzenGridColumn TItem="CommandeSortieView"
+								  Property="DescriptionCmd"
+								  Title="Description" />
 			</Columns>
 		</RadzenGrid>
 	</div>
@@ -62,4 +53,8 @@ else
 
 @code {
 
-}
+	protected override async Task OnInitializedAsync()
+	{
+		await ViewModel.LoadDatas();
+	}
+}

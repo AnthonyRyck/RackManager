@@ -13,6 +13,7 @@ namespace RackManager.ViewModels
 
 		IEnumerable<CommandeSortieView> Sorties { get; set; }
 
-		RadzenGrid<CommandeSortieView> SortieGrid { get; set; }
+
+		Task LoadDatas();
 	}
 }

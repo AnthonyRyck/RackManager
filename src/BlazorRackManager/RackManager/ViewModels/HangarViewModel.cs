@@ -15,8 +15,7 @@ namespace RackManager.ViewModels
 	public class HangarViewModel : IHangarViewModel
 	{
 		public bool IsLoaded { get; set; }
-
-
+		
 		public Action StateChange { get; set; }
 
 		public RenderFragment DisplayRenderFragment { get; set; }
@@ -52,7 +51,25 @@ namespace RackManager.ViewModels
 		{
 			SqlContext = sqlContext;
 			Notification = notification;
+		}
+
+		#region Public methods
+
+		public async Task LoadDatas()
+		{
 			IsLoaded = false;
+
+			ClientTransfert = new CommandeView()
+			{
+				NomClient = "Aucune sélection",
+				DescriptionCmd = "aucune",
+				IdClient = 0,
+				IdCommande = 0
+			};
+
+			Racks = new List<Rack>();
+			AllClients = new List<Client>();
+			RacksFull = new List<Rack>();
 
 			TransfertRackValidation = new TransfertRackValidation();
 			EntreHangarValidation = new EntreHangarValidation();
@@ -60,22 +77,20 @@ namespace RackManager.ViewModels
 			nouvelleEntreHangar = new GeoCommande();
 			IntervertirValidation = new InversionPaletteValidation();
 
-			ClientTransfert = new CommandeView() 
-			{ 
-				NomClient = "Aucune sélection",
-				DescriptionCmd = "aucune",
-				IdClient = 0,
-				IdCommande = 0
-			};
-
-			AllHangar = LoadDatas().GetAwaiter().GetResult();
+			try
+			{
+				AllHangar = await SqlContext.GetHangar();
+				Racks = await SqlContext.GetRackEmpty();
+				RacksFull = await SqlContext.GetRackFull();
+				AllClients = await SqlContext.LoadClients();
+			}
+			catch (Exception ex)
+			{
+				Notification.Notify(NotificationSeverity.Error, "Erreur chargement", "Erreur sur le chargement des informations du hangar");
+			}
 
 			IsLoaded = true;
 		}
-
-		#region Public methods
-
-		
 
 		public void SetStateHasChanged(Action stateHasChange)
 		{
@@ -441,32 +456,6 @@ namespace RackManager.ViewModels
 		}
 
 		#endregion
-
-		#endregion
-
-		#region Private methods
-
-		private async Task<List<HangarView>> LoadDatas()
-		{
-			List<HangarView> hangarViews = new List<HangarView>();
-			Racks = new List<Rack>();
-			AllClients = new List<Client>();
-			RacksFull = new List<Rack>();
-
-			try
-			{
-				hangarViews = await SqlContext.GetHangar();
-				Racks = await SqlContext.GetRackEmpty();
-				RacksFull = await SqlContext.GetRackFull();
-				AllClients = await SqlContext.LoadClients();
-			}
-			catch (Exception ex)
-			{
-				Notification.Notify(NotificationSeverity.Error, "Erreur chargement", "Erreur sur le chargement des informations du hangar");
-			}
-
-			return hangarViews;
-		}
 
 		#endregion
 

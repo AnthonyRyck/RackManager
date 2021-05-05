@@ -204,7 +204,11 @@ namespace AccessData
         /// <returns></returns>
         public async Task<IEnumerable<CommandeSortieView>> GetSorties()
         {
-            string cmd = "";
+            string cmd = "SELECT sc.IdCommande, sc.ClientId, cli.NomClient, sc.DescriptionCmd, sc.DateSortie"
+                            + " FROM suivicommande sc"
+                            + " INNER JOIN clients cli"
+                            + " ON sc.ClientId = cli.IdClient"
+                            + " WHERE sc.DateSortie IS NOT NULL; ";
 
             Func<MySqlCommand, Task<List<CommandeSortieView>>> funcCmd = async (cmd) =>
             {
@@ -220,7 +224,9 @@ namespace AccessData
                         sortieView.IdClient = reader.GetInt32(1);
                         sortieView.NomClient = reader.GetString(2);
                         sortieView.DescriptionCmd = ConvertFromDBVal<string?>(reader.GetValue(3));
-                        sortieView.DateSortie = reader.GetDateTime(3);
+                        sortieView.DateSortie = reader.GetDateTime(4);
+
+                        commandes.Add(sortieView);
                     }
                 }
 

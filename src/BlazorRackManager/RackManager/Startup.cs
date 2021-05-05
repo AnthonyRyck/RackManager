@@ -75,6 +75,7 @@ namespace RackManager
 			services.AddScoped<IClientViewModel, ClientViewModel>();
 			services.AddScoped<IRackViewModel, RackViewModel>();
 			services.AddScoped<IHangarViewModel, HangarViewModel>();
+			services.AddScoped<ISortiesViewModel, SortiesViewModel>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
