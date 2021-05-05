@@ -1,0 +1,65 @@
+﻿@page "/sorties"
+
+@inject ISortiesViewModel ViewModel
+
+<h3>Liste des sorties</h3>
+
+@if (ViewModel.IsLoaded)
+{
+	<div>
+		<RadzenGrid AllowFiltering="true"
+					FilterCaseSensitivity="FilterCaseSensitivity.Default"
+					AllowPaging="true"
+					PageSize="30"
+					AllowSorting="true"
+					Data="@ViewModel.Sorties"
+					TItem="CommandeSortieView"
+					EmptyText="Aucune sortie"
+					@ref="ViewModel.SortieGrid">
+			<Columns>
+				<RadzenGridColumn TItem="CommandeSortieView"
+								  Property="IdCommande"
+								  Title="Commande"
+								  Width="150px" />
+
+				<RadzenGridColumn TItem="CommandeSortieView"
+								  Property="DescriptionCmd"
+								  Title="Description"
+								  Width="150px" />
+
+				<RadzenGridColumn TItem="CommandeSortieView"
+								  Property="NomClient"
+								  Title="Client"
+								  Width="150px" />
+
+				<RadzenGridColumn TItem="CommandeSortieView"
+								  Property="PosRack"
+								  Title="Position"
+								  Sortable="false"
+								  Filterable="false"
+								  Width="80px" />
+
+				<RadzenGridColumn TItem="CommandeSortieView"
+								  Property="DateSortie"
+								  Title="Date sortie"
+								  Filterable="false"
+								  Format="date-time"
+								  Width="150px">
+					<Template Context="sortie">
+						@String.Format("{0:d}", sortie.DateSortie)
+					</Template>
+				</RadzenGridColumn>
+			</Columns>
+		</RadzenGrid>
+	</div>
+}
+else
+{
+	<div>Chargement en cours ...</div>
+}
+
+
+
+@code {
+
+}

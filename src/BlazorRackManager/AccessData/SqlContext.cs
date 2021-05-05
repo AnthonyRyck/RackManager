@@ -64,12 +64,13 @@ namespace AccessData
             return clients;
 		}
 
-        /// <summary>
-        /// Ajout d'un nouveau client
-        /// </summary>
-        /// <param name="nomClient"></param>
-        /// <returns></returns>
-        public async Task<int> AddClient(string nomClient)
+
+		/// <summary>
+		/// Ajout d'un nouveau client
+		/// </summary>
+		/// <param name="nomClient"></param>
+		/// <returns></returns>
+		public async Task<int> AddClient(string nomClient)
         {
             try
             {
@@ -196,15 +197,59 @@ namespace AccessData
             return commandeView;
         }
 
-		#endregion
 
-		#region Rack
+        /// <summary>
+        /// Récupère la liste des commandes qui sont "terminées"/sorties. 
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IEnumerable<CommandeSortieView>> GetSorties()
+        {
+            string cmd = "";
 
-		/// <summary>
-		/// Charge tous les racks
-		/// </summary>
-		/// <returns></returns>
-		public async Task<List<Rack>> LoadRacks()
+            Func<MySqlCommand, Task<List<CommandeSortieView>>> funcCmd = async (cmd) =>
+            {
+                List<CommandeSortieView> commandes = new List<CommandeSortieView>();
+
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (reader.Read())
+                    {
+                        CommandeSortieView sortieView = new CommandeSortieView();
+
+                        sortieView.IdCommande = reader.GetInt32(0);
+                        sortieView.IdClient = reader.GetInt32(1);
+                        sortieView.NomClient = reader.GetString(2);
+                        sortieView.DescriptionCmd = ConvertFromDBVal<string?>(reader.GetValue(3));
+                        sortieView.DateSortie = reader.GetDateTime(3);
+                    }
+                }
+
+                return commandes;
+            };
+
+            List<CommandeSortieView> sorties = new List<CommandeSortieView>();
+
+            try
+            {
+                sorties = await GetCoreAsync(cmd, funcCmd);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            return sorties;
+        }
+
+        #endregion
+
+        #region Rack
+
+        /// <summary>
+        /// Charge tous les racks
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<Rack>> LoadRacks()
         {
             var commandText = @"SELECT IdRack, Gisement, PosRack FROM Rack;";
 
@@ -587,6 +632,7 @@ namespace AccessData
         }
 
         #endregion
+
 
         /// <summary>
         /// 

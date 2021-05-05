@@ -1,6 +1,8 @@
-﻿namespace AccessData.Views
+﻿using System;
+
+namespace AccessData.Views
 {
-	public class CommandeView
+	public class CommandeSortieView
 	{
 		public int IdCommande { get; set; }
 
@@ -9,5 +11,7 @@
 		public int IdClient { get; set; }
 
 		public string NomClient { get; set; }
+
+		public DateTime DateSortie { get; set; }
 	}
 }
