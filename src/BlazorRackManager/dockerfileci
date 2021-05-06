@@ -15,7 +15,7 @@ WORKDIR /src
 COPY ["./src/BlazorRackManager/RackManager/RackManager.csproj", "RackManager/"]
 COPY ["./src/BlazorRackManager/AccessData/AccessData.csproj", "AccessData/"]
 RUN dotnet restore "RackManager/RackManager.csproj"
-COPY . .
+COPY ./src/BlazorRackManager/. .
 RUN dotnet build "RackManager/RackManager.csproj" -c Release -o /app/build
 
 FROM build AS publish
