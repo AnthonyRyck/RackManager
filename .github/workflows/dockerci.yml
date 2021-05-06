@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build and push
-        run: docker build --file ./src/BlazorRackManager/Dockerfile --tag anthonyryck/rackmanager:ci .
+        run: docker build --file ./src/BlazorRackManager/dockerfileci --tag anthonyryck/rackmanager:ci .
       - name: Login to DockerHub
         run: echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --
       - name: Push to DockerHub
