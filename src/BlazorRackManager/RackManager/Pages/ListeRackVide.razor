@@ -1,0 +1,48 @@
+﻿@page "/racksvides"
+
+@inject IRackVideViewModel ViewModel
+
+
+<h3>Liste des Racks vides</h3>
+
+@if(ViewModel.IsLoaded)
+{
+<div>
+	<RadzenGrid AllowFiltering="true"
+				FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+				AllowPaging="true"
+				PageSize="30"
+				AllowSorting="true"
+				Data="@ViewModel.EmptyRacks"
+				TItem="Rack"
+				EmptyText="Aucun rack de libre">
+		<Columns>
+			<RadzenGridColumn TItem="Rack"
+							  Property="Gisement"
+							  Title="Position"
+							  Sortable="false"
+							  Filterable="false"
+							  Width="80px" />
+
+			<RadzenGridColumn TItem="Rack"
+							  Property="GisementPos"
+							  Title="Gisement"
+							  Width="150px" />
+		</Columns>
+	</RadzenGrid>
+</div>
+}
+else
+{
+<div>Chargement en cours ...</div>
+}
+
+
+
+
+@code {
+	protected override async Task OnInitializedAsync()
+	{
+		await ViewModel.LoadEmptyRacks();
+	}
+}

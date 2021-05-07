@@ -64,7 +64,6 @@ namespace AccessData
             return clients;
 		}
 
-
 		/// <summary>
 		/// Ajout d'un nouveau client
 		/// </summary>
@@ -258,41 +257,7 @@ namespace AccessData
         public async Task<List<Rack>> LoadRacks()
         {
             var commandText = @"SELECT IdRack, Gisement, PosRack FROM Rack;";
-
-            Func<MySqlCommand, Task<List<Rack>>> funcCmd = async (cmd) =>
-            {
-                List<Rack> racks = new List<Rack>();
-
-                using (var reader = await cmd.ExecuteReaderAsync())
-                {
-                    while (reader.Read())
-                    {
-                        var rack = new Rack()
-                        {
-                            IdRack = reader.GetInt32(0),
-                            Gisement = reader.GetString(1),
-                            PosRack = reader.GetString(2)
-                        };
-
-                        racks.Add(rack);
-                    }
-                }
-
-                return racks;
-            };
-
-            List<Rack> racks = new List<Rack>();
-
-            try
-            {
-                racks = await GetCoreAsync(commandText, funcCmd);
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-
-            return racks;
+            return await GetRacks(commandText);
         }
 
         /// <summary>
@@ -343,41 +308,7 @@ namespace AccessData
                                 + " LEFT OUTER JOIN geocommande geo"
 	                            + " ON rac.IdRack = geo.RackId"
                                 + " WHERE geo.RackId IS NULL;";
-
-            Func<MySqlCommand, Task<List<Rack>>> funcCmd = async (cmd) =>
-            {
-                List<Rack> racks = new List<Rack>();
-
-                using (var reader = await cmd.ExecuteReaderAsync())
-                {
-                    while (reader.Read())
-                    {
-                        var rack = new Rack()
-                        {
-                            IdRack = reader.GetInt32(0),
-                            Gisement = reader.GetString(1),
-                            PosRack = reader.GetString(2)
-                        };
-
-                        racks.Add(rack);
-                    }
-                }
-
-                return racks;
-            };
-
-            List<Rack> racks = new List<Rack>();
-
-            try
-            {
-                racks = await GetCoreAsync(commandText, funcCmd);
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-
-            return racks;
+            return await GetRacks(commandText);
         }
 
         /// <summary>
@@ -392,40 +323,7 @@ namespace AccessData
                                 + " ON rac.IdRack = geo.RackId"
                                 + " WHERE geo.RackId IS NOT NULL;";
 
-            Func<MySqlCommand, Task<List<Rack>>> funcCmd = async (cmd) =>
-            {
-                List<Rack> racks = new List<Rack>();
-
-                using (var reader = await cmd.ExecuteReaderAsync())
-                {
-                    while (reader.Read())
-                    {
-                        var rack = new Rack()
-                        {
-                            IdRack = reader.GetInt32(0),
-                            Gisement = reader.GetString(1),
-                            PosRack = reader.GetString(2)
-                        };
-
-                        racks.Add(rack);
-                    }
-                }
-
-                return racks;
-            };
-
-            List<Rack> racks = new List<Rack>();
-
-            try
-            {
-                racks = await GetCoreAsync(commandText, funcCmd);
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-
-            return racks;
+            return await GetRacks(commandText);
         }
 
         #endregion
@@ -658,6 +556,45 @@ namespace AccessData
         }
 
         #region Private Methods
+
+        private async Task<List<Rack>> GetRacks(string commande)
+        {
+            Func<MySqlCommand, Task<List<Rack>>> funcCmd = async (cmd) =>
+            {
+                List<Rack> racks = new List<Rack>();
+
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (reader.Read())
+                    {
+                        var rack = new Rack()
+                        {
+                            IdRack = reader.GetInt32(0),
+                            Gisement = reader.GetString(1),
+                            PosRack = reader.GetString(2)
+                        };
+
+                        racks.Add(rack);
+                    }
+                }
+
+                return racks;
+            };
+
+            List<Rack> racks = new List<Rack>();
+
+            try
+            {
+                racks = await GetCoreAsync(commande, funcCmd);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            return racks;
+        }
+
 
         private async Task<List<T>> GetCoreAsync<T>(string commandSql, Func<MySqlCommand, Task<List<T>>> func)
             where T : new()
