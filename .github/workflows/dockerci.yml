@@ -2,7 +2,10 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    paths:
+     - 'src/BlazorRackManager/**'
+     - '!.github/workflows/**'
+     - '!README.md'
 
 jobs:
   docker:
