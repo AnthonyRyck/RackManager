@@ -1,14 +1,14 @@
 # RackManager
-*(Développement en cours)*
+*(DÃ©veloppement en cours)*
 
 ## A quoi elle sert ?
 C'est une application en .Net Core Blazor, pour la gestion d'un entrepot. Elle permet de situer ou ce trouve chaque palette (*gisement*) par client et par commande.
 
 Une image Docker est disponible sur [DockerHub](https://hub.docker.com/repository/docker/anthonyryck/rackmanager).  
-Pour avoir la dernière version pour tester, il faut prendre l'image avec le tag **ci**.
+Pour avoir la derniÃ¨re version pour tester, il faut prendre l'image avec le tag **ci**.
 
 ## Installation
-Il faut créer un schéma sur MySQL avant d'exécuter l'application, ensuite c'est l'application qui va créer toutes les tables.
+Il faut crÃ©er un schÃ©ma sur MySQL avant d'exÃ©cuter l'application, ensuite c'est l'application qui va crÃ©er toutes les tables.
 
 Commande docker run :
 ```
@@ -43,28 +43,29 @@ rackmng:
 
 ## Configuration
 
-### Créer les racks  
-Avant de stocker les palettes, il faut créer les racks, dans le menu Paramètres.
+### CrÃ©er les racks  
+Avant de stocker les palettes, il faut crÃ©er les racks, dans le menu ParamÃ¨tres.
 
 <img src="https://i.ibb.co/J7KQX8Y/01-Config-Racks.png">  
 
-Et une image pour illustré ce qu'est un gisement et une position.
+Et une image pour illustrÃ© ce qu'est un gisement et une position.
 
 <img src="https://i.ibb.co/dpNvXTZ/rack-Sample.jpg">
 
-**BL** est une allée dans le hangar. 
+**BL** est une allÃ©e dans le hangar. 
 
 
-### Créer les clients.  
+### CrÃ©er les clients.  
 <img src="https://i.ibb.co/XF21kfD/02-Config-Client.png">
 
 
 ## Action sur l'entrepot/hangar
-- possible de faire une entrée d'une commande (1 à n palettes).  
+- possible de faire une entrÃ©e d'une commande (1 Ã  n palettes).  
 <img src="https://i.ibb.co/cyxNWyM/03-Hangar-Entree.png">  
-C'est au moment de l'entré dans le rack qu'il faut saisir un numéro de commande.
+C'est au moment de l'entrÃ© dans le rack qu'il faut saisir un numÃ©ro de commande.  
+
 - faire une sortie de palette
-- déplacer une palette vers un rack vide
+- dÃ©placer une palette vers un rack vide
 - intervertir 2 palettes
 
 ## A venir
