@@ -72,6 +72,7 @@ namespace RackManager
 
 			services.AddMatBlazor();
 
+			services.AddScoped<IUsersViewModel, UsersViewModel>();
 			services.AddScoped<IClientViewModel, ClientViewModel>();
 			services.AddScoped<IRackViewModel, RackViewModel>();
 			services.AddScoped<IHangarViewModel, HangarViewModel>();

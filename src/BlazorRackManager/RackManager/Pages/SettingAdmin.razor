@@ -1,0 +1,67 @@
+﻿@page "/gestionuser"
+
+@attribute [Authorize(Roles = "Admin")]
+@inject IUsersViewModel viewModel
+
+<h3>Gestion des utilisateurs</h3>
+
+<table class="table">
+
+	<thead>
+		<tr>
+			<th>
+				Nom utilisateur
+			</th>
+			<th>
+				Email
+			</th>
+			<th>Rôle actuel</th>
+			<th>Nouveau rôle</th>
+			<th></th>
+		</tr>
+	</thead>
+
+	<tbody>
+		@foreach (var item in viewModel.AllUsers)
+		{
+			<tr>
+				<td>
+					@item.User.UserName
+				</td>
+				<td>
+					@item.User.Email
+				</td>
+				<td>
+					@item.Role
+				</td>
+				<td>
+					<select name="selectRole" @onchange="@(e =>  viewModel.OnChangeRole(e, item.User.Id))">
+						<option value=""></option>
+						<option value="SansRole">Aucun rôle</option>
+						<option value="Manager">Manager</option>
+						<option value="Admin">Admin</option>
+					</select>
+				</td>
+				<td>
+					<button @onclick="(() => viewModel.OpenChangeMdp(item.User.Id))">
+						Réinit MDP
+					</button>
+				</td>
+				<td>
+					<button class="btn btn-link"
+							@onclick="(() => viewModel.DeleteUser(item.User.Id))">
+						Supprimer
+					</button>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
+
+@code {
+	protected override void OnInitialized()
+	{
+		viewModel.LoadAllUsers();
+		base.OnInitialized();
+	}
+}
