@@ -62,7 +62,7 @@ Et une image pour illustré ce qu'est un gisement et une position.
 ## Action sur l'entrepot/hangar
 - possible de faire une entrée d'une commande (1 à n palettes).  
 <img src="https://i.ibb.co/cyxNWyM/03-Hangar-Entree.png">  
-C'est au moment de l'entré dans le rack qu'il faut saisir un numéro de commande.  
+C'est au moment de l'entrée dans le rack qu'il faut saisir un numéro de commande.  
 
 - faire une sortie de palette
 - déplacer une palette vers un rack vide
