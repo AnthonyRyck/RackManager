@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     paths:
-     - 'src/BlazorRackManager/**'
+     - 'src/BlazorRackManager/RackManager**'
      - '!.github/workflows/**'
      - '!README.md'
 
