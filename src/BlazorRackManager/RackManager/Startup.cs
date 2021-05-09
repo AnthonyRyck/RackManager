@@ -38,7 +38,7 @@ namespace RackManager
 		{
 			string connectionDb = Configuration.GetConnectionString("MySqlConnection");
 
-			// *** Dans le cas ou une utilisation avec DOCKER
+			// *** Dans le cas ou une utilisation avec DOCKER 
 			// *** voir post sur : https://www.ctrl-alt-suppr.dev/2021/02/01/connectionstring-et-image-docker/
 			string databaseAddress = Environment.GetEnvironmentVariable("DB_HOST");
 			string login = Environment.GetEnvironmentVariable("LOGIN_DB");
