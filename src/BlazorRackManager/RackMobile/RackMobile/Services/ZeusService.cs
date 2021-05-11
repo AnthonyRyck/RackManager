@@ -48,7 +48,7 @@ namespace RackMobile.Services
 					BaseAddress = new Uri(addresseServer)
 				};
 
-				HttpResponseMessage response = await clientTest.GetAsync("api/Movies/testconnect/");
+				HttpResponseMessage response = await clientTest.GetAsync("api/myconnect/testconnect/");
 
 				if (response.IsSuccessStatusCode)
 				{
@@ -72,7 +72,6 @@ namespace RackMobile.Services
 			var httpClientHandler = new HttpClientHandler();
 			httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => { return true; };
 
-
 			Client = new HttpClient(httpClientHandler)
 			{
 				BaseAddress = new Uri(addressServer)
@@ -80,5 +79,30 @@ namespace RackMobile.Services
 
 			IsServerAdressOk = true;
 		}
+
+		//public async Task<List<InformationMovie>> GetEmptyRack()
+		//{
+		//	List<InformationMovie> allMovies = new List<InformationMovie>();
+
+		//	if (!IsServerAdressOk)
+		//		return allMovies;
+
+		//	try
+		//	{
+		//		HttpResponseMessage response = await Client.GetAsync("api/Movies/allmovies");
+		//		if (response.IsSuccessStatusCode)
+		//		{
+		//			string content = await response.Content.ReadAsStringAsync();
+		//			allMovies = JsonConvert.DeserializeObject<List<InformationMovie>>(content);
+		//		}
+		//	}
+		//	catch (Exception)
+		//	{
+		//		throw;
+		//	}
+
+		//	return allMovies;
+		//}
+
 	}
 }

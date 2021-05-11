@@ -15,7 +15,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Mobile", "Mobile", "{E8BB5D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RackMobile.Android", "RackMobile\RackMobile.Android\RackMobile.Android.csproj", "{7D004666-5D06-449E-AC25-98528609B717}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RackMobile", "RackMobile\RackMobile\RackMobile.csproj", "{01CE8CAC-DFCD-4436-A6EF-8D34B218A229}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RackMobile", "RackMobile\RackMobile\RackMobile.csproj", "{01CE8CAC-DFCD-4436-A6EF-8D34B218A229}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Shared", "_Shared", "{EC7E28F8-BA8A-4F0F-93B5-46D9F9149054}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RackCore", "RackCore\RackCore.csproj", "{A348430A-090E-44BA-AB5B-CBA9FE576AAE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +49,10 @@ Global
 		{01CE8CAC-DFCD-4436-A6EF-8D34B218A229}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{01CE8CAC-DFCD-4436-A6EF-8D34B218A229}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{01CE8CAC-DFCD-4436-A6EF-8D34B218A229}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A348430A-090E-44BA-AB5B-CBA9FE576AAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A348430A-090E-44BA-AB5B-CBA9FE576AAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A348430A-090E-44BA-AB5B-CBA9FE576AAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A348430A-090E-44BA-AB5B-CBA9FE576AAE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -53,6 +61,7 @@ Global
 		{A5A8A475-7703-4F54-915F-91DF468AD22D} = {35FD1318-0F90-496A-A07B-80FFA96C5514}
 		{7D004666-5D06-449E-AC25-98528609B717} = {E8BB5D79-3EE4-43BF-AE4F-560D7D090320}
 		{01CE8CAC-DFCD-4436-A6EF-8D34B218A229} = {E8BB5D79-3EE4-43BF-AE4F-560D7D090320}
+		{A348430A-090E-44BA-AB5B-CBA9FE576AAE} = {EC7E28F8-BA8A-4F0F-93B5-46D9F9149054}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2AAB0E68-9AEC-4C0D-89E1-4D3EDF43C649}
