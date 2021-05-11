@@ -52,5 +52,18 @@ namespace RackMobile.Views
 				await DisplayAlert("Erreur", "Erreur sur la sauvegarde du serveur", "OK");
 			}
 		}
+
+		private async void OnConnexionCicked(object sender, EventArgs e)
+		{
+			try
+			{
+				settingViewModel.ConnexionServeur();
+			}
+			catch (Exception)
+			{
+				await DisplayAlert("Erreur", "Erreur sur la sauvegarde du serveur", "OK");
+			}
+		}
+		
 	}
 }

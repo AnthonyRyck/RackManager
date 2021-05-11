@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AccessData.Models
+namespace RackCore
 {
 	public class Client
 	{

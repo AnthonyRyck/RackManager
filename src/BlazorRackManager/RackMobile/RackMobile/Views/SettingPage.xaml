@@ -48,6 +48,37 @@
 					TextColor="Green"
 					IsVisible="{Binding IsSaveOk}"/>
 
+			<StackLayout Orientation="Vertical"
+						IsEnabled="{Binding HaveServerAddress}">
+
+				<Label Text="Connexion au serveur" />
+
+				<Entry Placeholder="Login de connexion"
+						Text="{Binding Login, Mode=TwoWay}"></Entry>
+				<Entry Placeholder="Mot de passe"
+						IsPassword="True"
+						Text="{Binding MotDePasse, Mode=TwoWay}"></Entry>
+
+				<Button Text="Connexion" 
+					Clicked="OnConnexionCicked" />
+
+				<Label Text="{Binding ResultatLogin}"
+						TextColor="Green">
+					<Label.Style>
+						<Style TargetType="Label">
+							<Style.Triggers>
+								<DataTrigger TargetType="Label"
+											Binding="{Binding IsSaveOkLogin}"
+											Value="False">
+									<Setter Property="TextColor"
+										Value="Red"></Setter>
+								</DataTrigger>
+							</Style.Triggers>
+						</Style>
+					</Label.Style>
+				</Label>
+			</StackLayout>
+
 
 		</StackLayout>
     </ContentPage.Content>

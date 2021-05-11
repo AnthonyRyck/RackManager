@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using RackApi.Models;
+using RackCore;
 using RackApi.SecureApi;
 using System;
 using System.Collections.Generic;

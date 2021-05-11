@@ -1,7 +1,12 @@
-﻿using RackMobile;
+﻿using Newtonsoft.Json;
+using RackCore;
+using RackMobile;
 using RackMobile.Services;
 using System;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net.Mime;
+using System.Text;
 using System.Threading.Tasks;
 
 
@@ -11,13 +16,15 @@ namespace RackMobile.Services
 	{
 		private HttpClient Client;
 
+		private string AdresseServeur;
+
 		public bool IsServerAdressOk { get; set; }
 
 		public RackService()
 		{
-			string address = App.SettingManager.Setting.AddressServer;
+			AdresseServeur = App.SettingManager.Setting.AddressServer;
 
-			if (string.IsNullOrEmpty(address))
+			if (string.IsNullOrEmpty(AdresseServeur))
 			{
 				IsServerAdressOk = false;
 				return;
@@ -29,7 +36,7 @@ namespace RackMobile.Services
 
 			Client = new HttpClient(httpClientHandler)
 			{
-				BaseAddress = new Uri(address)
+				BaseAddress = new Uri(AdresseServeur)
 			};
 			IsServerAdressOk = true;
 		}
@@ -68,6 +75,8 @@ namespace RackMobile.Services
 
 		public void ChangeServerAddress(string addressServer)
 		{
+			AdresseServeur = addressServer;
+
 			// Pour ignorer les erreurs SSL
 			var httpClientHandler = new HttpClientHandler();
 			httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => { return true; };
@@ -78,6 +87,30 @@ namespace RackMobile.Services
 			};
 
 			IsServerAdressOk = true;
+		}
+
+		public async Task<string> Connect(string login, string motDePasse)
+		{
+			UserCredential user = new UserCredential()
+			{
+				Login = login,
+				Password = motDePasse
+			};
+
+			using (var content = new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json"))
+			{
+				HttpResponseMessage result = Client.PostAsync("api/myconnect/authenticate/", content).Result;
+
+				if (result.StatusCode == System.Net.HttpStatusCode.OK)
+				{
+					string jwt = await result.Content.ReadAsStringAsync();
+					return jwt;
+				}
+				else
+				{
+					throw new Exception();
+				}
+			}
 		}
 
 		//public async Task<List<InformationMovie>> GetEmptyRack()

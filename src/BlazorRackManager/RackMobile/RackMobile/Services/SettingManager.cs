@@ -51,6 +51,20 @@ namespace RackMobile.Services
 			}
 		}
 
+		public void SaveToken(string jwt)
+		{
+			try
+			{
+				Setting.TokenJwt = jwt;
+				SaveFile();
+			}
+			catch (Exception ex)
+			{
+				var dd = ex;
+				throw;
+			}
+		}
+
 		private IRackService RackSvc => DependencyService.Get<IRackService>();
 
 		private void SaveFile()

@@ -8,8 +8,20 @@ namespace RackMobile.Services
 {
 	public interface IRackService
 	{
+		/// <summary>
+		/// Test de l'URL d'un serveur RackManager
+		/// </summary>
+		/// <param name="adresseServer"></param>
+		/// <returns></returns>
 		Task<bool> TestServerUrl(string adresseServer);
 		void ChangeServerAddress(string addressServer);
 
+		/// <summary>
+		/// Connexion au serveur
+		/// </summary>
+		/// <param name="login"></param>
+		/// <param name="motDePasse"></param>
+		/// <returns></returns>
+		Task<string> Connect(string login, string motDePasse);
 	}
 }

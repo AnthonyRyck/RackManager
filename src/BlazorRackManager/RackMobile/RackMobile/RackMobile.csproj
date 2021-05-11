@@ -12,6 +12,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\RackCore\RackCore.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <EmbeddedResource Update="Views\SettingPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </EmbeddedResource>

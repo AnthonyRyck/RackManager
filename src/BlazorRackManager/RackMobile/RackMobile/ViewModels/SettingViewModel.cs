@@ -12,6 +12,8 @@ namespace RackMobile.ViewModels
 {
 	public class SettingViewModel : BaseViewModel
 	{
+		#region Properties
+
 		/// <summary>
 		/// Affiche le résultat du test.
 		/// </summary>
@@ -69,11 +71,80 @@ namespace RackMobile.ViewModels
 		}
 		private string _adresseServer;
 
+		/// <summary>
+		/// Indicateur s'il y a un serveur
+		/// </summary>
+		public bool HaveServerAddress
+		{
+			get { return _haveServerAddress; }
+			set
+			{
+				_haveServerAddress = value;
+				OnNotifyPropertyChanged();
+			}
+		}
+		private bool _haveServerAddress;
 
-		private IRackService ZeusService => DependencyService.Get<IRackService>();
+		/// <summary>
+		/// Login de connexion
+		/// </summary>
+		public string Login
+		{
+			get { return _login; }
+			set
+			{
+				_login = value;
+				OnNotifyPropertyChanged();
+			}
+		}
+		private string _login;
+
+		/// <summary>
+		/// Mot de passe de connexion
+		/// </summary>
+		public string MotDePasse
+		{
+			get { return _motDePasse; }
+			set
+			{
+				_motDePasse = value;
+				OnNotifyPropertyChanged();
+			}
+		}
+		private string _motDePasse;
+
+		/// <summary>
+		/// Indique que la sauvegarde est OK pour le
+		/// login et MDP
+		/// </summary>
+		public bool IsSaveOkLogin
+		{
+			get { return _isSaveOkLogin; }
+			set
+			{
+				_isSaveOkLogin = value;
+				OnNotifyPropertyChanged();
+			}
+		}
+		private bool _isSaveOkLogin;
+
+		public string ResultatLogin
+		{
+			get { return _resultatLogin; }
+			set
+			{
+				_resultatLogin = value;
+				OnNotifyPropertyChanged();
+			}
+		}
+		private string _resultatLogin;
+
+
+		private IRackService RackService => DependencyService.Get<IRackService>();
 
 		public Setting Setting { get; set; }
 
+		#endregion
 
 		internal void LoadSetting()
 		{
@@ -81,6 +152,11 @@ namespace RackMobile.ViewModels
 			var setting = App.SettingManager.Setting;
 
 			AdresseServer = setting.AddressServer;
+
+			if (!string.IsNullOrEmpty(AdresseServer))
+			{
+				HaveServerAddress = true;
+			}
 		}
 
 
@@ -89,7 +165,7 @@ namespace RackMobile.ViewModels
 			if (!HaveSlash(AdresseServer))
 				AdresseServer += "/";
 
-			IsTestOk = await ZeusService.TestServerUrl(AdresseServer);
+			IsTestOk = await RackService.TestServerUrl(AdresseServer);
 
 			if(IsTestOk)
 			{
@@ -105,13 +181,36 @@ namespace RackMobile.ViewModels
 		public void SaveServeur()
 		{
 			App.SettingManager.SaveServeur(AdresseServer);
+			RackService.ChangeServerAddress(AdresseServer);
 			IsSaveOk = true;
+			HaveServerAddress = true;
 		}
 
+
+		public async Task ConnexionServeur()
+		{
+			try
+			{
+				string tokenJwt = await RackService.Connect(Login, MotDePasse);
+				App.SettingManager.SaveToken(tokenJwt);
+				IsSaveOkLogin = true;
+				ResultatLogin = "Login OK";
+			}
+			catch (Exception)
+			{
+				IsSaveOkLogin = false;
+				ResultatLogin = "Erreur de connexion avec le login";
+			}
+		}
+
+		#region Private methods
 
 		private bool HaveSlash(string adresseServer)
 		{
 			return adresseServer[adresseServer.Length - 1] == '/';
 		}
+
+		#endregion
+
 	}
 }

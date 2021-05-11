@@ -1,4 +1,4 @@
-﻿using AccessData.Models;
+﻿using RackCore;
 using AccessData.Views;
 using Microsoft.AspNetCore.Components;
 using RackManager.ValidationModels;

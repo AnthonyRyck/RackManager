@@ -1,5 +1,5 @@
 ﻿using AccessData;
-using AccessData.Models;
+using RackCore;
 using Microsoft.AspNetCore.Components;
 using RackManager.Composants;
 using RackManager.ValidationModels;

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AccessData.Models
+namespace RackCore
 {
 	public class SuiviCommande
 	{

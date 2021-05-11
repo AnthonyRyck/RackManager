@@ -32,6 +32,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AccessData\AccessData.csproj" />
+    <ProjectReference Include="..\RackCore\RackCore.csproj" />
   </ItemGroup>
 
 </Project>
