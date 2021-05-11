@@ -31,5 +31,13 @@ namespace RackApi.Controllers
 			return racksEmpty;
         }
 
+		[Authorize(Policy = "RequestAdmin")]
+		[HttpGet("rackoqp")]
+		public async Task<IEnumerable<Rack>> GetRacksOccupes()
+		{
+			var racksFull = await SqlContext.GetRackFull();
+			return racksFull;
+		}
+
 	}
 }

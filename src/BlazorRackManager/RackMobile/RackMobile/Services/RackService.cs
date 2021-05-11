@@ -128,6 +128,18 @@ namespace RackMobile.Services
 			return racksEmpty;
 		}
 
+		public async Task<List<Rack>> GetRacksOqp()
+		{
+			List<Rack> racksEmpty = new List<Rack>();
+
+			if (!IsServerAdressOk)
+				return racksEmpty;
+
+			racksEmpty = await Get<List<Rack>>("api/Hangar/rackoqp");
+
+			return racksEmpty;
+		}
+
 
 		/// <summary>
 		/// Pour toutes les méthodes Http GET
@@ -141,6 +153,12 @@ namespace RackMobile.Services
 
 			try
 			{
+				// Pour avoir la derniere version du token.
+				if(ClientHttp.DefaultRequestHeaders.Contains("Authorization"))
+				{
+					ClientHttp.DefaultRequestHeaders.Remove("Authorization");
+				}
+
 				ClientHttp.DefaultRequestHeaders.Add("Authorization", "Bearer " + App.SettingManager.Setting.TokenJwt);
 
 				HttpResponseMessage response = await ClientHttp.GetAsync(urlApi);

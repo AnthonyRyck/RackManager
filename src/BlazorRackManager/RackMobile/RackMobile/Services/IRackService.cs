@@ -16,6 +16,7 @@ namespace RackMobile.Services
 		/// <returns></returns>
 		Task<bool> TestServerUrl(string adresseServer);
 		void ChangeServerAddress(string addressServer);
+		
 
 		/// <summary>
 		/// Connexion au serveur
@@ -30,5 +31,11 @@ namespace RackMobile.Services
 		/// </summary>
 		/// <returns></returns>
 		Task<List<Rack>> GetRacksEmpty();
+
+		/// <summary>
+		/// Récupère les racks occupés
+		/// </summary>
+		/// <returns></returns>
+		Task<List<Rack>> GetRacksOqp();
 	}
 }

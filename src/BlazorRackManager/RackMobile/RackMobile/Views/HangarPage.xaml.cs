@@ -27,7 +27,7 @@ namespace RackMobile.Views
 					break;
 
 				case "RacksOqp":
-					await Navigation.PushAsync(new RackVidePage());
+					await Navigation.PushAsync(new RackOccupe());
 					break;
 				default:
 					break;

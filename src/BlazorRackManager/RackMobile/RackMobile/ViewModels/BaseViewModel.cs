@@ -10,7 +10,10 @@ namespace RackMobile.ViewModels
 {
 	public class BaseViewModel : INotifyPropertyChanged
 	{
-		
+		protected IRackService RackService => DependencyService.Get<IRackService>();
+
+
+
 		bool isBusy = false;
 		public bool IsBusy
 		{

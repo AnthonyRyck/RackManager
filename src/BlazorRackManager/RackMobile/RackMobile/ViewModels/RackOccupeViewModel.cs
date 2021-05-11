@@ -1,14 +1,12 @@
 ﻿using RackCore;
-using RackMobile.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using Xamarin.Forms;
 
 namespace RackMobile.ViewModels
 {
-	public class RackVideViewModel : BaseViewModel
+	public class RackOccupeViewModel : BaseViewModel
 	{
 		public List<Rack> Racks
 		{
@@ -22,15 +20,14 @@ namespace RackMobile.ViewModels
 		private List<Rack> _racks = new List<Rack>();
 
 
-		public RackVideViewModel()
+		public RackOccupeViewModel()
 		{
-			Title = "Liste des racks vides";
+			Title = "Liste des racks occupés";
 		}
 
-
-		public async Task LoadRacksVides()
+		internal async Task LoadRacksFull()
 		{
-			Racks = await RackService.GetRacksEmpty();
+			Racks = await RackService.GetRacksOqp();
 		}
 
 	}

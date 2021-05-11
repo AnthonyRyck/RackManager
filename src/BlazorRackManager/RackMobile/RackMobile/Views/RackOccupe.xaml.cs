@@ -1,5 +1,4 @@
-﻿using RackMobile.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,9 +10,9 @@ using Xamarin.Forms.Xaml;
 namespace RackMobile.Views
 {
 	[XamlCompilation(XamlCompilationOptions.Compile)]
-	public partial class RackVidePage : ContentPage
+	public partial class RackOccupe : ContentPage
 	{
-		public RackVidePage()
+		public RackOccupe()
 		{
 			InitializeComponent();
 		}
@@ -24,7 +23,7 @@ namespace RackMobile.Views
 
 			try
 			{
-				await ViewModel.LoadRacksVides();
+				await ViewModel.LoadRacksFull();
 			}
 			catch (UnauthorizedAccessException)
 			{
@@ -32,7 +31,7 @@ namespace RackMobile.Views
 			}
 			catch (Exception ex)
 			{
-				await DisplayAlert("Erreur", "Erreur sur la récupération des racks vides", "OK");
+				await DisplayAlert("Erreur", "Erreur sur la récupération des racks occupés", "OK");
 			}
 		}
 	}

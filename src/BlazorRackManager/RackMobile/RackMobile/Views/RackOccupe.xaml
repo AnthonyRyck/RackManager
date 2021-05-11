@@ -1,26 +1,26 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="RackMobile.Views.HangarPage"
-             xmlns:vm="clr-namespace:RackMobile.ViewModels"
-             Title="{Binding Title}">
+             x:Class="RackMobile.Views.RackOccupe"
+			 xmlns:vm="clr-namespace:RackMobile.ViewModels"
+			 Title="{Binding Title}">
 
 	<ContentPage.BindingContext>
-		<vm:HangarViewModel />
+		<vm:RackOccupeViewModel x:Name="ViewModel" />
 	</ContentPage.BindingContext>
 
 	<ContentPage.Content>
-		<Grid>
+		<StackLayout>
+
 			<ListView Margin="10"
 						RowHeight="40"
-						ItemsSource="{Binding HangarItems, Mode=OneWay}"
-						ItemSelected="OnChoixSelected">
+						ItemsSource="{Binding Racks, Mode=OneWay}">
 
 				<ListView.ItemTemplate>
 					<DataTemplate>
 						<ViewCell>
-							<Grid Margin="2">
-								<Label Text="{Binding ChoixDisplay}" 
+							<Grid>
+								<Label Text="{Binding GisementPos}"
 										FontSize="Large"
 										HorizontalTextAlignment="Center"/>
 							</Grid>
@@ -28,6 +28,7 @@
 					</DataTemplate>
 				</ListView.ItemTemplate>
 			</ListView>
-		</Grid>
+
+		</StackLayout>
 	</ContentPage.Content>
 </ContentPage>
