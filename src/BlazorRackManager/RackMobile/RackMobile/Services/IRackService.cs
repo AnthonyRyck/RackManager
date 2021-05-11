@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RackCore;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,5 +24,11 @@ namespace RackMobile.Services
 		/// <param name="motDePasse"></param>
 		/// <returns></returns>
 		Task<string> Connect(string login, string motDePasse);
+		
+		/// <summary>
+		/// Récupère les racks vides.
+		/// </summary>
+		/// <returns></returns>
+		Task<List<Rack>> GetRacksEmpty();
 	}
 }

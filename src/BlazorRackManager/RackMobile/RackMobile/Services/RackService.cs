@@ -3,6 +3,7 @@ using RackCore;
 using RackMobile;
 using RackMobile.Services;
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Mime;
@@ -14,11 +15,12 @@ namespace RackMobile.Services
 {
 	public class RackService : IRackService
 	{
-		private HttpClient Client;
+		private HttpClient ClientHttp;
 
 		private string AdresseServeur;
 
 		public bool IsServerAdressOk { get; set; }
+
 
 		public RackService()
 		{
@@ -34,7 +36,7 @@ namespace RackMobile.Services
 			var httpClientHandler = new HttpClientHandler();
 			httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => { return true; };
 
-			Client = new HttpClient(httpClientHandler)
+			ClientHttp = new HttpClient(httpClientHandler)
 			{
 				BaseAddress = new Uri(AdresseServeur)
 			};
@@ -81,7 +83,7 @@ namespace RackMobile.Services
 			var httpClientHandler = new HttpClientHandler();
 			httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => { return true; };
 
-			Client = new HttpClient(httpClientHandler)
+			ClientHttp = new HttpClient(httpClientHandler)
 			{
 				BaseAddress = new Uri(addressServer)
 			};
@@ -99,7 +101,7 @@ namespace RackMobile.Services
 
 			using (var content = new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json"))
 			{
-				HttpResponseMessage result = Client.PostAsync("api/myconnect/authenticate/", content).Result;
+				HttpResponseMessage result = ClientHttp.PostAsync("api/myconnect/authenticate/", content).Result;
 
 				if (result.StatusCode == System.Net.HttpStatusCode.OK)
 				{
@@ -113,29 +115,53 @@ namespace RackMobile.Services
 			}
 		}
 
-		//public async Task<List<InformationMovie>> GetEmptyRack()
-		//{
-		//	List<InformationMovie> allMovies = new List<InformationMovie>();
 
-		//	if (!IsServerAdressOk)
-		//		return allMovies;
+		public async Task<List<Rack>> GetRacksEmpty()
+		{
+			List<Rack> racksEmpty = new List<Rack>();
 
-		//	try
-		//	{
-		//		HttpResponseMessage response = await Client.GetAsync("api/Movies/allmovies");
-		//		if (response.IsSuccessStatusCode)
-		//		{
-		//			string content = await response.Content.ReadAsStringAsync();
-		//			allMovies = JsonConvert.DeserializeObject<List<InformationMovie>>(content);
-		//		}
-		//	}
-		//	catch (Exception)
-		//	{
-		//		throw;
-		//	}
+			if (!IsServerAdressOk)
+				return racksEmpty;
 
-		//	return allMovies;
-		//}
+			racksEmpty = await Get<List<Rack>>("api/Hangar/rackempty");
+
+			return racksEmpty;
+		}
+
+
+		/// <summary>
+		/// Pour toutes les méthodes Http GET
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="urlApi"></param>
+		/// <returns></returns>
+		private async Task<T> Get<T>(string urlApi)
+		{
+			T result = default;
+
+			try
+			{
+				ClientHttp.DefaultRequestHeaders.Add("Authorization", "Bearer " + App.SettingManager.Setting.TokenJwt);
+
+				HttpResponseMessage response = await ClientHttp.GetAsync(urlApi);
+				if (response.IsSuccessStatusCode)
+				{
+					string content = await response.Content.ReadAsStringAsync();
+					result = JsonConvert.DeserializeObject<T>(content);
+				}
+
+				if(response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+				{
+					throw new UnauthorizedAccessException();
+				}
+			}
+			catch (Exception)
+			{
+				throw;
+			}
+
+			return result;
+		}
 
 	}
 }

@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="RackMobile.Views.RackVidePage"
+             xmlns:vm="clr-namespace:RackMobile.ViewModels"
+			 Title="{Binding Title}">
+	
+	<ContentPage.BindingContext>
+		<vm:RackVideViewModel x:Name="ViewModel" />
+	</ContentPage.BindingContext>
+
+    <ContentPage.Content>
+        <StackLayout>
+
+			<ListView Margin="10"
+						RowHeight="40"
+						ItemsSource="{Binding Racks, Mode=OneWay}">
+
+				<ListView.ItemTemplate>
+					<DataTemplate>
+						<ViewCell>
+							<Grid>
+								<Label Text="{Binding GisementPos}"
+										FontSize="Large"
+										HorizontalTextAlignment="Center"/>
+							</Grid>
+						</ViewCell>
+					</DataTemplate>
+				</ListView.ItemTemplate>
+			</ListView>
+
+		</StackLayout>
+    </ContentPage.Content>
+</ContentPage>

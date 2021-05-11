@@ -41,15 +41,15 @@ namespace RackApi
 
 			// *** Dans le cas ou une utilisation avec DOCKER
 			// *** voir post sur : https://www.ctrl-alt-suppr.dev/2021/02/01/connectionstring-et-image-docker/
-			//string databaseAddress = Environment.GetEnvironmentVariable("DB_HOST");
-			//string login = Environment.GetEnvironmentVariable("LOGIN_DB");
-			//string mdp = Environment.GetEnvironmentVariable("PASSWORD_DB");
-			//string dbName = Environment.GetEnvironmentVariable("DB_NAME");
-			//
-			//connectionDb = connectionDb.Replace("USERNAME", login)
-			//						.Replace("YOURPASSWORD", mdp)
-			//						.Replace("YOURDB", dbName)
-			//						.Replace("YOURDATABASE", databaseAddress);
+			string databaseAddress = Environment.GetEnvironmentVariable("DB_HOST");
+			string login = Environment.GetEnvironmentVariable("LOGIN_DB");
+			string mdp = Environment.GetEnvironmentVariable("PASSWORD_DB");
+			string dbName = Environment.GetEnvironmentVariable("DB_NAME");
+
+			connectionDb = connectionDb.Replace("USERNAME", login)
+									.Replace("YOURPASSWORD", mdp)
+									.Replace("YOURDB", dbName)
+									.Replace("YOURDATABASE", databaseAddress);
 
 			services.AddDbContext<ApplicationDbContext>(options =>
 				options.UseMySql(connectionDb, ServerVersion.AutoDetect(connectionDb)));
@@ -84,7 +84,7 @@ namespace RackApi
 						ValidateIssuerSigningKey = true,
 						IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key)),
 						ValidateIssuer = false,
-						ValidateAudience = false
+						ValidateAudience = false,
 					};
 				});
 

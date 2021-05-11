@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="RackMobile.Views.HangarPage"
+             xmlns:vm="clr-namespace:RackMobile.ViewModels"
+             Title="{Binding Title}">
+
+	<ContentPage.BindingContext>
+		<vm:HangarViewModel />
+	</ContentPage.BindingContext>
+
+	<ContentPage.Content>
+		<Grid>
+			<ListView Margin="10"
+						RowHeight="40"
+						ItemsSource="{Binding HangarItems, Mode=OneWay}"
+						ItemSelected="OnChoixSelected">
+
+				<ListView.ItemTemplate>
+					<DataTemplate>
+						<ViewCell>
+							<Grid Margin="2">
+								<Label Text="{Binding ChoixMenu}" 
+										FontSize="Large"
+										HorizontalTextAlignment="Center"/>
+							</Grid>
+						</ViewCell>
+					</DataTemplate>
+				</ListView.ItemTemplate>
+			</ListView>
+		</Grid>
+	</ContentPage.Content>
+</ContentPage>
