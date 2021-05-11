@@ -29,5 +29,15 @@ namespace RackApi.Controllers
 			return Ok(token);
 		}
 
+		/// <summary>
+		/// Permet de tester la connection avec le serveur.
+		/// </summary>
+		/// <returns></returns>
+		[HttpGet("testconnect")]
+		public string GetTestConnection()
+		{
+			return "Connexion OK";
+		}
+
 	}
 }

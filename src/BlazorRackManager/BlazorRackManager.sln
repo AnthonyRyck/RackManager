@@ -9,7 +9,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AccessData", "AccessData\Ac
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{35FD1318-0F90-496A-A07B-80FFA96C5514}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RackApi", "RackApi\RackApi.csproj", "{A5A8A475-7703-4F54-915F-91DF468AD22D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RackApi", "RackApi\RackApi.csproj", "{A5A8A475-7703-4F54-915F-91DF468AD22D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Mobile", "Mobile", "{E8BB5D79-3EE4-43BF-AE4F-560D7D090320}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RackMobile.Android", "RackMobile\RackMobile.Android\RackMobile.Android.csproj", "{7D004666-5D06-449E-AC25-98528609B717}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RackMobile", "RackMobile\RackMobile\RackMobile.csproj", "{01CE8CAC-DFCD-4436-A6EF-8D34B218A229}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,12 +35,24 @@ Global
 		{A5A8A475-7703-4F54-915F-91DF468AD22D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A5A8A475-7703-4F54-915F-91DF468AD22D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A5A8A475-7703-4F54-915F-91DF468AD22D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D004666-5D06-449E-AC25-98528609B717}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D004666-5D06-449E-AC25-98528609B717}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D004666-5D06-449E-AC25-98528609B717}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{7D004666-5D06-449E-AC25-98528609B717}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D004666-5D06-449E-AC25-98528609B717}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D004666-5D06-449E-AC25-98528609B717}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{01CE8CAC-DFCD-4436-A6EF-8D34B218A229}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01CE8CAC-DFCD-4436-A6EF-8D34B218A229}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01CE8CAC-DFCD-4436-A6EF-8D34B218A229}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01CE8CAC-DFCD-4436-A6EF-8D34B218A229}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{A5A8A475-7703-4F54-915F-91DF468AD22D} = {35FD1318-0F90-496A-A07B-80FFA96C5514}
+		{7D004666-5D06-449E-AC25-98528609B717} = {E8BB5D79-3EE4-43BF-AE4F-560D7D090320}
+		{01CE8CAC-DFCD-4436-A6EF-8D34B218A229} = {E8BB5D79-3EE4-43BF-AE4F-560D7D090320}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2AAB0E68-9AEC-4C0D-89E1-4D3EDF43C649}
