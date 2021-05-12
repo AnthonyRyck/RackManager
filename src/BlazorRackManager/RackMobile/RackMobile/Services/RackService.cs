@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RackCore;
+using RackCore.EntityView;
 using RackMobile;
 using RackMobile.Services;
 using System;
@@ -138,6 +139,32 @@ namespace RackMobile.Services
 			racksEmpty = await Get<List<Rack>>("api/Hangar/rackoqp");
 
 			return racksEmpty;
+		}
+
+
+		public async Task<HangarView> GetInfoRack(int idRack)
+		{
+			HangarView result = new HangarView();
+
+			if (!IsServerAdressOk)
+				return result;
+
+			using (var content = new StringContent(JsonConvert.SerializeObject(idRack), Encoding.UTF8, "application/json"))
+			{
+				HttpResponseMessage reponse = await ClientHttp.PostAsync("api/Hangar/rackinfo/", content);
+
+				if (reponse.StatusCode == System.Net.HttpStatusCode.OK)
+				{
+					string jsonHangarView = await reponse.Content.ReadAsStringAsync();
+					return JsonConvert.DeserializeObject<HangarView>(jsonHangarView);
+				}
+				else
+				{
+					throw new Exception();
+				}
+			}
+
+			return result;
 		}
 
 

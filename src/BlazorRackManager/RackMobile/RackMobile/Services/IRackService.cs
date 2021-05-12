@@ -1,4 +1,5 @@
 ﻿using RackCore;
+using RackCore.EntityView;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -15,6 +16,7 @@ namespace RackMobile.Services
 		/// <param name="adresseServer"></param>
 		/// <returns></returns>
 		Task<bool> TestServerUrl(string adresseServer);
+		
 		void ChangeServerAddress(string addressServer);
 		
 
@@ -37,5 +39,12 @@ namespace RackMobile.Services
 		/// </summary>
 		/// <returns></returns>
 		Task<List<Rack>> GetRacksOqp();
+
+		/// <summary>
+		/// Récupère les informations sur le rack (client, commande,..)
+		/// </summary>
+		/// <param name="idRack"></param>
+		/// <returns></returns>
+		Task<HangarView> GetInfoRack(int idRack);
 	}
 }

@@ -18,7 +18,8 @@
 
 			<ListView Margin="10"
 						RowHeight="40"
-						ItemsSource="{Binding Racks, Mode=OneWay}">
+						ItemsSource="{Binding Racks, Mode=OneWay}"
+						ItemSelected="OnRackSelected">
 
 				<ListView.ItemTemplate>
 					<DataTemplate>

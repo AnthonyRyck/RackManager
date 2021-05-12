@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using RackCore.EntityView;
 
 namespace RackApi.Controllers
 {
@@ -39,5 +40,13 @@ namespace RackApi.Controllers
 			return racksFull;
 		}
 
+
+		[Authorize(Policy = "RequestAdmin")]
+		[HttpPost("rackinfo")]
+		public async Task<HangarView> GetRackInfo([FromBody] int idRack)
+		{
+			var rackInfo = await SqlContext.GetHangar(idRack);
+			return rackInfo;
+		}
 	}
 }

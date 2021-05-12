@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RackCore.EntityView;
 
 namespace AccessData
 {
@@ -63,6 +64,8 @@ namespace AccessData
 
             return clients;
 		}
+
+
 
 		/// <summary>
 		/// Ajout d'un nouveau client
@@ -344,6 +347,59 @@ namespace AccessData
                                 + " INNER JOIN clients cli ON cli.IdClient = cmd.ClientId"
                                 + " INNER JOIN rack rac ON rac.IdRack = geo.RackId"
                                 + $" WHERE geo.CommandeId = {commandeId} AND geo.RackId = {rackId};";
+
+            Func<MySqlCommand, Task<HangarView>> funcCmd = async (cmd) =>
+            {
+                HangarView hangar = new HangarView();
+
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (reader.Read())
+                    {
+                        hangar = new HangarView()
+                        {
+                            IdClient = reader.GetInt32(0),
+                            NomClient = reader.GetString(1),
+                            IdRack = reader.GetInt32(2),
+                            Gisement = reader.GetString(3),
+                            PosRack = reader.GetString(4),
+                            IdCommande = reader.GetInt32(5),
+                            DescriptionCmd = ConvertFromDBVal<string?>(reader.GetValue(6)),
+                            DateEntree = reader.GetDateTime(7)
+                        };
+                    }
+                }
+
+                return hangar;
+            };
+
+            HangarView hangar = new HangarView();
+
+            try
+            {
+                hangar = await GetCoreAsync(commandText, funcCmd);
+            }
+            catch (Exception ex)
+            {
+                var exs = ex.Message;
+            }
+
+            return hangar;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="idRack"></param>
+        /// <returns></returns>
+        public async Task<HangarView> GetHangar(int idRack)
+        {
+            var commandText = @"SELECT cli.IdClient, cli.NomClient, rac.IdRack, rac.Gisement, rac.PosRack, cmd.IdCommande, cmd.DescriptionCmd, geo.DateEntre"
+                    + " FROM geocommande geo"
+                    + " INNER JOIN suivicommande cmd ON cmd.IdCommande = geo.CommandeId"
+                    + " INNER JOIN clients cli ON cli.IdClient = cmd.ClientId"
+                    + " INNER JOIN rack rac ON rac.IdRack = geo.RackId"
+                    + $" WHERE geo.RackId = {idRack};";
 
             Func<MySqlCommand, Task<HangarView>> funcCmd = async (cmd) =>
             {

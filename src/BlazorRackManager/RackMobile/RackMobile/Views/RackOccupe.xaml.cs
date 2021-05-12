@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RackCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -39,6 +40,13 @@ namespace RackMobile.Views
 		{
 			string gisement = e.NewTextValue.ToUpper();
 			ViewModel.Rechercher(gisement);
+		}
+
+		private async void OnRackSelected(object sender, SelectedItemChangedEventArgs e)
+		{
+			var rackSelected = e.SelectedItem as Rack;
+
+			await Navigation.PushAsync(new RackOqpDetailPage(rackSelected));
 		}
 	}
 }
