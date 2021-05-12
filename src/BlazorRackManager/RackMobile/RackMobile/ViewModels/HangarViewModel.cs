@@ -19,8 +19,37 @@ namespace RackMobile.ViewModels
 		}
 		private List<ItemHangar> _hangarItems;
 
+		/// <summary>
+		/// Indicateur si l'utilisateur a le rôle requis pour voir cette
+		/// ressource
+		/// </summary>
+		public bool HasGoodRole
+		{
+			get { return _hasGoodRole; }
+			set
+			{
+				_hasGoodRole = value;
+				OnNotifyPropertyChanged();
+			}
+		}
+		private bool _hasGoodRole;
 
+		/// <summary>
+		/// Indicateur si l'utilisateur n'a pas le rôle requis pour voir cette
+		/// ressource
+		/// </summary>
+		public bool NotGoodRole
+		{
+			get { return _notGoodRole; }
+			set
+			{
+				_notGoodRole = value;
+				OnNotifyPropertyChanged();
+			}
+		}
+		private bool _notGoodRole;
 
+		
 		public HangarViewModel()
 		{
 			Title = "Hangar";
@@ -38,7 +67,13 @@ namespace RackMobile.ViewModels
 					ChoixMenu = "RacksOqp"
 				},
 			};
+
+			HasGoodRole = DetermineRole("Admin", "Managaer", "Member");
+			NotGoodRole = !HasGoodRole;
 		}
 
+
+
+		
 	}
 }

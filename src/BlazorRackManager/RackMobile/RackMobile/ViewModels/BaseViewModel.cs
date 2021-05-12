@@ -1,6 +1,7 @@
 ﻿using RackMobile.Models;
 using RackMobile.Services;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -40,6 +41,16 @@ namespace RackMobile.ViewModels
 			OnNotifyPropertyChanged(propertyName);
 			return true;
 		}
+
+
+
+		protected bool DetermineRole(params string[] roles)
+		{
+			return roles.Contains(App.SettingManager.Setting.RoleUtilisateur);
+		}
+
+
+
 
 		#region INotifyPropertyChanged
 		public event PropertyChangedEventHandler PropertyChanged;

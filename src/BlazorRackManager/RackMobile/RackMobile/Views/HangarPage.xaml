@@ -14,7 +14,8 @@
 			<ListView Margin="10"
 						RowHeight="40"
 						ItemsSource="{Binding HangarItems, Mode=OneWay}"
-						ItemSelected="OnChoixSelected">
+						ItemSelected="OnChoixSelected"
+						IsVisible="{Binding HasGoodRole}">
 
 				<ListView.ItemTemplate>
 					<DataTemplate>
@@ -28,6 +29,10 @@
 					</DataTemplate>
 				</ListView.ItemTemplate>
 			</ListView>
+
+			<Label IsVisible="{Binding NotGoodRole}"
+					Margin="10"
+					Text="Il faut se connecter à un serveur et avoir un rôle qui permet de voir les informations. Aller sur Settings pour configurer l'adresse du serveur, et votre login et mot de passe."/>
 		</Grid>
 	</ContentPage.Content>
 </ContentPage>
