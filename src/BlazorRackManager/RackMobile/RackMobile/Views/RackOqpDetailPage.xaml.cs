@@ -20,6 +20,8 @@ namespace RackMobile.Views
 		{
 			InitializeComponent();
 			viewModel = new RackDetailViewModel(rack);
+			viewModel.Title = "Info sur le rack";
+			BindingContext = viewModel;
 		}
 
 
