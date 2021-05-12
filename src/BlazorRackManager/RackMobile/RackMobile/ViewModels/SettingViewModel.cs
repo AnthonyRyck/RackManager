@@ -1,12 +1,6 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+﻿using System;
 using System.Threading.Tasks;
-using Xamarin.Forms;
 using RackMobile.Models;
-using RackMobile.Services;
 
 namespace RackMobile.ViewModels
 {
@@ -56,6 +50,33 @@ namespace RackMobile.ViewModels
 		}
 		private bool _isSaveOk;
 
+		/// <summary>
+		/// Indicateur que le test serveur est en cours.
+		/// </summary>
+		public bool TestServerIsRun
+		{
+			get { return _testServerIsRun; }
+			set
+			{
+				_testServerIsRun = value;
+				OnNotifyPropertyChanged();
+			}
+		}
+		private bool _testServerIsRun;
+
+		/// <summary>
+		/// Indicateur que le test de connexion est en cours.
+		/// </summary>
+		public bool TestConnexionIsRun
+		{
+			get { return _testConnexionIsRun; }
+			set
+			{
+				_testConnexionIsRun = value;
+				OnNotifyPropertyChanged();
+			}
+		}
+		private bool _testConnexionIsRun;
 
 		/// <summary>
 		/// Adresse du serveur à tester.
@@ -139,9 +160,6 @@ namespace RackMobile.ViewModels
 		}
 		private string _resultatLogin;
 
-
-		private IRackService RackService => DependencyService.Get<IRackService>();
-
 		public Setting Setting { get; set; }
 
 		#endregion
@@ -162,6 +180,8 @@ namespace RackMobile.ViewModels
 
 		public async Task TestServeur()
 		{
+			TestServerIsRun = true;
+
 			if (!HaveSlash(AdresseServer))
 				AdresseServer += "/";
 
@@ -175,6 +195,8 @@ namespace RackMobile.ViewModels
 			{
 				ResultTest = "Pas de connexion au serveur demandé réussie.";
 			}
+
+			TestServerIsRun = false;
 		}
 
 
@@ -189,6 +211,7 @@ namespace RackMobile.ViewModels
 
 		public async Task ConnexionServeur()
 		{
+			TestConnexionIsRun = true;
 			try
 			{
 				string tokenJwt = await RackService.Connect(Login, MotDePasse);
@@ -201,6 +224,7 @@ namespace RackMobile.ViewModels
 				IsSaveOkLogin = false;
 				ResultatLogin = "Erreur de connexion avec le login";
 			}
+			TestConnexionIsRun = false;
 		}
 
 		#region Private methods

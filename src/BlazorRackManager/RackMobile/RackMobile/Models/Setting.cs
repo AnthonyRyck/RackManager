@@ -9,5 +9,7 @@ namespace RackMobile.Models
 		public string AddressServer { get; set; } = string.Empty;
 
 		public string TokenJwt { get; set; } = string.Empty;
+
+		public string RoleUtilisateur { get; set; } = string.Empty;
 	}
 }

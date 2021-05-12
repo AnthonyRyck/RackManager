@@ -2,7 +2,9 @@
 using RackMobile.Models;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Xamarin.Forms;
 
@@ -56,6 +58,16 @@ namespace RackMobile.Services
 			try
 			{
 				Setting.TokenJwt = jwt;
+
+				var handler = new JwtSecurityTokenHandler();
+				var token = handler.ReadJwtToken(jwt);
+
+				var listRole = token.Claims.Where(x => x.Type == "role").ToList();
+				if (listRole.Count > 0)
+				{
+					Setting.RoleUtilisateur = listRole.First().Value;
+				}
+
 				SaveFile();
 			}
 			catch (Exception ex)
@@ -63,6 +75,11 @@ namespace RackMobile.Services
 				var dd = ex;
 				throw;
 			}
+		}
+
+		internal void SaveRole(string value)
+		{
+			throw new NotImplementedException();
 		}
 
 		private IRackService RackSvc => DependencyService.Get<IRackService>();
@@ -75,5 +92,7 @@ namespace RackMobile.Services
 			if (RackSvc != null)
 				RackSvc.ChangeServerAddress(Setting.AddressServer);
 		}
+
+
 	}
 }

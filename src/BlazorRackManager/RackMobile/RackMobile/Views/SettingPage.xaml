@@ -23,6 +23,9 @@
 					Clicked="OnTestClicked" />
 			<!--<Label Text="{Binding ResultTest}" TextColor="" />-->
 
+			<Label Margin="5" IsVisible="{Binding TestServerIsRun}"
+					Text="Test de la connection au serveur..."/>
+
 			<Label Text="{Binding ResultTest}"
 					TextColor="Green">
 				<Label.Style>
@@ -61,6 +64,9 @@
 
 				<Button Text="Connexion" 
 					Clicked="OnConnexionCicked" />
+
+				<Label Margin="5" IsVisible="{Binding TestConnexionIsRun}"
+					Text="Test du login/mot de passe..."/>
 
 				<Label Text="{Binding ResultatLogin}"
 						TextColor="Green">
