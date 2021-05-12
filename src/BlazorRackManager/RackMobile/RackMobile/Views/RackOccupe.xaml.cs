@@ -34,5 +34,11 @@ namespace RackMobile.Views
 				await DisplayAlert("Erreur", "Erreur sur la récupération des racks occupés", "OK");
 			}
 		}
+
+		private void Recherche_TextChanged(object sender, TextChangedEventArgs e)
+		{
+			string gisement = e.NewTextValue.ToUpper();
+			ViewModel.Rechercher(gisement);
+		}
 	}
 }

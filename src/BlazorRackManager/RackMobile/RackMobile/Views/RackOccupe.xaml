@@ -10,7 +10,11 @@
 	</ContentPage.BindingContext>
 
 	<ContentPage.Content>
-		<StackLayout>
+		<StackLayout Orientation="Vertical">
+			<Label Text="Recherche d'un rack"
+					FontSize="Large"/>
+			<Entry Placeholder="Gisement"
+					TextChanged="Recherche_TextChanged"></Entry>
 
 			<ListView Margin="10"
 						RowHeight="40"
