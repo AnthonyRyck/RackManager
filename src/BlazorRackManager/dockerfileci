@@ -12,8 +12,10 @@ ENV DB_NAME="YourDbName"
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
 WORKDIR /src
+COPY ["./src/BlazorRackManager/RackCore/RackCore.csproj", "RackCore/"]
 COPY ["./src/BlazorRackManager/RackManager/RackManager.csproj", "RackManager/"]
 COPY ["./src/BlazorRackManager/AccessData/AccessData.csproj", "AccessData/"]
+
 RUN dotnet restore "RackManager/RackManager.csproj"
 COPY ./src/BlazorRackManager/. .
 RUN dotnet build "RackManager/RackManager.csproj" -c Release -o /app/build

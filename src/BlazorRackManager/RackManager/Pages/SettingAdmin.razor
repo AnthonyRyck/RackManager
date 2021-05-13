@@ -5,6 +5,10 @@
 
 <h3>Gestion des utilisateurs</h3>
 
+@if (viewModel.IsLoaded)
+{ 
+
+
 <table class="table">
 
 	<thead>
@@ -57,11 +61,17 @@
 		}
 	</tbody>
 </table>
+}
+else
+{
+	<div>Chargement des utilisateurs...</div>
+}
+
 
 @code {
-	protected override void OnInitialized()
+
+	protected async override Task OnInitializedAsync()
 	{
-		viewModel.LoadAllUsers();
-		base.OnInitialized();
+		await viewModel.LoadAllUsers();
 	}
 }

@@ -90,3 +90,11 @@ else
 {
 	<div>Chargement en cours ...</div>
 }
+
+@code{
+
+	protected override async Task OnInitializedAsync()
+	{
+		await ViewModel.LoadRacks();
+	}
+}

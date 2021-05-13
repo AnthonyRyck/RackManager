@@ -2,6 +2,7 @@
 using RackManager.ValidationModels;
 using Radzen.Blazor;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace RackManager.ViewModels
 {
@@ -46,5 +47,11 @@ namespace RackManager.ViewModels
 		/// Ferme la vue du nouveau rack
 		/// </summary>
 		void CloseNouveauRack();
+
+		/// <summary>
+		/// Charge tous les racks
+		/// </summary>
+		/// <returns></returns>
+		Task LoadRacks();
 	}
 }

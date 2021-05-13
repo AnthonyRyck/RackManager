@@ -8,6 +8,7 @@ namespace RackManager.Data
 	public enum Role
 	{
 		SansRole,
+		Member,
 		Manager,
 		Admin
 	}

@@ -1,6 +1,7 @@
 ﻿using AccessData;
 using AccessData.Views;
-using Radzen.Blazor;
+using Serilog;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -24,8 +25,15 @@ namespace RackManager.ViewModels
 
 		public async Task LoadDatas()
 		{
-			Sorties = await SqlContext.GetSorties();
-			IsLoaded = true;
+			try
+			{
+				Sorties = await SqlContext.GetSorties();
+				IsLoaded = true;
+			}
+			catch (Exception ex)
+			{
+				Log.Error(ex, "SortiesViewModel - LoadDatas");
+			}
 		}
 
 	}

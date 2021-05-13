@@ -3,6 +3,7 @@ using RackCore;
 using RackManager.ValidationModels;
 using Radzen;
 using Radzen.Blazor;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,7 +39,6 @@ namespace RackManager.ViewModels
 			NotificationService = notificationService;
 
 			NouveauRack = new RackValidation();
-			LoadRacks().GetAwaiter().GetResult();
 		}
 
 		#region Public methods
@@ -84,24 +84,23 @@ namespace RackManager.ViewModels
 				};
 				NotificationService.Notify(messNotif);
 
+				Log.Information("RACK - " + message);
+
 				NouveauRack = new RackValidation();
 			}
 			catch (Exception ex)
 			{
-				throw;
+				Log.Error(ex, "RackViewModel - OnValidSubmit");
 			}
 		}
-
-		#endregion
-
-		#region Private methods
 
 		/// <summary>
 		/// Charge tous les racks.
 		/// </summary>
 		/// <returns></returns>
-		private async Task LoadRacks()
+		public async Task LoadRacks()
 		{
+			IsLoaded = false;
 			AllRacks = (await SqlContext.LoadRacks()).ToList();
 			IsLoaded = true;
 		}

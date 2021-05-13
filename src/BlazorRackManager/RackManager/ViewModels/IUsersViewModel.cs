@@ -15,7 +15,9 @@ namespace RackManager.ViewModels
 		UserManager<IdentityUser> UserManager { get; set; }
 		bool ShowResetMdp { get; set; }
 
-		void OnChangeRole(ChangeEventArgs e, string idUser);
+		bool IsLoaded { get; set; }
+
+		Task OnChangeRole(ChangeEventArgs e, string idUser);
 
 		void DeleteUser(string idUser);
 
@@ -25,6 +27,6 @@ namespace RackManager.ViewModels
 
 		Task SetNewPassword(string newPassword);
 
-		void LoadAllUsers();
+		Task LoadAllUsers();
 	}
 }

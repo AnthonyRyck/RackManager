@@ -50,5 +50,10 @@ namespace RackManager.ViewModels
 		/// </summary>
 		void CloseNouveauClient();
 
+		/// <summary>
+		/// Charge tous les clients.
+		/// </summary>
+		/// <returns></returns>
+		Task LoadClients();
 	}
 }

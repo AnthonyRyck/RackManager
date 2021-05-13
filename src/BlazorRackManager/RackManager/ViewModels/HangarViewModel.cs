@@ -9,6 +9,8 @@ using Radzen.Blazor;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using RackCore.EntityView;
+using Serilog;
 
 namespace RackManager.ViewModels
 {
@@ -86,6 +88,7 @@ namespace RackManager.ViewModels
 			}
 			catch (Exception ex)
 			{
+				Log.Error(ex, "HangarViewModel - LoadDatas");
 				Notification.Notify(NotificationSeverity.Error, "Erreur chargement", "Erreur sur le chargement des informations du hangar");
 			}
 
@@ -156,6 +159,10 @@ namespace RackManager.ViewModels
 
 				Notification.Notify(NotificationSeverity.Success, "Sauvegarde OK", "Sauvegarde OK");
 
+				Log.Information("HANGAR ENTREE - {date} : commande- {commande} - RackId-{rack}",
+										nouvelleEntreHangar.DateEntree.ToString("d"),
+										cmd.IdCommande, nouvelleEntreHangar.RackId);
+
 				// remise à zéro
 				nouvelleEntreHangar = new GeoCommande();
 				EntreHangarValidation = new EntreHangarValidation();
@@ -170,6 +177,7 @@ namespace RackManager.ViewModels
 			}
 			catch (Exception ex)
 			{
+				Log.Error(ex, "HangarViewModel - OnValidSubmit");
 				Notification.Notify(NotificationSeverity.Success, "Error", "Erreur sur la sauvegarde");
 			}
 		}
@@ -238,6 +246,12 @@ namespace RackManager.ViewModels
 				// mettre la commande avec une date de sortie
 				await SqlContext.UpdateSortieCommande(SortieHangarValidation.IdCommande.Value, SortieHangarValidation.DateSortie.Value);
 
+
+				Log.Information("HANGAR SORTIE - {date} : commande- {commande} - Gisement-{rack}",
+										SortieHangarValidation.DateSortie.Value.ToString("d"),
+										SortieHangarValidation.IdCommande.Value,
+										SortieHangarValidation.GisementRack);
+
 				AllHangar.RemoveAll(x => x.IdCommande == SortieHangarValidation.IdCommande.Value
 										&& x.IdRack == SortieHangarValidation.IdRack);
 				await HangarGrid.Reload();
@@ -254,6 +268,7 @@ namespace RackManager.ViewModels
 			}
 			catch (Exception ex)
 			{
+				Log.Error(ex, "HangarViewModel - OnValidSortieSubmit");
 				Notification.Notify(NotificationSeverity.Success, "Error", "Erreur sur la sauvegarde");
 			}
 		}
@@ -337,6 +352,7 @@ namespace RackManager.ViewModels
 			}
 			catch (Exception ex)
 			{
+				Log.Error(ex, "HangarViewModel - OnValidTransfert");
 				Notification.Notify(NotificationSeverity.Success, "Error", "Erreur sur le transfert");
 			}
 		}
@@ -443,6 +459,7 @@ namespace RackManager.ViewModels
 			}
 			catch (Exception ex)
 			{
+				Log.Error(ex, "HangarViewModel - OnValidIntervertir");
 				Notification.Notify(NotificationSeverity.Success, "Error", "Erreur sur l'inversion");
 			}
 		}

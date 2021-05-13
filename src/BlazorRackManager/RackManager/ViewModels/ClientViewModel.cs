@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Serilog;
 
 namespace RackManager.ViewModels
 {
@@ -40,8 +41,6 @@ namespace RackManager.ViewModels
 			NotificationService = notificationService;
 
 			NouveauClient = new ClientValidation();
-
-			LoadClients().GetAwaiter().GetResult();
 		}
 
 		#region Public methods
@@ -86,24 +85,23 @@ namespace RackManager.ViewModels
 				};
 				NotificationService.Notify(messNotif);
 
+				Log.Information("CLIENT - " + message);
+
 				NouveauClient = new ClientValidation();
 			}
 			catch (Exception ex)
 			{
-				throw;
+				Log.Error(ex, "ClientViewModel - OnValidSubmit");
 			}
 		}
-
-		#endregion
-
-		#region Private methods
 
 		/// <summary>
 		/// Charge tous les clients.
 		/// </summary>
 		/// <returns></returns>
-		private async Task LoadClients()
+		public async Task LoadClients()
 		{
+			IsLoaded = false;
 			AllClients = (await SqlContext.LoadClients()).ToList();
 			IsLoaded = true;
 		}
