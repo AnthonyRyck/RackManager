@@ -80,14 +80,14 @@ namespace RackApi.Areas.Identity.Pages.Account
 
 			if (ModelState.IsValid)
 			{
-				var user = new IdentityUser { UserName = Input.UserLogin, Email = Input.Email, EmailConfirmed = true };
-				var result = await _userManager.CreateAsync(user, Input.Password);
-				if (result.Succeeded)
-				{
-					_logger.LogInformation("User created a new account with password.");
+				//var user = new IdentityUser { UserName = Input.UserLogin, Email = Input.Email, EmailConfirmed = true };
+				//var result = await _userManager.CreateAsync(user, Input.Password);
+				//if (result.Succeeded)
+				//{
+				//	_logger.LogInformation("User created a new account with password.");
 
 					//await _signInManager.SignInAsync(user, isPersistent: false);
-					await _userManager.AddToRoleAsync(user, "Member");
+					//await _userManager.AddToRoleAsync(user, Role.Member);
 					return LocalRedirect(returnUrl);
 
 					// *********** Pour confirmer le compte avec un mail ***********
@@ -114,12 +114,12 @@ namespace RackApi.Areas.Identity.Pages.Account
 					//	await _signInManager.SignInAsync(user, isPersistent: false);
 					//	return LocalRedirect(returnUrl);
 					//}
-				}
+				//}
 
-				foreach (var error in result.Errors)
-				{
-					ModelState.AddModelError(string.Empty, error.Description);
-				}
+				//foreach (var error in result.Errors)
+				//{
+				//	ModelState.AddModelError(string.Empty, error.Description);
+				//}
 			}
 
 			// If we got this far, something failed, redisplay form
