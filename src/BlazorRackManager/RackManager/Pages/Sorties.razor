@@ -1,5 +1,7 @@
 ﻿@page "/sorties"
 
+@attribute [Authorize(Roles = "Admin, Manager, Member")]
+
 @inject ISortiesViewModel ViewModel
 
 <h3>Liste des sorties</h3>
@@ -52,9 +54,9 @@ else
 
 
 @code {
+			protected override async Task OnInitializedAsync()
+			{
+				await ViewModel.LoadDatas();
+			}
 
-	protected override async Task OnInitializedAsync()
-	{
-		await ViewModel.LoadDatas();
-	}
-}
+}

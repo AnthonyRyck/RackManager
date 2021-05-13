@@ -1,6 +1,9 @@
 ﻿@page "/settings"
 
-@using RackManager.Composants 
+@attribute [Authorize(Roles = "Admin, Manager")]
+
+
+@using RackManager.Composants
 
 <h3>Configuration</h3>
 

@@ -1,6 +1,8 @@
 ﻿@page "/hangar"
 @inject IHangarViewModel ViewModel
 
+@attribute [Authorize(Roles = "Admin, Manager, Member")]
+
 <h1>Hangar</h1>
 
 @if (ViewModel.IsLoaded)
