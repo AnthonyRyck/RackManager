@@ -94,7 +94,10 @@ namespace RackApi
 					   policy.RequireRole("Admin"));
 
 				options.AddPolicy("ManagerRequest", policy =>
-					   policy.RequireRole("Manager"));
+					   policy.RequireRole("Manager", "Admin"));
+
+				options.AddPolicy("MemberRequest", policy =>
+					   policy.RequireRole("Member",  "Manager", "Admin"));
 			});
 
 			services.AddScoped<IJwtAuthenticationManager, JwtAuthenticationManager>();

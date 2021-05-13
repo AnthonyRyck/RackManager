@@ -24,7 +24,7 @@ namespace RackApi.Controllers
 		}
 
 
-        [Authorize(Policy = "RequestAdmin")]
+        [Authorize(Policy = "MemberRequest")]
         [HttpGet("rackempty")]
         public async Task<IEnumerable<Rack>> GetRacksEmpty()
         {
@@ -32,7 +32,7 @@ namespace RackApi.Controllers
 			return racksEmpty;
         }
 
-		[Authorize(Policy = "RequestAdmin")]
+		[Authorize(Policy = "MemberRequest")]
 		[HttpGet("rackoqp")]
 		public async Task<IEnumerable<Rack>> GetRacksOccupes()
 		{
@@ -41,7 +41,7 @@ namespace RackApi.Controllers
 		}
 
 
-		[Authorize(Policy = "RequestAdmin")]
+		[Authorize(Policy = "MemberRequest")]
 		[HttpPost("rackinfo")]
 		public async Task<HangarView> GetRackInfo([FromBody] int idRack)
 		{

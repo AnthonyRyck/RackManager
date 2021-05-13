@@ -68,7 +68,7 @@ namespace RackMobile.ViewModels
 				},
 			};
 
-			HasGoodRole = DetermineRole("Admin", "Managaer", "Member");
+			HasGoodRole = DetermineRole("Admin", "Manager", "Member");
 			NotGoodRole = !HasGoodRole;
 		}
 
