@@ -66,13 +66,12 @@ namespace RackManager.ViewModels
 
 				Log.Information("USER - Changement ROLE pour {username} - ancien {role} - nouveau {selectedValue} ", currentUser.User.UserName, currentUser.Role, selectedValue);
 
-				if (selectedValue == "SansRole")
-				{
+				// Utilisateur qui a déjà un rôle.
+				if (currentUser.Role != null)
 					await UserManager.RemoveFromRoleAsync(currentUser.User, currentUser.Role);
-				}
-				else
+
+				if (selectedValue != "SansRole")
 				{
-					await UserManager.RemoveFromRoleAsync(currentUser.User, currentUser.Role);
 					await UserManager.AddToRoleAsync(currentUser.User, selectedValue);
 				}
 
