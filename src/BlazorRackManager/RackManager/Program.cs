@@ -24,6 +24,30 @@ namespace RackManager
 
 			try
 			{
+				var host = CreateHostBuilder(args).Build();
+
+				var scopeFactory = host.Services.GetRequiredService<IServiceScopeFactory>();
+				using (var scope = scopeFactory.CreateScope())
+				{
+					var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+					var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+					var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+					var sqlContext = scope.ServiceProvider.GetRequiredService<SqlContext>();
+
+					// Vrai si la base de données est créée, false si elle existait déjà.
+					if (db.Database.EnsureCreated())
+					{
+						DataInitializer.InitData(roleManager, userManager).Wait();
+
+						// créer le reste de la base
+						DataInitializer.CreateTables(sqlContext).Wait();
+					}
+				}
+				
+				// Pour les logs.
+				// ATTENTION : il faut que la table Logs (créé par Serilog) soit faites APRES
+				// la création des tables ASP, sinon "db.Database.EnsureCreated" considère que la
+				// base est déjà créée.
 				var configuration = new ConfigurationBuilder()
 							.SetBasePath(Directory.GetCurrentDirectory())
 							.AddJsonFile("appsettings.json")
@@ -48,26 +72,6 @@ namespace RackManager
 					.WriteTo.RollingFile(Path.Combine(pathLog, "log-{Date}.txt"))
 					.WriteTo.MySQL(connectionDb, "Logs")
 					.CreateLogger();
-
-				var host = CreateHostBuilder(args).Build();
-
-				var scopeFactory = host.Services.GetRequiredService<IServiceScopeFactory>();
-				using (var scope = scopeFactory.CreateScope())
-				{
-					var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-					var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-					var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-					var sqlContext = scope.ServiceProvider.GetRequiredService<SqlContext>();
-
-					// Vrai si la base de données est créée, false si elle existait déjà.
-					if (db.Database.EnsureCreated())
-					{
-						DataInitializer.InitData(roleManager, userManager).Wait();
-
-						// créer le reste de la base
-						DataInitializer.CreateTables(sqlContext).Wait();
-					}
-				}
 
 				host.Run();
 			}
