@@ -169,7 +169,9 @@ namespace RackManager.ViewModels
 						userView.User = user;
 						userView.Role = role;
 
-						retourUsers.Add(userView);
+						// Exclure root, pour ne pas pouvoir changer son rôle.
+						if(userView.User.UserName != "root")
+							retourUsers.Add(userView);
 					}
 
 					return retourUsers;
