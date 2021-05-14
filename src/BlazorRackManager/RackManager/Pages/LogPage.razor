@@ -1,0 +1,59 @@
+﻿@page "/logs"
+
+@attribute [Authorize(Roles = "Admin")]
+@inject ILogsViewModel ViewModel
+
+<h3>Suivi des logs</h3>
+
+<div class="row">
+	<div>
+		<select name="selectLevel" 
+				@onchange="@(e =>  ViewModel.OnChangeLevel(e))">
+			<option value=""></option>
+			<option value="information">Information</option>
+			<option value="warning">Warning</option>
+			<option value="error">Error</option>
+		</select>
+	</div>
+
+	<div>
+		<RadzenDatePicker @bind-Value=@ViewModel.DateDebutLog  
+						DateFormat="d" />
+	</div>
+
+	@*<div><RadzenButton @onclick="ViewModel.LoadLogs"
+						Text="Charger"/> </div>*@
+
+	<div><button @onclick="@ViewModel.LoadLogs">Charger</button></div>
+</div>
+<div>
+	<RadzenGrid AllowPaging="true"
+				PageSize="50"
+				Data="@ViewModel.Logs"
+				TItem="LogEntity"
+				EmptyText="Aucun log">
+		<Columns>
+			<RadzenGridColumn TItem="LogEntity"
+							  Property="DateLog"
+							  Title="Date"
+							  Width="180px" />
+
+			<RadzenGridColumn TItem="LogEntity"
+							  Property="Level"
+							  Title="Niveau"
+							  Width="125px" />
+
+			<RadzenGridColumn TItem="LogEntity"
+							  Property="Message"
+							  Title="Message" />
+
+			<RadzenGridColumn TItem="LogEntity"
+							  Property="ExceptionMsg"
+							  Title="Erreur" />
+		</Columns>
+	</RadzenGrid>
+</div>
+
+@code {
+
+}

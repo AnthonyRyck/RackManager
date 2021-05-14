@@ -57,7 +57,7 @@ namespace AccessData
             {
                 clients = await GetCoreAsync(commandText, funcCmd);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -96,7 +96,7 @@ namespace AccessData
 
                 return idClient;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -191,7 +191,7 @@ namespace AccessData
             {
                 commandeView = await GetCoreAsync(cmd, funcCmd);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -241,7 +241,7 @@ namespace AccessData
             {
                 sorties = await GetCoreAsync(cmd, funcCmd);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -294,7 +294,7 @@ namespace AccessData
 
                 return idRack;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -379,9 +379,9 @@ namespace AccessData
             {
                 hangar = await GetCoreAsync(commandText, funcCmd);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                var exs = ex.Message;
+                throw;
             }
 
             return hangar;
@@ -432,9 +432,9 @@ namespace AccessData
             {
                 hangar = await GetCoreAsync(commandText, funcCmd);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                var exs = ex.Message;
+                throw;
             }
 
             return hangar;
@@ -486,9 +486,9 @@ namespace AccessData
             {
                 hangar = await GetCoreAsync(commandText, funcCmd);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                var exs = ex.Message;
+                throw;
             }
 
             return hangar;
@@ -520,7 +520,7 @@ namespace AccessData
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -593,6 +593,54 @@ namespace AccessData
 
         #endregion
 
+        #region Logs
+
+        public async Task<List<LogEntity>> GetLogs(string level, DateTime dateDebut)
+        {
+            var commandText = @"SELECT lg.Timestamp, lg.Level, lg.Message, lg.Exception"
+                                + " FROM logs lg"
+                                + $" WHERE lg._ts > '{dateDebut.ToString("yyyy-MM-dd")}'" 
+                                + $" AND lg.Level='{level}'" 
+                                + " ORDER BY _ts DESC;";
+
+            Func<MySqlCommand, Task<List<LogEntity>>> funcCmd = async (cmd) =>
+            {
+                List<LogEntity> logs = new List<LogEntity>();
+
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (reader.Read())
+                    {
+                        var log = new LogEntity()
+                        {
+                            DateLog = DateTime.Parse(reader.GetString(0)),
+                            Level = reader.GetString(1),
+                            Message = reader.GetString(2),
+                            ExceptionMsg = ConvertFromDBVal<string?>(reader.GetValue(3))
+                        };
+
+                        logs.Add(log);
+                    }
+                }
+
+                return logs;
+            };
+
+            List<LogEntity> logs = new List<LogEntity>();
+
+            try
+            {
+                logs = await GetCoreAsync(commandText, funcCmd);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            return logs;
+        }
+
+        #endregion
 
         /// <summary>
         /// 
@@ -643,7 +691,7 @@ namespace AccessData
             {
                 racks = await GetCoreAsync(commande, funcCmd);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -666,7 +714,7 @@ namespace AccessData
                     result = await func.Invoke(cmd);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -695,7 +743,7 @@ namespace AccessData
                     result = await func.Invoke(cmd);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
