@@ -16,12 +16,6 @@ namespace RackManager
 	{
 		public static void Main(string[] args)
 		{
-			string pathLog = Path.Combine(AppContext.BaseDirectory, "Logs");
-			if (!Directory.Exists(pathLog))
-			{
-				Directory.CreateDirectory(pathLog);
-			}
-
 			try
 			{
 				var host = CreateHostBuilder(args).Build();
@@ -69,7 +63,6 @@ namespace RackManager
 					.MinimumLevel.Debug()
 					.MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
 					.MinimumLevel.Override("System", LogEventLevel.Warning)
-					.WriteTo.RollingFile(Path.Combine(pathLog, "log-{Date}.txt"))
 					.WriteTo.MySQL(connectionDb, "Logs")
 					.CreateLogger();
 

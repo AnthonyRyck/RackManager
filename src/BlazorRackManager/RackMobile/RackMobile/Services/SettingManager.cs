@@ -55,26 +55,18 @@ namespace RackMobile.Services
 
 		public void SaveToken(string jwt)
 		{
-			try
+			Setting.TokenJwt = jwt;
+
+			var handler = new JwtSecurityTokenHandler();
+			var token = handler.ReadJwtToken(jwt);
+
+			var listRole = token.Claims.Where(x => x.Type == "role").ToList();
+			if (listRole.Count > 0)
 			{
-				Setting.TokenJwt = jwt;
-
-				var handler = new JwtSecurityTokenHandler();
-				var token = handler.ReadJwtToken(jwt);
-
-				var listRole = token.Claims.Where(x => x.Type == "role").ToList();
-				if (listRole.Count > 0)
-				{
-					Setting.RoleUtilisateur = listRole.First().Value;
-				}
-
-				SaveFile();
+				Setting.RoleUtilisateur = listRole.First().Value;
 			}
-			catch (Exception ex)
-			{
-				var dd = ex;
-				throw;
-			}
+
+			SaveFile();
 		}
 
 		internal void SaveRole(string value)

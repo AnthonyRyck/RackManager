@@ -5,6 +5,8 @@
 
 <h3>Suivi des logs</h3>
 
+<div>Les logs sont supprimés de façon automatique tous les 30 jours pour éviter de charger la base de donnée.</div>
+
 <div class="row">
 	<div>
 		<select name="selectLevel" 
@@ -20,9 +22,6 @@
 		<RadzenDatePicker @bind-Value=@ViewModel.DateDebutLog  
 						DateFormat="d" />
 	</div>
-
-	@*<div><RadzenButton @onclick="ViewModel.LoadLogs"
-						Text="Charger"/> </div>*@
 
 	<div><button @onclick="@ViewModel.LoadLogs">Charger</button></div>
 </div>

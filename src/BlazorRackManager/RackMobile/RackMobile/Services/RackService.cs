@@ -35,6 +35,7 @@ namespace RackMobile.Services
 
 			// Pour ignorer les erreurs SSL
 			var httpClientHandler = new HttpClientHandler();
+			// POUR NE PAS AVOIR DE REJET avec les connexions non sécurisés.
 			httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => { return true; };
 
 			ClientHttp = new HttpClient(httpClientHandler)

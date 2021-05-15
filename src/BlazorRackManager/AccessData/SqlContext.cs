@@ -595,6 +595,12 @@ namespace AccessData
 
         #region Logs
 
+        /// <summary>
+        /// Récupère les logs du niveau choisi et avec une date de début.
+        /// </summary>
+        /// <param name="level"></param>
+        /// <param name="dateDebut"></param>
+        /// <returns></returns>
         public async Task<List<LogEntity>> GetLogs(string level, DateTime dateDebut)
         {
             var commandText = @"SELECT lg.Timestamp, lg.Level, lg.Message, lg.Exception"
@@ -632,12 +638,33 @@ namespace AccessData
             {
                 logs = await GetCoreAsync(commandText, funcCmd);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
 
             return logs;
+        }
+
+        /// <summary>
+        /// Supprime les logs qui sont supérieurs à la date donnée.
+        /// </summary>
+        /// <param name="nombreJoursToDeleteLogs"></param>
+        public async Task<int> DeleteLogs(uint nombreJoursToDeleteLogs)
+        {
+            DateTime dateToDelete = DateTime.Now.AddDays(-nombreJoursToDeleteLogs);
+
+            var commandText = @"DELETE FROM logs lg"
+                               + $" WHERE '{dateToDelete.ToString("yyyy-MM-dd")}' > lg._ts;";
+
+			try
+			{
+                return await ExecuteCoreAsync(commandText);
+            }
+			catch (Exception)
+			{
+                throw;
+			}
         }
 
         #endregion
@@ -756,14 +783,14 @@ namespace AccessData
         /// </summary>
         /// <param name="commandSql"></param>
         /// <returns></returns>
-        private async Task ExecuteCoreAsync(string commandSql)
+        private async Task<int> ExecuteCoreAsync(string commandSql)
         {
             using (var conn = new MySqlConnection(ConnectionString))
             {
                 MySqlCommand cmd = new MySqlCommand(commandSql, conn);
 
                 conn.Open();
-                await cmd.ExecuteNonQueryAsync();
+                return await cmd.ExecuteNonQueryAsync();
             }
         }
 
