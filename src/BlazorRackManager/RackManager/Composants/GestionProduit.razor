@@ -1,0 +1,113 @@
+﻿@inject IProduitViewModel ViewModel
+
+<h3>Gestion des Produits</h3>
+
+@if (ViewModel.IsLoaded)
+{
+	<div>
+		<div class="padding-10">
+			@if (!ViewModel.CanOpenNewProduit)
+			{
+				<RadzenButton Text="Nouveau Produit"
+							  Icon="add_circle"
+							  ButtonStyle="ButtonStyle.Secondary"
+							  Click="ViewModel.OpenNewProduit" />
+			}
+			else
+			{
+				<div class="col-xl-6">
+					<EditForm OnValidSubmit="@ViewModel.OnValidSubmitProduit"
+							  Model="@ViewModel.NouveauProduit">
+						<RadzenCard>
+
+							<DataAnnotationsValidator />
+
+							<div class="margin-5px">
+								<div>
+									<ValidationMessage For="@(() => ViewModel.NouveauProduit.Reference)" />
+								</div>
+								<RadzenTextBox Placeholder="Référence..."
+											   @bind-Value="ViewModel.NouveauProduit.Reference"
+											   Style="width 300px" />
+							</div>
+
+							<div class="margin-5px">
+								<div>
+									<ValidationMessage For="@(() => ViewModel.NouveauProduit.NomProduit)" />
+								</div>
+								<RadzenTextBox Placeholder="Nom..."
+											   @bind-Value="ViewModel.NouveauProduit.NomProduit"
+											   Style="width 300px" />
+							</div>
+
+							<div class="margin-5px">
+								<div>
+									<ValidationMessage For="@(() => ViewModel.NouveauProduit.IdMesure)" />
+								</div>
+								<select name="selectMesure"
+										@onchange="@(e =>  ViewModel.OnChangeMesure(e))">
+
+									@foreach (var mesure in ViewModel.Mesures)
+									{
+										<option value="@mesure.IdMesure">@mesure.Unite</option>
+									}
+								</select>
+							</div>
+
+						</RadzenCard>
+
+						<span class="margin-10px">
+							<button type="submit" class="padding-5">Ajouter</button>
+
+							<button type="reset"
+									class="padding-5"
+									@onclick="ViewModel.CloseNewProduit">
+								Terminer
+							</button>
+						</span>
+					</EditForm>
+				</div>
+			}
+		</div>
+	</div>
+	<div class="col-6">
+		<RadzenGrid AllowFiltering="true"
+					FilterCaseSensitivity="FilterCaseSensitivity.Default"
+					AllowPaging="true"
+					PageSize="30"
+					AllowSorting="true"
+					Data="@ViewModel.Produits"
+					TItem="ProduitView"
+					EmptyText="Aucun produit"
+					@ref="ViewModel.ProduitGrid">
+			<Columns>
+				<RadzenGridColumn TItem="ProduitView"
+								  Property="IdReference"
+								  Title="Référence"
+								  Width="100px" />
+
+				<RadzenGridColumn TItem="ProduitView"
+								  Property="Nom"
+								  Title="Intitulé"
+								  Width="150px" />
+
+				<RadzenGridColumn TItem="ProduitView"
+								  Property="UniteMesure"
+								  Title="Unité de mesure" />
+			</Columns>
+		</RadzenGrid>
+
+	</div>
+
+}
+else
+{
+	<div>Chargement des produits...</div>
+}
+
+@code {
+	protected override async Task OnInitializedAsync()
+	{
+		await ViewModel.LoadProduits();
+	}
+}

@@ -4,8 +4,6 @@ using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using RackCore.EntityView;
 
@@ -64,8 +62,6 @@ namespace AccessData
 
             return clients;
 		}
-
-
 
 		/// <summary>
 		/// Ajout d'un nouveau client
@@ -665,6 +661,218 @@ namespace AccessData
 			{
                 throw;
 			}
+        }
+
+        #endregion
+
+        #region Unite de mesure
+
+        /// <summary>
+        /// Charge tous les unités de mesure
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<UniteMesure>> GetUniteMesure()
+        {
+            var commandText = @"SELECT IdMesure, Unite FROM Mesure;";
+
+            Func<MySqlCommand, Task<List<UniteMesure>>> funcCmd = async (cmd) =>
+            {
+                List<UniteMesure> mesures = new List<UniteMesure>();
+
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (reader.Read())
+                    {
+                        var produit = new UniteMesure()
+                        {
+                            IdMesure = reader.GetInt32(0),
+                            Unite = reader.GetString(1)
+                        };
+
+                        mesures.Add(produit);
+                    }
+                }
+
+                return mesures;
+            };
+
+            List<UniteMesure> mesures = new List<UniteMesure>();
+
+            try
+            {
+                mesures = await GetCoreAsync(commandText, funcCmd);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return mesures;
+        }
+
+        /// <summary>
+		/// Ajout d'une nouvelle unité de mesure
+		/// </summary>
+		/// <param name="uniteMesure"></param>
+		/// <returns></returns>
+		public async Task<int> AddUniteMesure(string uniteMesure)
+        {
+            try
+            {
+                using (var conn = new MySqlConnection(ConnectionString))
+                {
+                    string command = "INSERT INTO Mesure (Unite)"
+                                    + " VALUES(@unite);";
+
+                    using (var cmd = new MySqlCommand(command, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@unite", uniteMesure);
+
+                        conn.Open();
+                        await cmd.ExecuteNonQueryAsync();
+                        conn.Close();
+                    }
+                }
+
+                string cmdLastId = " SELECT LAST_INSERT_ID();";
+                int lastId = await GetIntCore(cmdLastId);
+
+                return lastId;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        #endregion
+
+        #region Produits
+
+        /// <summary>
+        /// Charge tous les produits
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<ProduitView>> GetProduits()
+        {
+            var commandText = @"SELECT prod.IdProduit, prod.Nom, mes.Unite, mes.IdMesure"
+                                + " FROM Produit prod"
+                                + " INNER JOIN mesure mes ON mes.IdMesure = prod.MesureId;";
+
+            Func<MySqlCommand, Task<List<ProduitView>>> funcCmd = async (cmd) =>
+            {
+                List<ProduitView> produits = new List<ProduitView>();
+
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (reader.Read())
+                    {
+                        var produit = new ProduitView()
+                        {
+                            IdReference = reader.GetString(0),
+                            Nom = reader.GetString(1),
+                            UniteMesure = reader.GetString(2),
+                            IdMesure = reader.GetInt32(3)
+                        };
+
+                        produits.Add(produit);
+                    }
+                }
+
+                return produits;
+            };
+
+            List<ProduitView> produits = new List<ProduitView>();
+
+            try
+            {
+                produits = await GetCoreAsync(commandText, funcCmd);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return produits;
+        }
+
+
+        /// <summary>
+        /// Charge le produit par sa référence.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<ProduitView> GetProduits(string reference)
+        {
+            var commandText = @"SELECT prod.IdProduit, prod.Nom, mes.Unite, mes.IdMesure"
+                                + " FROM Produit prod"
+                                + " INNER JOIN mesure mes ON mes.IdMesure = prod.MesureId"
+                                + $" WHERE prod.IdProduit = '{reference}';";
+
+            Func<MySqlCommand, Task<ProduitView>> funcCmd = async (cmd) =>
+            {
+                ProduitView produit = new ProduitView();
+
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (reader.Read())
+                    {
+                        produit = new ProduitView()
+                        {
+                            IdReference = reader.GetString(0),
+                            Nom = reader.GetString(1),
+                            UniteMesure = reader.GetString(2),
+                            IdMesure = reader.GetInt32(3)
+                        };
+                    }
+                }
+
+                return produit;
+            };
+
+            ProduitView produit = new ProduitView();
+
+            try
+            {
+                produit = await GetCoreAsync(commandText, funcCmd);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return produit;
+        }
+
+        /// <summary>
+		/// Ajout d'un nouveau produit
+		/// </summary>
+		/// <param name="nouveauProduit"></param>
+		/// <returns></returns>
+		public async Task AddProduit(Produit nouveauProduit)
+        {
+            try
+            {
+                using (var conn = new MySqlConnection(ConnectionString))
+                {
+                    string command = "INSERT INTO Produit (IdProduit, Nom, Unite)"
+                                    + " VALUES(@id, @nom, @unite);";
+
+                    using (var cmd = new MySqlCommand(command, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@client", nouveauProduit.IdReference);
+                        cmd.Parameters.AddWithValue("@nom", nouveauProduit.Nom);
+                        cmd.Parameters.AddWithValue("@unite", nouveauProduit.UniteId);
+
+                        conn.Open();
+                        int result = await cmd.ExecuteNonQueryAsync();
+                        conn.Close();
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         #endregion

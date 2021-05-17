@@ -269,7 +269,7 @@ namespace RackManager.ViewModels
 			catch (Exception ex)
 			{
 				Log.Error(ex, "HangarViewModel - OnValidSortieSubmit");
-				Notification.Notify(NotificationSeverity.Success, "Error", "Erreur sur la sauvegarde");
+				Notification.Notify(NotificationSeverity.Error, "Error", "Erreur sur la sauvegarde");
 			}
 		}
 
