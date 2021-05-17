@@ -854,12 +854,12 @@ namespace AccessData
             {
                 using (var conn = new MySqlConnection(ConnectionString))
                 {
-                    string command = "INSERT INTO Produit (IdProduit, Nom, Unite)"
+                    string command = "INSERT INTO Produit (IdProduit, Nom, MesureId)"
                                     + " VALUES(@id, @nom, @unite);";
 
                     using (var cmd = new MySqlCommand(command, conn))
                     {
-                        cmd.Parameters.AddWithValue("@client", nouveauProduit.IdReference);
+                        cmd.Parameters.AddWithValue("@id", nouveauProduit.IdReference);
                         cmd.Parameters.AddWithValue("@nom", nouveauProduit.Nom);
                         cmd.Parameters.AddWithValue("@unite", nouveauProduit.UniteId);
 

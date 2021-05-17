@@ -47,6 +47,8 @@
 								<select name="selectMesure"
 										@onchange="@(e =>  ViewModel.OnChangeMesure(e))">
 
+									<option value="noid"></option>
+
 									@foreach (var mesure in ViewModel.Mesures)
 									{
 										<option value="@mesure.IdMesure">@mesure.Unite</option>
@@ -93,7 +95,8 @@
 
 				<RadzenGridColumn TItem="ProduitView"
 								  Property="UniteMesure"
-								  Title="Unité de mesure" />
+								  Title="Unité de mesure"
+								  Width="150px"/>
 			</Columns>
 		</RadzenGrid>
 

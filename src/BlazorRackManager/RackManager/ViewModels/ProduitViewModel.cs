@@ -34,7 +34,10 @@ namespace RackManager.ViewModels
 		public ProduitViewModel(SqlContext sqlContext, NotificationService notificationService)
 		{
 			ContextSql = sqlContext;
+			Notification = notificationService;
 
+			NouveauProduit = new ProduitValidation();
+			
 			IsLoaded = false;
 		}
 
@@ -65,7 +68,7 @@ namespace RackManager.ViewModels
 		public void CloseNewProduit()
 		{
 			CanOpenNewProduit = false;
-
+			NouveauProduit = new ProduitValidation();
 		}
 
 		public async Task OnValidSubmitProduit()
@@ -104,7 +107,20 @@ namespace RackManager.ViewModels
 
 		public void OnChangeMesure(ChangeEventArgs e)
 		{
-
+			try
+			{
+				if(e.Value.ToString() != "noid")
+					NouveauProduit.IdMesure = Convert.ToInt32(e.Value);
+				else
+				{
+					NouveauProduit.IdMesure = null;
+				}
+			}
+			catch (Exception ex)
+			{
+				Log.Error(ex, "OnChangeMesure - Erreur sur le changement d'unité");
+				Notification.Notify(NotificationSeverity.Error, "Erreur", "Erreur sur le changement d'unité de mesure");
+			}
 		}
 	}
 }
