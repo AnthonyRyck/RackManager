@@ -10,6 +10,14 @@ Pour avoir la dernière version pour tester, il faut prendre l'image avec le tag
 ## Installation
 Il faut créer un schéma sur MySQL avant d'exécuter l'application, ensuite c'est l'application qui va créer toutes les tables.
 
+NOTE :  
+Il faut que la base de donnée MySQL est la configuration :
+```
+[mysqld]
+lower_case_table_names=1
+```
+Sinon aucune requête ne peut passer.
+
 Commande docker run :
 ```
 docker run -d -p 3030:80 \
