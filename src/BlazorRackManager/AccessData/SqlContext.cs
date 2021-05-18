@@ -306,7 +306,10 @@ namespace AccessData
                                 + " FROM rack rac"
                                 + " LEFT OUTER JOIN geocommande geo"
 	                            + " ON rac.IdRack = geo.RackId"
-                                + " WHERE geo.RackId IS NULL;";
+                                + " LEFT OUTER JOIN stock stoc"
+                                + " ON stoc.RackId = rac.IdRack"
+                                + " WHERE geo.RackId IS NULL"
+                                + " AND stoc.ProduitId IS NULL;";
             return await GetRacks(commandText);
         }
 
@@ -320,7 +323,10 @@ namespace AccessData
                                 + " FROM rack rac"
                                 + " LEFT OUTER JOIN geocommande geo"
                                 + " ON rac.IdRack = geo.RackId"
-                                + " WHERE geo.RackId IS NOT NULL;";
+                                + " LEFT OUTER JOIN stock stoc"
+                                + " ON stoc.RackId = rac.IdRack"
+                                + " WHERE geo.RackId IS NOT NULL"
+                                + " OR stoc.ProduitId IS NOT NULL;";
 
             return await GetRacks(commandText);
         }
