@@ -43,6 +43,11 @@ rackmng:
 
 ## Configuration
 
+Il faut avoir un un rôle Admin ou Manage. Le rôle Admin permet de changer les rôles des autres utilisateurs.  
+Compte par défaut Admin :  
+login : root  
+mot de passe : Azerty123!  
+
 ### Créer les racks  
 Avant de stocker les palettes, il faut créer les racks, dans le menu Paramètres.
 
