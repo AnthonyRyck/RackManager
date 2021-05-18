@@ -26,6 +26,7 @@
 
 			<RadzenAutoComplete Placeholder="Choisir un rack..." 
 							Data=@Racks 
+							FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
 							TextProperty="GisementPos" 
 							@bind-Value="EntreStockValidation.GisementRack"
 							Change=@OnActionSelectRack
@@ -42,6 +43,7 @@
 			<RadzenAutoComplete Data=@Produits 
 								TextProperty="IdReference"
 								Style="margin-bottom: 20px" 
+								FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
 								Placeholder="Choisir une référence de produit"
 								@bind-Value="@EntreStockValidation.ReferenceProduit"
 								Change="OnActionSelectProduit" />

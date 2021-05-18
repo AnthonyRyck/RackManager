@@ -151,6 +151,7 @@ namespace RackManager.ViewModels
 				}
 				else
 				{
+					StockValidation.GisementRack = string.Empty;
 					StockValidation.IdRack = 0;
 				}
 			}
