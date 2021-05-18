@@ -76,6 +76,7 @@ namespace RackManager
 			services.AddScoped<ILogsViewModel, LogsViewModel>();
 			services.AddScoped<IProduitViewModel, ProduitViewModel>();
 			services.AddScoped<IUniteMesureViewModel, UniteMesureViewModel>();
+			services.AddScoped<IStockViewModel, StockViewModel>();
 
 			// Service pour les logs
 			services.AddHostedService<LogHostedService>();

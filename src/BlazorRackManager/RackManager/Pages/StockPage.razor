@@ -1,0 +1,96 @@
+﻿@page "/stock"
+@attribute [Authorize(Roles = "Admin, Manager, Member")]
+@inject IStockViewModel ViewModel
+
+<h3>Stock</h3>
+
+@if (ViewModel.IsLoaded)
+{
+	<div>
+		<div class="padding-10">
+			<RadzenButton Text="Nouvelle entrée"
+						  Icon="add_circle"
+						  ButtonStyle="ButtonStyle.Secondary"
+						  Click="ViewModel.OpenNouvelleEntre" />
+
+			@*<RadzenButton Text="Sortie"
+						  Icon="all_out"
+						  ButtonStyle="ButtonStyle.Secondary"
+						  Click="ViewModel.OpenSortie" />
+
+			<RadzenButton Text="Déplacer"
+						  Icon="input"
+						  ButtonStyle="ButtonStyle.Secondary"
+						  Click="ViewModel.OpenTransfert" />
+
+			<RadzenButton Text="Intervertir"
+						  Icon="compare_arrows"
+						  ButtonStyle="ButtonStyle.Secondary"
+						  Click="ViewModel.OpenIntervertir" />*@
+
+
+			@if (ViewModel.DisplayRenderFragment != null)
+			{
+				<div class="margin-5px">
+					@ViewModel.DisplayRenderFragment
+				</div>
+			}
+		</div>
+	</div>
+
+	<div>
+		<RadzenGrid AllowFiltering="true"
+					FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+					AllowPaging="true"
+					PageSize="30"
+					AllowSorting="true"
+					Data="@ViewModel.AllStock"
+					TItem="StockView"
+					EmptyText="Aucun stock"
+					@ref="ViewModel.StockGrid">
+			<Columns>
+				<RadzenGridColumn TItem="StockView"
+								  Property="GisementPos"
+								  Title="Gisement"
+								  Width="150px" />
+
+				<RadzenGridColumn TItem="StockView"
+								  Property="ReferenceProduit"
+								  Title="Référence"
+								  Width="150px" />
+
+				<RadzenGridColumn TItem="StockView"
+								  Property="NomDuProduit"
+								  Title="Intitulé"
+								  Width="150px" />
+
+				<RadzenGridColumn TItem="StockView"
+								  Property="Quantite"
+								  Title="Quantite"
+								  Sortable="false"
+								  Filterable="false"
+								  Width="80px" />
+
+				<RadzenGridColumn TItem="StockView"
+								  Property="Unite"
+								  Title="Unité"
+								  Filterable="false"
+								  Sortable="false"
+								  Width="150px">
+				</RadzenGridColumn>
+			</Columns>
+		</RadzenGrid>
+	</div>
+}
+else
+{
+	<div>Chargement des stocks en cours ...</div>
+}
+
+@code {
+	protected override async Task OnInitializedAsync()
+	{
+		ViewModel.SetStateHasChanged(StateHasChanged);
+		await ViewModel.LoadStocks();
+	}
+}

@@ -437,9 +437,8 @@ namespace AccessData
         }
 
         /// <summary>
-        /// Récupère les formations par rapport à un titre de formation.
+        /// Récupère toutes les entrées du hangar
         /// </summary>
-        /// <param name="nomFormation"></param>
         /// <returns></returns>
         public async Task<List<HangarView>> GetHangar()
         {
@@ -580,6 +579,145 @@ namespace AccessData
                                    + $" AND CommandeId={idCommande};";
 
                 await ExecuteCoreAsync(cmdUpdate);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        #endregion
+
+        #region Stock
+        
+        /// <summary>
+        /// Charge tous les stocks.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<StockView>> GetStocks()
+        {
+            var commandText = @"SELECT stoc.RackId, rac.Gisement, rac.PosRack, stoc.ProduitId, prod.Nom, stoc.Quantite, mes.Unite"
+                            + " FROM Stock stoc"
+                            + " INNER JOIN rack rac ON rac.IdRack = stoc.RackId"
+                            + " INNER JOIN produit prod ON prod.IdProduit = stoc.ProduitId"
+                            + " INNER JOIN mesure mes ON prod.MesureId = mes.IdMesure;";
+
+            Func<MySqlCommand, Task<List<StockView>>> funcCmd = async (cmd) =>
+            {
+                List<StockView> stocks = new List<StockView>();
+
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (reader.Read())
+                    {
+                        var stock = new StockView()
+                        {
+                            IdRack = reader.GetInt32(0),
+                            Gisement = reader.GetString(1),
+                            PosRack = reader.GetString(2),
+                            ReferenceProduit = reader.GetString(3),
+                            NomDuProduit = reader.GetString(4),
+                            Quantite = reader.GetDouble(5),
+                            Unite = reader.GetString(6)
+                        };
+
+                        stocks.Add(stock);
+                    }
+                }
+
+                return stocks;
+            };
+
+            List<StockView> stocks = new List<StockView>();
+
+            try
+            {
+                stocks = await GetCoreAsync(commandText, funcCmd);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return stocks;
+        }
+
+        /// <summary>
+        /// Charge tous les stocks.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<StockView> GetStocks(int rackId, string produitId)
+        {
+            var commandText = @"SELECT stoc.RackId, rac.Gisement, rac.PosRack, stoc.ProduitId, prod.Nom, stoc.Quantite, mes.Unite"
+                            + " FROM Stock stoc"
+                            + " INNER JOIN rack rac ON rac.IdRack = stoc.RackId"
+                            + " INNER JOIN produit prod ON prod.IdProduit = stoc.ProduitId"
+                            + " INNER JOIN mesure mes ON prod.MesureId = mes.IdMesure"
+                            + $" WHERE stoc.RackId = {rackId} AND stoc.ProduitId='{produitId}';";
+
+            Func<MySqlCommand, Task<StockView>> funcCmd = async (cmd) =>
+            {
+                StockView stock = new StockView();
+
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (reader.Read())
+                    {
+                        stock = new StockView()
+                        {
+                            IdRack = reader.GetInt32(0),
+                            Gisement = reader.GetString(1),
+                            PosRack = reader.GetString(2),
+                            ReferenceProduit = reader.GetString(3),
+                            NomDuProduit = reader.GetString(4),
+                            Quantite = reader.GetDouble(5),
+                            Unite = reader.GetString(6)
+                        };
+                    }
+                }
+
+                return stock;
+            };
+
+            StockView stock = new StockView();
+
+            try
+            {
+                stock = await GetCoreAsync(commandText, funcCmd);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return stock;
+        }
+
+        /// <summary>
+        /// AJout une nouvelle entrée de stock
+        /// </summary>
+        /// <param name="stock"></param>
+        /// <returns></returns>
+        public async Task AddNewStock(Stock stock)
+        {
+            try
+            {
+                using (var conn = new MySqlConnection(ConnectionString))
+                {
+                    string command = "INSERT INTO Stock (RackId, ProduitId, Quantite)"
+                                    + " VALUES(@rack, @produit, @quantite);";
+
+                    using (var cmd = new MySqlCommand(command, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@rack", stock.RackId);
+                        cmd.Parameters.AddWithValue("@produit", stock.ProduitId);
+                        cmd.Parameters.AddWithValue("@quantite", stock.Quantite);
+
+                        conn.Open();
+                        int result = await cmd.ExecuteNonQueryAsync();
+                        conn.Close();
+                    }
+                }
             }
             catch (Exception)
             {

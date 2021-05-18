@@ -1,0 +1,122 @@
+﻿<div class="col-xl-3">
+	<EditForm OnValidSubmit="@OnValidSubmit"
+			  Model="@EntreStockValidation">
+		<RadzenCard>
+			@* Super IMPORTANT !!! *@
+			<DataAnnotationsValidator />
+
+			<h4>Ajouter une entrée</h4>
+
+			@*Choisir un gisement*@
+		<div class="margin-5px">
+			<div>
+				<ValidationMessage For="@(() => EntreStockValidation.GisementRack)" />
+			</div>
+			@*<RadzenDropDown AllowClear="true"
+							TValue="string"
+							FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+							FilterOperator="StringFilterOperator.StartsWith"
+							AllowFiltering="true"
+							Data=@Racks
+							TextProperty="GisementPos"
+							ValueProperty="GisementPos"
+							Placeholder="Choisir un Gisement"
+							@bind-Value="EntreStockValidation.GisementRack"
+							SelectedItemChanged="OnActionSelectRack" />*@
+
+			<RadzenAutoComplete Placeholder="Choisir un rack..." 
+							Data=@Racks 
+							TextProperty="GisementPos" 
+							@bind-Value="EntreStockValidation.GisementRack"
+							Change=@OnActionSelectRack
+							Style="margin-bottom: 20px" />
+
+		</div>
+
+			@*Choix dn produit*@
+		<div class="margin-5px">
+			<div>
+				<ValidationMessage For="@(() => EntreStockValidation.ReferenceProduit)" />
+			</div>
+
+			<RadzenAutoComplete Data=@Produits 
+								TextProperty="IdReference"
+								Style="margin-bottom: 20px" 
+								Placeholder="Choisir une référence de produit"
+								@bind-Value="@EntreStockValidation.ReferenceProduit"
+								Change="OnActionSelectProduit" />
+
+		</div>
+
+			<div class="margin-5px">
+				<div>
+					<ValidationMessage For="@(() => EntreStockValidation.Quantite)" />
+				</div>
+				<RadzenNumeric ShowUpDown="false"
+							   TValue="double"
+							   Step="0.1"
+							   Min="0"
+							   @bind-Value=@EntreStockValidation.Quantite
+							   Placeholder="Donner une quantité"
+							   Style="width 300px" />
+			</div>
+		</RadzenCard>
+
+
+		<span class="margin-10px">
+			<button type="submit" class="padding-5">Ajouter</button>
+
+			<button type="reset"
+					class="padding-5"
+					@onclick="OnTerminerClick">
+				Terminer
+			</button>
+		</span>
+
+	</EditForm>
+</div>
+
+
+@code {
+
+	[Parameter]
+	public EntreStockValidation EntreStockValidation { get; set; }
+
+
+	[Parameter]
+	public IEnumerable<Rack> Racks { get; set; }
+
+	[Parameter]
+	public IEnumerable<ProduitView> Produits { get; set; }
+
+	[Parameter]
+	public EventCallback OnTerminerClick { get; set; }
+
+	[Parameter]
+	public EventCallback<string> OnSelectedRack { get; set; }
+
+	[Parameter]
+	public EventCallback OnValidSubmit { get; set; }
+
+	private void OnActionSelectRack(object rack)
+	{
+		var rackSelected = rack as String;
+		if (rackSelected != null)
+		{
+			OnSelectedRack.InvokeAsync(rackSelected);
+		}
+	}
+
+
+	[Parameter]
+	public EventCallback<string> OnSelectedProduit { get; set; }
+
+	private void OnActionSelectProduit(object produit)
+	{
+		var produitSelected = produit as String;
+		if (produitSelected != null)
+		{
+			OnSelectedProduit.InvokeAsync(produitSelected);
+		}
+	}
+}
