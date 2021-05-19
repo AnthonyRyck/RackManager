@@ -1,0 +1,38 @@
+﻿<div class="margin-5px">
+	<div>
+		<ValidationMessage For="@(() => Gisement)" />
+	</div>
+
+	<RadzenAutoComplete Placeholder="Choisir un rack..."
+						Data=@Racks
+						FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+						TextProperty="GisementPos"
+						@bind-Value="GisementSelected"
+						Change=@OnActionSelectRack
+						Style="margin-bottom: 20px" />
+
+</div>
+
+@code {
+
+	[Parameter]
+	public string Gisement { get; set; }
+
+	[Parameter]
+	public IEnumerable<Rack> Racks { get; set; }
+
+	[Parameter]
+	public string GisementSelected { get; set; }
+
+	[Parameter]
+	public EventCallback<string> OnSelectedRack { get; set; }
+
+	private void OnActionSelectRack(object rack)
+	{
+		var rackSelected = rack as String;
+		if (rackSelected != null)
+		{
+			OnSelectedRack.InvokeAsync(rackSelected);
+		}
+	}
+}

@@ -148,6 +148,7 @@ namespace RackManager.ViewModels
 				if (rackSelected != null)
 				{
 					StockValidation.IdRack = rackSelected.IdRack;
+					StockValidation.GisementRack = rackSelected.GisementPos;
 				}
 				else
 				{
@@ -178,6 +179,7 @@ namespace RackManager.ViewModels
 		{
 			DisplayRenderFragment = null;
 			StockValidation = new EntreStockValidation();
+			StateHasChange.Invoke();
 		}
 
 		#endregion

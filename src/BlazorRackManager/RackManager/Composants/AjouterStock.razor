@@ -8,31 +8,11 @@
 			<h4>Ajouter une entrée</h4>
 
 			@*Choisir un gisement*@
-		<div class="margin-5px">
-			<div>
-				<ValidationMessage For="@(() => EntreStockValidation.GisementRack)" />
-			</div>
-			@*<RadzenDropDown AllowClear="true"
-							TValue="string"
-							FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-							FilterOperator="StringFilterOperator.StartsWith"
-							AllowFiltering="true"
-							Data=@Racks
-							TextProperty="GisementPos"
-							ValueProperty="GisementPos"
-							Placeholder="Choisir un Gisement"
-							@bind-Value="EntreStockValidation.GisementRack"
-							SelectedItemChanged="OnActionSelectRack" />*@
+		<SelectRack Racks="@Racks"
+					Gisement="@EntreStockValidation.GisementRack"
+					OnSelectedRack="OnSelectedRack"
+					GisementSelected="@EntreStockValidation.GisementRack"/>
 
-			<RadzenAutoComplete Placeholder="Choisir un rack..." 
-							Data=@Racks 
-							FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-							TextProperty="GisementPos" 
-							@bind-Value="EntreStockValidation.GisementRack"
-							Change=@OnActionSelectRack
-							Style="margin-bottom: 20px" />
-
-		</div>
 
 			@*Choix dn produit*@
 		<div class="margin-5px">
@@ -99,16 +79,6 @@
 
 	[Parameter]
 	public EventCallback OnValidSubmit { get; set; }
-
-	private void OnActionSelectRack(object rack)
-	{
-		var rackSelected = rack as String;
-		if (rackSelected != null)
-		{
-			OnSelectedRack.InvokeAsync(rackSelected);
-		}
-	}
-
 
 	[Parameter]
 	public EventCallback<string> OnSelectedProduit { get; set; }
