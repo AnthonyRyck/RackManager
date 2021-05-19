@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using RackCore.EntityView;
 using Serilog;
+using System.Linq;
 
 namespace RackManager.ViewModels
 {
@@ -47,8 +48,6 @@ namespace RackManager.ViewModels
 		private NotificationService Notification;
 
 
-		private GeoCommande nouvelleEntreHangar;
-
 		public HangarViewModel(SqlContext sqlContext, NotificationService notification)
 		{
 			SqlContext = sqlContext;
@@ -76,7 +75,6 @@ namespace RackManager.ViewModels
 			TransfertRackValidation = new TransfertRackValidation();
 			EntreHangarValidation = new EntreHangarValidation();
 			SortieHangarValidation = new SortieHangarValidation();
-			nouvelleEntreHangar = new GeoCommande();
 			IntervertirValidation = new InversionPaletteValidation();
 
 			try
@@ -119,7 +117,7 @@ namespace RackManager.ViewModels
 				var eventOnSelectClient = EventCallback.Factory.Create(this, retourAction);
 				builder.AddAttribute(5, "OnSelectClient", eventOnSelectClient);
 
-				Action<Rack> retourRack = OnSelectedRack;
+				Action<string> retourRack = OnSelectedRack;
 				var eventOnSelectRack = EventCallback.Factory.Create(this, retourRack);
 				builder.AddAttribute(6, "OnSelectedRack", eventOnSelectRack);
 
@@ -138,33 +136,34 @@ namespace RackManager.ViewModels
 			StateChange.Invoke();
 
 			EntreHangarValidation = new EntreHangarValidation();
-			nouvelleEntreHangar = new GeoCommande();
 		}
 
 		public async void OnValidSubmit()
 		{
 			try
 			{
-				nouvelleEntreHangar.DateEntree = EntreHangarValidation.DateEntree.Value;
+				if (EntreHangarValidation.IdRack == 0)
+				{
+					Notification.Notify(NotificationSeverity.Warning, "Attention", "Le Rack choisi n'est pas bon.");
+					return;
+				}
 
 				// Sauvegarde de la commande
 				SuiviCommande cmd = EntreHangarValidation.ToSuiviCommande();
 				await SqlContext.AddCommande(cmd);
 
-				nouvelleEntreHangar.CommandeId = cmd.IdCommande;
-
 				// Sauvegarde dans le hangar
+				GeoCommande nouvelleEntreHangar = EntreHangarValidation.ToGeoCommande();
 				await SqlContext.AddToHangar(nouvelleEntreHangar);
+
 				HangarView newEntry = await SqlContext.GetHangar(nouvelleEntreHangar.CommandeId, nouvelleEntreHangar.RackId);
 
 				Notification.Notify(NotificationSeverity.Success, "Sauvegarde OK", "Sauvegarde OK");
-
 				Log.Information("HANGAR ENTREE - {date} : commande- {commande} - RackId-{rack}",
 										nouvelleEntreHangar.DateEntree.ToString("d"),
 										cmd.IdCommande, nouvelleEntreHangar.RackId);
 
 				// remise à zéro
-				nouvelleEntreHangar = new GeoCommande();
 				EntreHangarValidation = new EntreHangarValidation();
 
 				AllHangar.Add(newEntry);
@@ -191,10 +190,23 @@ namespace RackManager.ViewModels
 			}
 		}
 
-		public void OnSelectedRack(Rack rack)
+		public void OnSelectedRack(string selected)
 		{
-			if (rack != null)
-				nouvelleEntreHangar.RackId = rack.IdRack;
+			if (!string.IsNullOrEmpty(selected))
+			{
+				Rack rackSelected = Racks.FirstOrDefault(x => x.GisementPos == selected);
+
+				if (rackSelected != null)
+				{
+					EntreHangarValidation.IdRack = rackSelected.IdRack;
+					EntreHangarValidation.GisementRack = rackSelected.GisementPos;
+				}
+				else
+				{
+					EntreHangarValidation.GisementRack = string.Empty;
+					EntreHangarValidation.IdRack = 0;
+				}
+			}
 		}
 
 
@@ -278,8 +290,6 @@ namespace RackManager.ViewModels
 			if (rackSelected != null)
 				SortieHangarValidation.IdRack = rackSelected.IdRack;
 		}
-
-
 
 		#endregion
 

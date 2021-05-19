@@ -28,6 +28,9 @@ namespace RackManager.ValidationModels
 
 		public string Description { get; set; }
 
+
+		public int IdRack { get; set; }
+
 		internal SuiviCommande ToSuiviCommande()
 		{
 			return new SuiviCommande()
@@ -35,6 +38,16 @@ namespace RackManager.ValidationModels
 				ClientId = IdClient.Value,
 				IdCommande = IdCommande.Value,
 				DescriptionCmd = Description
+			};
+		}
+
+		internal GeoCommande ToGeoCommande()
+		{
+			return new GeoCommande()
+			{
+				RackId = IdRack,
+				CommandeId = IdCommande.Value,
+				DateEntree = DateTime.Now
 			};
 		}
 	}

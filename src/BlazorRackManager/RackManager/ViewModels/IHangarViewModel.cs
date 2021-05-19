@@ -43,7 +43,7 @@ namespace RackManager.ViewModels
 		Task LoadDatas();
 
 
-		void OnSelectedRack(Rack rack);
+		void OnSelectedRack(string rack);
 
 		void OnSelectedRackSortie(Rack rackSelected);
 

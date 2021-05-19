@@ -12,17 +12,11 @@
 				<div>
 					<ValidationMessage For="@(() => EntreHangarValidation.GisementRack)" />
 				</div>
-				<RadzenDropDown AllowClear="true"
-								TValue="string"
-								FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-								FilterOperator="StringFilterOperator.StartsWith"
-								AllowFiltering="true"
-								Data=@Racks
-								TextProperty="GisementPos"
-								ValueProperty="GisementPos"
-								Placeholder="Choisir un Gisement"
-								@bind-Value="EntreHangarValidation.GisementRack"
-								SelectedItemChanged="OnActionSelectRack" />
+
+			<SelectRack Racks="@Racks"
+						Gisement="@EntreHangarValidation.GisementRack"
+						OnSelectedRack="@OnSelectedRack"
+						GisementSelected="@EntreHangarValidation.GisementRack" />
 			</div>
 
 			@*Choix du client*@
@@ -103,20 +97,20 @@
 	public EventCallback<Client> OnSelectClient { get; set; }
 
 	[Parameter]
-	public EventCallback<Rack> OnSelectedRack { get; set; }
+	public EventCallback<string> OnSelectedRack { get; set; }
 
 	[Parameter]
 	public EventCallback OnValidSubmit { get; set; }
 
 
-	private void OnActionSelectRack(object rack)
-	{
-		var rackSelected = rack as Rack;
-		if (rackSelected != null)
-		{
-			OnSelectedRack.InvokeAsync(rackSelected);
-		}
-	}
+	//private void OnActionSelectRack(object rack)
+	//{
+	//	var rackSelected = rack as Rack;
+	//	if (rackSelected != null)
+	//	{
+	//		OnSelectedRack.InvokeAsync(rackSelected);
+	//	}
+	//}
 
 
 	private void OnActionSelectClient(object client)
