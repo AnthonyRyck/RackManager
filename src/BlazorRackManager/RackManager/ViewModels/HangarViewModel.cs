@@ -192,21 +192,7 @@ namespace RackManager.ViewModels
 
 		public void OnSelectedRack(string selected)
 		{
-			if (!string.IsNullOrEmpty(selected))
-			{
-				Rack rackSelected = Racks.FirstOrDefault(x => x.GisementPos == selected);
-
-				if (rackSelected != null)
-				{
-					EntreHangarValidation.IdRack = rackSelected.IdRack;
-					EntreHangarValidation.GisementRack = rackSelected.GisementPos;
-				}
-				else
-				{
-					EntreHangarValidation.GisementRack = string.Empty;
-					EntreHangarValidation.IdRack = 0;
-				}
-			}
+			SelectedRack(selected, EntreHangarValidation);
 		}
 
 
@@ -226,7 +212,7 @@ namespace RackManager.ViewModels
 				var eventTerminerSortie = EventCallback.Factory.Create(this, CloseSortie);
 				builder.AddAttribute(3, "CloseSortieHangar", eventTerminerSortie);
 
-				Action<Rack> retourRack = OnSelectedRackSortie;
+				Action<string> retourRack = OnSelectedRackSortie;
 				var eventOnSelectRack = EventCallback.Factory.Create(this, retourRack);
 				builder.AddAttribute(6, "OnSelectRackSortie", eventOnSelectRack);
 
@@ -252,12 +238,17 @@ namespace RackManager.ViewModels
 		{
 			try
 			{
+				if (SortieHangarValidation.IdRack == 0)
+				{
+					Notification.Notify(NotificationSeverity.Warning, "Attention", "Le Rack choisi n'est pas bon.");
+					return;
+				}
+
 				// enlever de geocommande, la palette
 				await SqlContext.DeleteToHangar(SortieHangarValidation.IdRack, SortieHangarValidation.IdCommande.Value);
 
 				// mettre la commande avec une date de sortie
 				await SqlContext.UpdateSortieCommande(SortieHangarValidation.IdCommande.Value, SortieHangarValidation.DateSortie.Value);
-
 
 				Log.Information("HANGAR SORTIE - {date} : commande- {commande} - Gisement-{rack}",
 										SortieHangarValidation.DateSortie.Value.ToString("d"),
@@ -285,10 +276,9 @@ namespace RackManager.ViewModels
 			}
 		}
 
-		public void OnSelectedRackSortie(Rack rackSelected)
+		public void OnSelectedRackSortie(string rackSelected)
 		{
-			if (rackSelected != null)
-				SortieHangarValidation.IdRack = rackSelected.IdRack;
+			SelectedRack(rackSelected, SortieHangarValidation);
 		}
 
 		#endregion
@@ -312,11 +302,11 @@ namespace RackManager.ViewModels
 
 				builder.AddAttribute(6, "ClientTransfert", ClientTransfert);
 
-				Action<Rack> rackArrivantAction = OnSelectedRackArrivant;
+				Action<string> rackArrivantAction = OnSelectedRackArrivant;
 				var eventOnSelectRackArrivant = EventCallback.Factory.Create(this, rackArrivantAction);
 				builder.AddAttribute(7, "SelectRackArrivant", eventOnSelectRackArrivant);
 
-				Action<Rack> rackPartantAction = OnSelectedRackPartant;
+				Action<string> rackPartantAction = OnSelectedRackPartant;
 				var eventOnSelectRackPartant = EventCallback.Factory.Create(this, rackPartantAction);
 				builder.AddAttribute(8, "SelectRackPartant", eventOnSelectRackPartant);
 
@@ -367,26 +357,53 @@ namespace RackManager.ViewModels
 			}
 		}
 
-		public async void OnSelectedRackPartant(object rackPartant)
+		public async void OnSelectedRackPartant(string rackPartant)
 		{
-			var rackSelected = rackPartant as Rack;
-			if (rackSelected != null)
-			{
-				TransfertRackValidation.IdRackPartant = rackSelected.IdRack;
-				var temp = await SqlContext.GetCommandeByIdRack(rackSelected.IdRack);
 
-				ClientTransfert.NomClient = temp.NomClient;
-				ClientTransfert.DescriptionCmd = temp.DescriptionCmd;
-				ClientTransfert.IdClient = temp.IdClient;
-				ClientTransfert.IdCommande = temp.IdCommande;
+			if (!string.IsNullOrEmpty(rackPartant))
+			{
+				Rack rackSelected = RacksFull.FirstOrDefault(x => x.GisementPos == rackPartant);
+
+				if (rackSelected != null)
+				{
+					TransfertRackValidation.IdRackPartant = rackSelected.IdRack;
+
+					var temp = await SqlContext.GetCommandeByIdRack(rackSelected.IdRack);
+
+					ClientTransfert.NomClient = temp.NomClient;
+					ClientTransfert.DescriptionCmd = temp.DescriptionCmd;
+					ClientTransfert.IdClient = temp.IdClient;
+					ClientTransfert.IdCommande = temp.IdCommande;
+
+					TransfertRackValidation.GisementRackPartant = rackSelected.GisementPos;
+					StateChange.Invoke();
+				}
+				else
+				{
+					TransfertRackValidation.IdRackPartant = 0;
+					TransfertRackValidation.GisementRackPartant = string.Empty;
+
+					ClientTransfert = new CommandeView();
+				}
 			}
 		}
 
-		public void OnSelectedRackArrivant(object rackArrivant)
+		public void OnSelectedRackArrivant(string rackArrivant)
 		{
-			var rackSelected = rackArrivant as Rack;
-			if (rackSelected != null)
-				TransfertRackValidation.IdRackArrivant = rackSelected.IdRack;
+			if (!string.IsNullOrEmpty(rackArrivant))
+			{
+				Rack rackSelected = Racks.FirstOrDefault(x => x.GisementPos == rackArrivant);
+				if (rackSelected != null)
+				{
+					TransfertRackValidation.IdRackArrivant = rackSelected.IdRack;
+					TransfertRackValidation.GisementRackArrivant = rackSelected.GisementPos;
+				}
+				else
+				{
+					TransfertRackValidation.IdRackArrivant = 0;
+					TransfertRackValidation.GisementRackArrivant = string.Empty;
+				}
+			}
 		}
 
 		#endregion
@@ -408,11 +425,11 @@ namespace RackManager.ViewModels
 				var eventOnValidCloseIntervertir = EventCallback.Factory.Create(this, CloseIntervertir);
 				builder.AddAttribute(4, "CloseInvertion", eventOnValidCloseIntervertir);
 
-				Action<Rack> rackArrivantAction = OnSelectedRackArrivantIntervertir;
+				Action<string> rackArrivantAction = OnSelectedRackArrivantIntervertir;
 				var eventOnSelectRackArrivant = EventCallback.Factory.Create(this, rackArrivantAction);
 				builder.AddAttribute(5, "SelectRackArrivant", eventOnSelectRackArrivant);
 
-				Action<Rack> rackPartantAction = OnSelectedRackPartantIntervertir;
+				Action<string> rackPartantAction = OnSelectedRackPartantIntervertir;
 				var eventOnSelectRackPartant = EventCallback.Factory.Create(this, rackPartantAction);
 				builder.AddAttribute(6, "SelectRackPartant", eventOnSelectRackPartant);
 
@@ -422,23 +439,42 @@ namespace RackManager.ViewModels
 			DisplayRenderFragment = CreateCompo();
 		}
 
-		private void OnSelectedRackPartantIntervertir(object rackPartant)
+		private void OnSelectedRackPartantIntervertir(string rackPartant)
 		{
-			var rackSelected = rackPartant as Rack;
-			if (rackSelected != null)
+			if (!string.IsNullOrEmpty(rackPartant))
 			{
-				IntervertirValidation.IdRackPartant = rackSelected.IdRack;
-				IntervertirValidation.IdCommandePartant = AllHangar.Find(x => x.IdRack == rackSelected.IdRack).IdCommande;
+				Rack rackSelected = RacksFull.FirstOrDefault(x => x.GisementPos == rackPartant);
+
+				if(rackSelected != null)
+				{
+					IntervertirValidation.IdRackPartant = rackSelected.IdRack;
+					IntervertirValidation.IdCommandePartant = AllHangar.Find(x => x.IdRack == rackSelected.IdRack).IdCommande;
+					IntervertirValidation.GisementRackPartant = rackSelected.GisementPos;
+				}
+				else
+				{
+					IntervertirValidation.IdRackPartant = 0;
+					IntervertirValidation.GisementRackPartant = string.Empty;
+				}
 			}
 		}
 
-		private void OnSelectedRackArrivantIntervertir(object rackArrivant)
+		private void OnSelectedRackArrivantIntervertir(string rackArrivant)
 		{
-			var rackSelected = rackArrivant as Rack;
-			if (rackSelected != null)
+			if (!string.IsNullOrEmpty(rackArrivant))
 			{
-				IntervertirValidation.IdRackArrivant = rackSelected.IdRack;
-				IntervertirValidation.IdCommandeArrivant = AllHangar.Find(x => x.IdRack == rackSelected.IdRack).IdCommande;
+				Rack rackSelected = RacksFull.FirstOrDefault(x => x.GisementPos == rackArrivant);
+				if(rackSelected != null)
+				{
+					IntervertirValidation.IdRackArrivant = rackSelected.IdRack;
+					IntervertirValidation.IdCommandeArrivant = AllHangar.Find(x => x.IdRack == rackSelected.IdRack).IdCommande;
+					IntervertirValidation.GisementRackArrivant = rackSelected.GisementPos;
+				}
+				else
+				{
+					IntervertirValidation.IdRackArrivant = 0;
+					IntervertirValidation.GisementRackArrivant = string.Empty;
+				}
 			}
 		}
 
@@ -485,6 +521,26 @@ namespace RackManager.ViewModels
 		#endregion
 
 		#endregion
+
+
+		private void SelectedRack<T>(string selected, T validator) where T : BaseValidation
+		{
+			if (!string.IsNullOrEmpty(selected))
+			{
+				Rack rackSelected = Racks.FirstOrDefault(x => x.GisementPos == selected);
+
+				if (rackSelected != null)
+				{
+					validator.IdRack = rackSelected.IdRack;
+					validator.GisementRack = rackSelected.GisementPos;
+				}
+				else
+				{
+					validator.GisementRack = string.Empty;
+					validator.IdRack = 0;
+				}
+			}
+		}
 
 	}
 }

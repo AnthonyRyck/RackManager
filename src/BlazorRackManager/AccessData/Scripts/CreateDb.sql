@@ -2,24 +2,24 @@ CREATE TABLE Rack
 (IdRack int NOT NULL AUTO_INCREMENT,
 Gisement VARCHAR(5) NOT NULL,
 PosRack VARCHAR(1) NOT NULL,
-PRIMARY KEY(IdRack));
+PRIMARY KEY(IdRack, Gisement, PosRack));
 
 CREATE TABLE Clients
 (IdClient int NOT NULL AUTO_INCREMENT,
 NomClient VARCHAR(50) NOT NULL,
-PRIMARY KEY(IdClient));
+PRIMARY KEY(IdClient, NomClient));
 
 CREATE TABLE Mesure
 (IdMesure int NOT NULL AUTO_INCREMENT,
 Unite VARCHAR(10) NOT NULL,
-PRIMARY KEY(IdMesure));
+PRIMARY KEY(IdMesure, Unite));
 
 CREATE TABLE Produit
 (IdProduit VARCHAR(25) NOT NULL,
 Nom VARCHAR(50) NOT NULL,
 MesureId int NOT NULL,
 FOREIGN KEY(MesureId) REFERENCES Mesure(IdMesure),
-PRIMARY KEY(IdProduit));
+PRIMARY KEY(IdProduit, Nom));
 
 CREATE TABLE SuiviCommande
 (IdCommande int NOT NULL,

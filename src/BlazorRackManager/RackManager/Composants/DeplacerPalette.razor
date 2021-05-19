@@ -7,42 +7,23 @@
 
 			<div class="row">
 
-				<div class="col-xl-3">
+				<div class="col-xl-4">
 
 					<h4>Déplacer</h4>
-					<span>Déplacer une palette d'un rack, vers un rack vide.</span>
+					<span>Déplacer une palette d'un rack  vers un rack vide.</span>
 
-					<div>
-						<ValidationMessage For="@(() => TransfertRackValidation.GisementRackPartant)" />
-					</div>
-					<RadzenDropDown AllowClear="true"
-									TValue="string"
-									FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-									FilterOperator="StringFilterOperator.StartsWith"
-									AllowFiltering="true"
-									Data=@RackFull
-									TextProperty="GisementPos"
-									ValueProperty="GisementPos"
-									Placeholder="Choisir un Gisement occupé"
-									@bind-Value="TransfertRackValidation.GisementRackPartant"
-									SelectedItemChanged=@OnSelectedRackPartant />
+					<SelectRack Racks="@RackFull"
+								Gisement="@TransfertRackValidation.GisementRackPartant"
+								OnSelectedRack="@SelectRackPartant"
+								PlaceHolder="Choisir un rack occupé"
+								GisementSelected="@TransfertRackValidation.GisementRackPartant" />
 
-					<div class="margin-5px">
-						<div>
-							<ValidationMessage For="@(() => TransfertRackValidation.GisementRackArrivant)" />
-						</div>
-						<RadzenDropDown AllowClear="true"
-										TValue="string"
-										FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-										FilterOperator="StringFilterOperator.StartsWith"
-										AllowFiltering="true"
-										Data=@RackEmpty
-										TextProperty="GisementPos"
-										ValueProperty="GisementPos"
-										Placeholder="Choisir un Gisement vide"
-										@bind-Value="TransfertRackValidation.GisementRackArrivant"
-										SelectedItemChanged=@OnSelectedRackArrivant />
-					</div>
+					<SelectRack Racks="@RackEmpty"
+								Gisement="@TransfertRackValidation.GisementRackArrivant"
+								OnSelectedRack="@SelectRackArrivant"
+								PlaceHolder="Choisir un rack vide"
+								GisementSelected="@TransfertRackValidation.GisementRackArrivant" />
+
 				</div>
 
 				<div class="col-xl-3">
@@ -100,27 +81,10 @@
 	public CommandeView ClientTransfert { get; set; }
 
 	[Parameter]
-	public EventCallback<Rack> SelectRackArrivant { get; set; }
+	public EventCallback<string> SelectRackArrivant { get; set; }
 
 	[Parameter]
-	public EventCallback<Rack> SelectRackPartant { get; set; }
+	public EventCallback<string> SelectRackPartant { get; set; }
 
 
-	private async void OnSelectedRackArrivant(object rack)
-	{
-		var rackSelected = rack as Rack;
-		if (rackSelected != null)
-		{
-			await SelectRackArrivant.InvokeAsync(rackSelected);
-		}
-	}
-
-	private async void OnSelectedRackPartant(object rack)
-	{
-		var rackSelected = rack as Rack;
-		if (rackSelected != null)
-		{
-			await SelectRackPartant.InvokeAsync(rackSelected);
-		}
-	}
 }
