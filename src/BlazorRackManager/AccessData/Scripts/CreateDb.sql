@@ -44,3 +44,10 @@ Quantite DOUBLE NOT NULL,
 FOREIGN KEY(RackId) REFERENCES rack(IdRack),
 FOREIGN KEY(ProduitId) REFERENCES produit(IdProduit),
 PRIMARY KEY (RackId, ProduitId));
+
+CREATE TABLE SortieStock
+(ProduitId VARCHAR(25) NOT NULL,
+Quantite DOUBLE NOT NULL,
+DateSortie DATETIME NOT NULL,
+FOREIGN KEY(ProduitId) REFERENCES produit(IdProduit),
+PRIMARY KEY (ProduitId, DateSortie));

@@ -8,43 +8,97 @@
 
 @if (ViewModel.IsLoaded)
 {
-	<div>
-		<RadzenGrid AllowFiltering="true"
-					FilterCaseSensitivity="FilterCaseSensitivity.Default"
-					AllowPaging="true"
-					PageSize="30"
-					AllowSorting="true"
-					Data="@ViewModel.Sorties"
-					TItem="CommandeSortieView"
-					EmptyText="Aucune sortie">
-			<Columns>
-				<RadzenGridColumn TItem="CommandeSortieView"
-								  Property="IdCommande"
-								  Title="Commande"
-								  Width="150px" />
+	<RadzenTabs>
+		<Tabs>
+			<RadzenTabsItem Text="Sortie commande">
+				<div>
+					<RadzenGrid AllowFiltering="true"
+								FilterCaseSensitivity="FilterCaseSensitivity.Default"
+								AllowPaging="true"
+								PageSize="30"
+								AllowSorting="true"
+								Data="@ViewModel.Sorties"
+								TItem="CommandeSortieView"
+								EmptyText="Aucune sortie">
+						<Columns>
+							<RadzenGridColumn TItem="CommandeSortieView"
+											  Property="IdCommande"
+											  Title="Commande"
+											  Width="150px" />
 
-				<RadzenGridColumn TItem="CommandeSortieView"
-								  Property="NomClient"
-								  Title="Client"
-								  Width="150px" />
+							<RadzenGridColumn TItem="CommandeSortieView"
+											  Property="NomClient"
+											  Title="Client"
+											  Width="150px" />
 
-				<RadzenGridColumn TItem="CommandeSortieView"
-								  Property="DateSortie"
-								  Title="Date sortie"
-								  Filterable="false"
-								  Format="date-time"
-								  Width="150px">
-					<Template Context="sortie">
-						@String.Format("{0:d}", sortie.DateSortie)
-					</Template>
-				</RadzenGridColumn>
+							<RadzenGridColumn TItem="CommandeSortieView"
+											  Property="DateSortie"
+											  Title="Date sortie"
+											  Filterable="false"
+											  Format="date-time"
+											  Width="150px">
+								<Template Context="sortie">
+									@String.Format("{0:d}", sortie.DateSortie)
+								</Template>
+							</RadzenGridColumn>
 
-				<RadzenGridColumn TItem="CommandeSortieView"
-								  Property="DescriptionCmd"
-								  Title="Description" />
-			</Columns>
-		</RadzenGrid>
-	</div>
+							<RadzenGridColumn TItem="CommandeSortieView"
+											  Property="DescriptionCmd"
+											  Title="Description" />
+						</Columns>
+					</RadzenGrid>
+				</div>
+			</RadzenTabsItem>
+
+			<RadzenTabsItem Text="Sortie stock">
+				<RadzenGrid AllowFiltering="true"
+							FilterCaseSensitivity="FilterCaseSensitivity.Default"
+							AllowPaging="true"
+							PageSize="30"
+							AllowSorting="true"
+							Data="@ViewModel.StockSortie"
+							TItem="SortieStockView"
+							EmptyText="Aucune sortie">
+					<Columns>
+						<RadzenGridColumn TItem="SortieStockView"
+										  Property="Produit.IdReference"
+										  Title="Référence Produit"
+										  Width="150px" />
+
+						<RadzenGridColumn TItem="SortieStockView"
+										  Property="Produit.Nom"
+										  Title="Nom"
+										  Width="150px" />
+
+						<RadzenGridColumn TItem="SortieStockView"
+										  Property="Quantite"
+										  Title="Quantite"
+										  Width="150px" />
+
+						<RadzenGridColumn TItem="SortieStockView"
+										  Property="Produit.UniteMesure"
+										  Title="Unité"
+										  Width="150px" />
+
+						<RadzenGridColumn TItem="SortieStockView"
+										  Property="DateDeSortie"
+										  Title="Date sortie"
+										  Filterable="false"
+										  Format="date-time"
+										  Width="150px">
+							<Template Context="sortie">
+								@String.Format("{0:d}", sortie.DateDeSortie)
+							</Template>
+						</RadzenGridColumn>
+
+						<RadzenGridColumn TItem="CommandeSortieView"
+										  Property="DescriptionCmd"
+										  Title="Description" />
+					</Columns>
+				</RadzenGrid>
+			</RadzenTabsItem>
+		</Tabs>
+	</RadzenTabs>
 }
 else
 {

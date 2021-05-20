@@ -195,12 +195,11 @@ namespace AccessData
             return commandeView;
         }
 
-
-        /// <summary>
-        /// Récupère la liste des commandes qui sont "terminées"/sorties. 
-        /// </summary>
-        /// <returns></returns>
-        public async Task<IEnumerable<CommandeSortieView>> GetSorties()
+		/// <summary>
+		/// Récupère la liste des commandes qui sont "terminées"/sorties. 
+		/// </summary>
+		/// <returns></returns>
+		public async Task<IEnumerable<CommandeSortieView>> GetSorties()
         {
             string cmd = "SELECT sc.IdCommande, sc.ClientId, cli.NomClient, sc.DescriptionCmd, sc.DateSortie"
                             + " FROM suivicommande sc"
@@ -729,6 +728,126 @@ namespace AccessData
             {
                 throw;
             }
+        }
+
+        /// <summary>
+        /// Met à jour le stock d'un rack
+        /// </summary>
+        /// <param name="idRack"></param>
+        /// <param name="referenceProduit"></param>
+        /// <param name="quantite"></param>
+        /// <returns></returns>
+        public async Task UpdateStock(int idRack, string referenceProduit, double quantite)
+        {
+			try
+			{
+                string cmdUpdate = @"UPDATE stock SET Quantite=@quantite"
+                                + $" WHERE RackId={idRack} AND ProduitId='{referenceProduit}'";
+
+                using (var conn = new MySqlConnection(ConnectionString))
+                {
+                    using (var cmd = new MySqlCommand(cmdUpdate, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@quantite", quantite);
+
+                        conn.Open();
+                        await cmd.ExecuteNonQueryAsync();
+                        conn.Close();
+                    }
+                }
+            }
+			catch (Exception)
+			{
+				throw;
+			}
+        }
+
+        #endregion
+
+        #region SortieStock
+
+        /// <summary>
+        /// AJout une nouvelle entrée de stock
+        /// </summary>
+        /// <param name="stock"></param>
+        /// <returns></returns>
+        public async Task AddNewSortieStock(string produitId, double quantite, DateTime dateSortie)
+        {
+            try
+            {
+                using (var conn = new MySqlConnection(ConnectionString))
+                {
+                    string command = "INSERT INTO SortieStock (ProduitId, Quantite, DateSortie)"
+                                    + " VALUES(@produit, @quantite, @date);";
+
+                    using (var cmd = new MySqlCommand(command, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@produit", produitId);
+                        cmd.Parameters.AddWithValue("@quantite", quantite);
+                        cmd.Parameters.AddWithValue("@date", dateSortie);
+
+                        conn.Open();
+                        int result = await cmd.ExecuteNonQueryAsync();
+                        conn.Close();
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Retourne tous les stocks sorties
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IEnumerable<SortieStockView>> GetStockSortie()
+        {
+            var commandText = @"SELECT prod.IdProduit, prod.Nom, mes.Unite, stoc.Quantite, stoc.DateSortie"
+                                + " FROM sortiestock stoc"
+                                + " INNER JOIN produit prod ON prod.IdProduit = stoc.ProduitId"
+                                + " INNER JOIN mesure mes ON mes.IdMesure = prod.MesureId;";
+
+            Func<MySqlCommand, Task<List<SortieStockView>>> funcCmd = async (cmd) =>
+            {
+                List<SortieStockView> stocks = new List<SortieStockView>();
+
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (reader.Read())
+                    {
+                        var stockView = new SortieStockView()
+                        {
+                            Produit = new ProduitView()
+                            {
+                                IdReference = reader.GetString(0),
+                                Nom = reader.GetString(1),
+                                UniteMesure = reader.GetString(2)
+							},
+                            Quantite = reader.GetDouble(3),
+                            DateDeSortie = reader.GetDateTime(4)
+                        };
+
+                        stocks.Add(stockView);
+                    }
+                }
+
+                return stocks;
+            };
+
+            List<SortieStockView> stocks = new List<SortieStockView>();
+
+            try
+            {
+                stocks = await GetCoreAsync(commandText, funcCmd);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return stocks;
         }
 
         #endregion

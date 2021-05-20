@@ -23,5 +23,19 @@ namespace AccessData.Views
 		public double Quantite { get; set; }
 
 		public string Unite { get; set; }
+
+		public StockView DeepCopy()
+		{
+			return new StockView()
+			{
+				IdRack = this.IdRack,
+				Gisement = this.Gisement,
+				PosRack = this.PosRack,
+				ReferenceProduit = this.ReferenceProduit,
+				NomDuProduit = this.NomDuProduit,
+				Quantite = this.Quantite,
+				Unite = this.Unite
+			};
+		}
 	}
 }

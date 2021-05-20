@@ -14,6 +14,9 @@ namespace RackManager.ViewModels
 		IEnumerable<CommandeSortieView> Sorties { get; set; }
 
 
+		IEnumerable<SortieStockView> StockSortie { get; }
+
+
 		Task LoadDatas();
 	}
 }

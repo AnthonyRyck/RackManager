@@ -2,6 +2,7 @@
 @attribute [Authorize(Roles = "Admin, Manager, Member")]
 @inject IStockViewModel ViewModel
 
+
 <h3>Stock</h3>
 
 @if (ViewModel.IsLoaded)
@@ -31,8 +32,38 @@
 					Data="@ViewModel.AllStock"
 					TItem="StockView"
 					EmptyText="Aucun stock"
+					RowUpdate="@ViewModel.OnUpdateRow"
 					@ref="ViewModel.StockGrid">
 			<Columns>
+
+				@*Colonne pour faire une sortie, une modification de la colonne quantité*@
+				<RadzenGridColumn TItem="StockView"
+								  Title="Actions"
+								  Width="100px"
+								  Sortable="false"
+								  Filterable="false">
+					<Template Context="data">
+						<RadzenButton Size="ButtonSize.Small"
+									  Click="@(args => ViewModel.EditRow(data, true))"
+									  Disabled="ViewModel.RowOnUpdate">Ajouter</RadzenButton>
+
+						<RadzenButton Size="ButtonSize.Small"
+									  Click="@(args => ViewModel.EditRow(data, false))"
+									  Disabled="ViewModel.RowOnUpdate">Sortir</RadzenButton>
+					</Template>
+
+					<EditTemplate Context="data">
+						<RadzenButton Icon="save" 
+										Size="ButtonSize.Small"
+									  Click="@((args) => ViewModel.SaveRow(data))" />
+
+						<RadzenButton Icon="cancel" 
+										Size="ButtonSize.Small"
+									  ButtonStyle="ButtonStyle.Secondary"
+									  Click="@((args) => ViewModel.CancelEdit(data))" />
+					</EditTemplate>
+				</RadzenGridColumn>
+
 				<RadzenGridColumn TItem="StockView"
 								  Property="GisementPos"
 								  Title="Gisement"
@@ -53,7 +84,15 @@
 								  Title="Quantite"
 								  Sortable="false"
 								  Filterable="false"
-								  Width="80px" />
+								  Width="80px">
+					<EditTemplate Context="data">
+						<RadzenNumeric @bind-Value="data.Quantite" 
+										Style="width:100%"
+										TValue="double"
+										Min="@ViewModel.MinQuantite"
+										Max="@ViewModel.MaxQuantite"/>
+					</EditTemplate>
+				</RadzenGridColumn>
 
 				<RadzenGridColumn TItem="StockView"
 								  Property="Unite"

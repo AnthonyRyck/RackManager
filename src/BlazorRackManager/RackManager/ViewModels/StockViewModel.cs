@@ -183,5 +183,81 @@ namespace RackManager.ViewModels
 		}
 
 		#endregion
+
+		#region Event DataGrid
+
+
+		public decimal? MaxQuantite { get; private set; }
+		public decimal? MinQuantite { get; private set; }
+
+		public bool RowOnUpdate { get; private set; } = false;
+
+		public async void OnUpdateRow(StockView stock)
+		{
+			try
+			{
+				await ContextSql.UpdateStock(stock.IdRack, stock.ReferenceProduit, stock.Quantite);
+				
+				// Si ce n'est pas un ajout de stock
+				if(EstAjoutStock)
+				{
+					var quantiteEntre = stock.Quantite - backup.Quantite;
+					Log.Information($"STOCK - Ajout : {stock.ReferenceProduit} - quantité : {quantiteEntre} {stock.Unite} sur {stock.GisementPos}");
+				}
+				else
+				{
+					var quantiteSortie = backup.Quantite - stock.Quantite;
+					await ContextSql.AddNewSortieStock(stock.ReferenceProduit, quantiteSortie, DateTime.Now);
+
+					Log.Information($"STOCK - Sortie : {stock.ReferenceProduit} - quantité : {quantiteSortie} {stock.Unite} de {stock.GisementPos}");
+				}
+
+				RowOnUpdate = false;
+			}
+			catch (Exception ex)
+			{
+				Log.Error(ex, "Erreur sur OnUpdateRow");
+			}
+		}
+
+		private StockView backup;
+		private bool EstAjoutStock;
+
+
+		public void EditRow(StockView stock, bool isAdd)
+		{
+			backup = stock.DeepCopy();
+			RowOnUpdate = true;
+			EstAjoutStock = isAdd;
+
+			if (isAdd)
+			{
+				MinQuantite = Convert.ToDecimal(stock.Quantite);
+				MaxQuantite = decimal.MaxValue;
+			}
+			else
+			{
+				MinQuantite = 0;
+				MaxQuantite = Convert.ToDecimal(stock.Quantite);
+			}
+
+			StockGrid.EditRow(stock);
+		}
+
+		public async void SaveRow(StockView stock)
+		{
+			await StockGrid.UpdateRow(stock);
+			RowOnUpdate = false;
+		}
+
+		public void CancelEdit(StockView stock)
+		{
+			stock.Quantite = backup.Quantite;
+
+			StockGrid.CancelEditRow(stock);
+			RowOnUpdate = false;
+		}
+
+		#endregion
 	}
 }

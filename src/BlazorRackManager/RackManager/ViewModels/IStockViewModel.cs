@@ -24,5 +24,28 @@ namespace RackManager.ViewModels
 		Task LoadStocks();
 
 		void OpenNouvelleEntre();
+
+
+		decimal? MaxQuantite { get; }
+
+		decimal? MinQuantite { get; }
+
+		bool RowOnUpdate { get; }
+
+		#region Event DataGrid
+
+		/// <summary>
+		/// Sauvegarde en BDD des modifications
+		/// </summary>
+		/// <param name="currentSalle"></param>
+		void OnUpdateRow(StockView currentStock);
+
+		void EditRow(StockView stock, bool isAdd);
+
+		void SaveRow(StockView stock);
+
+		void CancelEdit(StockView currentStock);
+
+		#endregion
 	}
 }

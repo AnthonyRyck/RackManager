@@ -13,6 +13,8 @@ namespace RackManager.ViewModels
 
 		public IEnumerable<CommandeSortieView> Sorties { get; set; }
 
+		public IEnumerable<SortieStockView> StockSortie { get; private set; }
+
 
 		private SqlContext SqlContext;
 
@@ -28,6 +30,9 @@ namespace RackManager.ViewModels
 			try
 			{
 				Sorties = await SqlContext.GetSorties();
+
+				StockSortie = await SqlContext.GetStockSortie();
+
 				IsLoaded = true;
 			}
 			catch (Exception ex)
