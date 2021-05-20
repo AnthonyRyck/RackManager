@@ -44,7 +44,6 @@ namespace RackManager.Services
             return Task.CompletedTask;
         }
 
-
         public void Dispose()
         {
             _timerReset?.Dispose();
