@@ -63,6 +63,22 @@ namespace RackManager.ViewModels
 		{
 			try
 			{
+				// Si contient déjà le même nom de client.
+				if (AllClients.Any(x => x.NomClient == NouveauClient.NomClient))
+				{
+					string msgWarn = $"Aucun ajout : {NouveauClient.NomClient} existe déjà";
+					NotificationMessage messWarn = new NotificationMessage()
+					{
+						Summary = "Attention",
+						Detail = msgWarn,
+						Duration = 3000,
+						Severity = NotificationSeverity.Warning
+					};
+					NotificationService.Notify(messWarn);
+
+					return;
+				}
+
 				// Ajout dans la base de donnée.
 				int idClient = await SqlContext.AddClient(NouveauClient.NomClient);
 

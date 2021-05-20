@@ -61,6 +61,23 @@ namespace RackManager.ViewModels
 		{
 			try
 			{
+				// Si contient déjà le gisement et la position.
+				if(AllRacks.Any(x => x.Gisement == NouveauRack.Gisement
+								&& x.PosRack == NouveauRack.Position))
+				{
+					string msgWarn = $"Aucun ajout : {NouveauRack.Gisement} - {NouveauRack.Position} existe déjà";
+					NotificationMessage messWarn = new NotificationMessage()
+					{
+						Summary = "Attention",
+						Detail = msgWarn,
+						Duration = 3000,
+						Severity = NotificationSeverity.Warning
+					};
+					NotificationService.Notify(messWarn);
+
+					return;
+				}
+
 				// Ajout dans la base de donnée.
 				int idRack = await SqlContext.AddRack(NouveauRack.Gisement, NouveauRack.Position);
 

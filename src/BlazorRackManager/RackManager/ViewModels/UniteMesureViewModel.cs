@@ -73,6 +73,22 @@ namespace RackManager.ViewModels
 		{
 			try
 			{
+				// Si contient déjà le même nom de client.
+				if (AllMesures.Any(x => x.Unite == UniteMesure.NomMesure))
+				{
+					string msgWarn = $"Aucun ajout : {UniteMesure.NomMesure} existe déjà";
+					NotificationMessage messWarn = new NotificationMessage()
+					{
+						Summary = "Attention",
+						Detail = msgWarn,
+						Duration = 3000,
+						Severity = NotificationSeverity.Warning
+					};
+					Notification.Notify(messWarn);
+
+					return;
+				}
+
 				// Ajout dans la base de donnée.
 				int idMesure = await ContextSql.AddUniteMesure(UniteMesure.NomMesure);
 
