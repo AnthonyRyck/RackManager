@@ -43,9 +43,9 @@ namespace RackManager.ViewModels
 		Task LoadDatas();
 
 
-		void OnSelectedRack(Rack rack);
+		void OnSelectedRack(string rack);
 
-		void OnSelectedRackSortie(Rack rackSelected);
+		void OnSelectedRackSortie(string rackSelected);
 
 		void OpenNouvelleEntre();
 
@@ -63,9 +63,9 @@ namespace RackManager.ViewModels
 
 
 
-		void OnSelectedRackPartant(object rackPartant);
+		void OnSelectedRackPartant(string rackPartant);
 
-		void OnSelectedRackArrivant(object rackArrivant);
+		void OnSelectedRackArrivant(string rackArrivant);
 
 
 

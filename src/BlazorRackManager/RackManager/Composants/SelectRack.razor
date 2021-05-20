@@ -3,7 +3,7 @@
 		<ValidationMessage For="@(() => Gisement)" />
 	</div>
 
-	<RadzenAutoComplete Placeholder="Choisir un rack..."
+	<RadzenAutoComplete Placeholder=@PlaceHolder
 						Data=@Racks
 						FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
 						TextProperty="GisementPos"
@@ -26,6 +26,9 @@
 
 	[Parameter]
 	public EventCallback<string> OnSelectedRack { get; set; }
+
+	[Parameter]
+	public string PlaceHolder { get; set; } = "Choisir un Rack...";
 
 	private void OnActionSelectRack(object rack)
 	{

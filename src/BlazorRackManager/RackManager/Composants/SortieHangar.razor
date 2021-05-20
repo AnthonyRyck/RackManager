@@ -18,17 +18,11 @@
 			<div>
 				<ValidationMessage For="@(() => SortieHangarValidation.GisementRack)" />
 			</div>
-			<RadzenDropDown AllowClear="true"
-							TValue="string"
-							FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-							FilterOperator="StringFilterOperator.StartsWith"
-							AllowFiltering="true"
-							Data=@RacksFull
-							TextProperty="GisementPos"
-							ValueProperty="GisementPos"
-							Placeholder="Choisir un Gisement"
-							@bind-Value="SortieHangarValidation.GisementRack"
-							SelectedItemChanged="OnSelectedRackSortie" />
+
+			<SelectRack Racks="@RacksFull"
+					Gisement="@SortieHangarValidation.GisementRack"
+					OnSelectedRack="@OnSelectRackSortie"
+					GisementSelected="@SortieHangarValidation.GisementRack" />
 
 			@*Date de sortie*@
 			<div class="margin-5px">
@@ -64,16 +58,9 @@
 	public EventCallback CloseSortieHangar { get; set; }
 
 	[Parameter]
-	public EventCallback<Rack> OnSelectRackSortie { get; set; }
+	public EventCallback<string> OnSelectRackSortie { get; set; }
 
 	[Parameter]
 	public EventCallback OnValidSortieSubmit { get; set; }
 
-
-	private void OnSelectedRackSortie(object rack)
-	{
-		var rackSelected = rack as Rack;
-		if (rackSelected != null)
-			OnSelectRackSortie.InvokeAsync(rackSelected);
-	}
 }

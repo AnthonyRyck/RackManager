@@ -8,41 +8,22 @@
 			<div class="row">
 
 				<div class="col-xl-3">
-					<h4>Inversion de palettes</h4>	
+					<h4>Inversion de palettes</h4>
 
 					<div>Permet d'intervertir 2 palettes.</div>
 
-					<div>
-						<ValidationMessage For="@(() => InversionPaletteValidation.GisementRackPartant)" />
-					</div>
-					<RadzenDropDown AllowClear="true"
-									TValue="string"
-									FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-									FilterOperator="StringFilterOperator.StartsWith"
-									AllowFiltering="true"
-									Data=@RackFull
-									TextProperty="GisementPos"
-									ValueProperty="GisementPos"
-									Placeholder="Choisir un Gisement occupé"
-									@bind-Value="InversionPaletteValidation.GisementRackPartant"
-									SelectedItemChanged=@OnSelectedRackPartant />
+					<SelectRack Racks="@RackFull"
+								Gisement="@InversionPaletteValidation.GisementRackPartant"
+								OnSelectedRack="@SelectRackPartant"
+								PlaceHolder="Choisir rack occupé"
+								GisementSelected="@InversionPaletteValidation.GisementRackPartant" />
 
-					<div class="margin-5px">
-						<div>
-							<ValidationMessage For="@(() => InversionPaletteValidation.GisementRackArrivant)" />
-						</div>
-						<RadzenDropDown AllowClear="true"
-										TValue="string"
-										FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-										FilterOperator="StringFilterOperator.StartsWith"
-										AllowFiltering="true"
-										Data=@RackFull
-										TextProperty="GisementPos"
-										ValueProperty="GisementPos"
-										Placeholder="Choisir un Gisement occupé"
-										@bind-Value="InversionPaletteValidation.GisementRackArrivant"
-										SelectedItemChanged=@OnSelectedRackArrivant />
-					</div>
+
+					<SelectRack Racks="@RackFull"
+								Gisement="@InversionPaletteValidation.GisementRackArrivant"
+								OnSelectedRack="@SelectRackArrivant"
+								PlaceHolder="Choisir rack occupé"
+								GisementSelected="@InversionPaletteValidation.GisementRackArrivant" />
 				</div>
 			</div>
 
@@ -74,27 +55,9 @@
 	public IEnumerable<Rack> RackFull { get; set; }
 
 	[Parameter]
-	public EventCallback<Rack> SelectRackArrivant { get; set; }
+	public EventCallback<string> SelectRackArrivant { get; set; }
 
 	[Parameter]
-	public EventCallback<Rack> SelectRackPartant { get; set; }
+	public EventCallback<string> SelectRackPartant { get; set; }
 
-
-	private async void OnSelectedRackArrivant(object rack)
-	{
-		var rackSelected = rack as Rack;
-		if (rackSelected != null)
-		{
-			await SelectRackArrivant.InvokeAsync(rackSelected);
-		}
-	}
-
-	private async void OnSelectedRackPartant(object rack)
-	{
-		var rackSelected = rack as Rack;
-		if (rackSelected != null)
-		{
-			await SelectRackPartant.InvokeAsync(rackSelected);
-		}
-	}
 }
