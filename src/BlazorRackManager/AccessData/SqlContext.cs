@@ -1138,6 +1138,62 @@ namespace AccessData
             }
         }
 
+		#endregion
+
+		#region Inventaire
+
+        /// <summary>
+        /// Fait l'inventaire des stocks présents.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<InventaireView>> GetInventaire()
+		{
+            string commandText = "SELECT sc.ProduitId, SUM(sc.Quantite), prod.Nom, mes.Unite"
+                            + " FROM rackdb.stock sc"
+                            + " INNER JOIN produit prod ON prod.IdProduit = sc.ProduitId"
+                            + " INNER JOIN mesure mes ON mes.IdMesure = prod.MesureId"
+                            + " GROUP BY sc.ProduitId;";
+
+            Func<MySqlCommand, Task<List<InventaireView>>> funcCmd = async (cmd) =>
+            {
+                List<InventaireView> stocks = new List<InventaireView>();
+
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (reader.Read())
+                    {
+                        var inventaire = new InventaireView()
+                        {
+                            Produit = new ProduitView()
+                            {
+                                IdReference = reader.GetString(0),
+                                Nom = reader.GetString(2),
+                                UniteMesure = reader.GetString(3)
+                            },
+                            Quantite = reader.GetDouble(1)
+                        };
+
+                        stocks.Add(inventaire);
+                    }
+                }
+
+                return stocks;
+            };
+
+            List<InventaireView> stocks = new List<InventaireView>();
+
+            try
+            {
+                stocks = await GetCoreAsync(commandText, funcCmd);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return stocks;
+        }
+
         #endregion
 
         /// <summary>
