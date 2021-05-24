@@ -6,7 +6,7 @@
              Title="{Binding Title}">
 
 	<ContentPage.BindingContext>
-		<vm:HangarViewModel />
+		<vm:HangarViewModel x:Name="ViewModel" />
 	</ContentPage.BindingContext>
 
 	<ContentPage.Content>

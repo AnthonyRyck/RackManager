@@ -66,13 +66,14 @@ namespace RackMobile.ViewModels
 					ChoixDisplay = "Liste des racks occupés",
 					ChoixMenu = "RacksOqp"
 				},
-			};
+			};			
+		}
 
+		public void Init()
+		{
 			HasGoodRole = DetermineRole("Admin", "Manager", "Member");
 			NotGoodRole = !HasGoodRole;
 		}
-
-
 
 		
 	}

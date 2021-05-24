@@ -16,6 +16,15 @@ namespace RackMobile.Views
 			InitializeComponent();
 		}
 
+		protected override void OnAppearing()
+		{
+			ViewModel.Init();
+			base.OnAppearing();
+		}
+
+
+
+
 		private async void OnChoixSelected(object sender, SelectedItemChangedEventArgs e)
 		{
 			var choixSelected = e.SelectedItem as ItemHangar;
@@ -34,10 +43,5 @@ namespace RackMobile.Views
 			}
 		}
 
-
-
-
-
-		// await Navigation.PushAsync(new MovieDetail(movieViewModel));
 	}
 }
