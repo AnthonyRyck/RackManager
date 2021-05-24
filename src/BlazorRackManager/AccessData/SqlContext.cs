@@ -1149,7 +1149,7 @@ namespace AccessData
         public async Task<List<InventaireView>> GetInventaire()
 		{
             string commandText = "SELECT sc.ProduitId, SUM(sc.Quantite), prod.Nom, mes.Unite"
-                            + " FROM rackdb.stock sc"
+                            + " FROM stock sc"
                             + " INNER JOIN produit prod ON prod.IdProduit = sc.ProduitId"
                             + " INNER JOIN mesure mes ON mes.IdMesure = prod.MesureId"
                             + " GROUP BY sc.ProduitId;";
