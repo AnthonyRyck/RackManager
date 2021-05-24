@@ -120,14 +120,14 @@ namespace RackManager.ViewModels
 
 				Notification.Notify(NotificationSeverity.Success, "Sauvegarde OK", "Sauvegarde OK");
 
-				Log.Information("STOCK ENTREE - ");
-
 				// remise à zéro
 				StockValidation = new EntreStockValidation();
 				StateHasChange.Invoke();
 
 				// Récupération de l'enregistrement
 				StockView newStock = await ContextSql.GetStocks(stock.RackId, stock.ProduitId);
+
+				Log.Information($"STOCK ENTREE - Ajout de {newStock.Quantite} de {newStock.ReferenceProduit} sur {newStock.GisementPos}");
 
 				AllStock.Add(newStock);
 				await StockGrid.Reload();

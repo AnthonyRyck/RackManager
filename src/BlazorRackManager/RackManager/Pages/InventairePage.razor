@@ -1,0 +1,59 @@
+﻿@page "/inventaire"
+
+@inject IInventaireViewModel ViewModel
+
+
+<h3>Inventaire</h3>
+
+@if (ViewModel.IsLoaded)
+{
+<div>
+	<RadzenGrid AllowFiltering="true"
+				FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+				AllowPaging="true"
+				PageSize="30"
+				AllowSorting="true"
+				Data="@ViewModel.AllProduits"
+				TItem="InventaireView"
+				EmptyText="Rien en inventaire">
+		<Columns>
+			<RadzenGridColumn TItem="InventaireView"
+							  Property="Produit.IdReference"
+							  Title="Référence"
+							  Width="150px" />
+
+			<RadzenGridColumn TItem="InventaireView"
+							  Property="Produit.Nom"
+							  Title="Nom"
+							  Width="150px" />
+
+			<RadzenGridColumn TItem="InventaireView"
+							  Property="Produit.UniteMesure"
+							  Title="Unité"
+							  Filterable="false"
+							  Sortable="false"
+							  Width="150px" />
+
+			<RadzenGridColumn TItem="InventaireView"
+							  Property="Quantite"
+							  Filterable="false"
+							  Sortable="false"
+							  Title="Quantité" />
+		</Columns>
+	</RadzenGrid>
+</div>
+
+}
+else
+{
+	<div>Chargement en cours ...</div>
+}
+
+
+
+@code {
+	protected override async Task OnInitializedAsync()
+	{
+		await ViewModel.LoadInventaire();
+	}
+}
