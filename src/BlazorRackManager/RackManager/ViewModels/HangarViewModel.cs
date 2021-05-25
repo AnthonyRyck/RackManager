@@ -527,7 +527,7 @@ namespace RackManager.ViewModels
 		{
 			if (!string.IsNullOrEmpty(selected))
 			{
-				Rack rackSelected = Racks.FirstOrDefault(x => x.GisementPos == selected);
+				Rack rackSelected = RacksFull.FirstOrDefault(x => x.GisementPos == selected);
 
 				if (rackSelected != null)
 				{

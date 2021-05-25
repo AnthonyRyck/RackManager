@@ -1,5 +1,5 @@
-﻿using AccessData.Views;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
+using RackCore.EntityView;
 using Radzen.Blazor;
 using System;
 using System.Collections.Generic;

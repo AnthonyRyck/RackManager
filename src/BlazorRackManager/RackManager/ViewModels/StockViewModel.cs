@@ -2,6 +2,7 @@
 using AccessData.Views;
 using Microsoft.AspNetCore.Components;
 using RackCore;
+using RackCore.EntityView;
 using RackManager.Composants;
 using RackManager.ValidationModels;
 using Radzen;

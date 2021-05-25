@@ -651,6 +651,59 @@ namespace AccessData
         /// Charge tous les stocks.
         /// </summary>
         /// <returns></returns>
+        public async Task<List<StockView>> GetStocks(string refProduit)
+        {
+            var commandText = @"SELECT stoc.RackId, rac.Gisement, rac.PosRack, stoc.ProduitId, prod.Nom, stoc.Quantite, mes.Unite"
+                            + " FROM Stock stoc"
+                            + " INNER JOIN rack rac ON rac.IdRack = stoc.RackId"
+                            + " INNER JOIN produit prod ON prod.IdProduit = stoc.ProduitId"
+                            + " INNER JOIN mesure mes ON prod.MesureId = mes.IdMesure"
+                            + $" WHERE stoc.ProduitId='{refProduit}';";
+
+            Func<MySqlCommand, Task<List<StockView>>> funcCmd = async (cmd) =>
+            {
+                List<StockView> stocks = new List<StockView>();
+
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (reader.Read())
+                    {
+                        var stock = new StockView()
+                        {
+                            IdRack = reader.GetInt32(0),
+                            Gisement = reader.GetString(1),
+                            PosRack = reader.GetString(2),
+                            ReferenceProduit = reader.GetString(3),
+                            NomDuProduit = reader.GetString(4),
+                            Quantite = reader.GetDouble(5),
+                            Unite = reader.GetString(6)
+                        };
+
+                        stocks.Add(stock);
+                    }
+                }
+
+                return stocks;
+            };
+
+            List<StockView> stocks = new List<StockView>();
+
+            try
+            {
+                stocks = await GetCoreAsync(commandText, funcCmd);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return stocks;
+        }
+
+        /// <summary>
+        /// Charge tous les stocks.
+        /// </summary>
+        /// <returns></returns>
         public async Task<StockView> GetStocks(int rackId, string produitId)
         {
             var commandText = @"SELECT stoc.RackId, rac.Gisement, rac.PosRack, stoc.ProduitId, prod.Nom, stoc.Quantite, mes.Unite"
