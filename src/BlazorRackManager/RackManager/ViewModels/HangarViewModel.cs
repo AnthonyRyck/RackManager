@@ -192,7 +192,7 @@ namespace RackManager.ViewModels
 
 		public void OnSelectedRack(string selected)
 		{
-			SelectedRack(selected, EntreHangarValidation);
+			SelectedRackEmpty(selected, EntreHangarValidation);
 		}
 
 
@@ -278,7 +278,7 @@ namespace RackManager.ViewModels
 
 		public void OnSelectedRackSortie(string rackSelected)
 		{
-			SelectedRack(rackSelected, SortieHangarValidation);
+			SelectedRackFull(rackSelected, SortieHangarValidation);
 		}
 
 		#endregion
@@ -523,11 +523,30 @@ namespace RackManager.ViewModels
 		#endregion
 
 
-		private void SelectedRack<T>(string selected, T validator) where T : BaseValidation
+		private void SelectedRackFull<T>(string selected, T validator) where T : BaseValidation
 		{
 			if (!string.IsNullOrEmpty(selected))
 			{
 				Rack rackSelected = RacksFull.FirstOrDefault(x => x.GisementPos == selected);
+
+				if (rackSelected != null)
+				{
+					validator.IdRack = rackSelected.IdRack;
+					validator.GisementRack = rackSelected.GisementPos;
+				}
+				else
+				{
+					validator.GisementRack = string.Empty;
+					validator.IdRack = 0;
+				}
+			}
+		}
+
+		private void SelectedRackEmpty<T>(string selected, T validator) where T : BaseValidation
+		{
+			if (!string.IsNullOrEmpty(selected))
+			{
+				Rack rackSelected = Racks.FirstOrDefault(x => x.GisementPos == selected);
 
 				if (rackSelected != null)
 				{
