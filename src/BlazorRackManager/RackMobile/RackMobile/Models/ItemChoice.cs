@@ -4,7 +4,7 @@ using System.Text;
 
 namespace RackMobile.Models
 {
-	public class ItemHangar
+	public class ItemChoice
 	{
 		public string ChoixDisplay { get; set; }
 

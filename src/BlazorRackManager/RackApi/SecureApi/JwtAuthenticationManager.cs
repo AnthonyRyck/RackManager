@@ -35,7 +35,6 @@ namespace RackApi.SecureApi
 			if (!await userManager.CheckPasswordAsync(user, password))
 				return null;
 
-
 			var rolesUser = await userManager.GetRolesAsync(user);
 			string role = rolesUser.First();
 

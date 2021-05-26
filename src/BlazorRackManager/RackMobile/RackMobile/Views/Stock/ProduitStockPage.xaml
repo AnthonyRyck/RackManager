@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+			 xmlns:vm="clr-namespace:RackMobile.ViewModels.Stock"
+			 x:Class="RackMobile.Views.Stock.ProduitStockPage"
+			 Title="{Binding Title}">
+
+	<ContentPage.BindingContext>
+		<vm:ProduitStockViewModel x:Name="ViewModel" />
+	</ContentPage.BindingContext>
+
+	<ContentPage.Content>
+		<StackLayout Orientation="Vertical">
+			<Label Text="Recherche d'un produit"
+					FontSize="Large" />
+			<Entry Placeholder="Référence du produit..."
+					Completed="Recherche_Completed"></Entry>
+
+			<ListView Margin="10"
+						HasUnevenRows="True"
+						RowHeight="40"
+						ItemsSource="{Binding Racks, Mode=OneWay}">
+
+				<ListView.ItemTemplate>
+					<DataTemplate>
+						<ViewCell>
+							<StackLayout Orientation="Vertical">
+								<Label Text="{Binding GisementPos}"
+										FontSize="Large"
+										HorizontalTextAlignment="Center" />
+
+								<StackLayout Orientation="Horizontal">
+									<Label Text="Nom" TextDecorations="Underline" FontSize="Medium" />
+									<Label Text="{Binding NomDuProduit}" FontSize="Medium" />
+								</StackLayout>
+
+								<StackLayout Orientation="Horizontal">
+									<Label Text="Quantité" TextDecorations="Underline" FontSize="Medium" />
+									<Label Text="{Binding Quantite}" FontSize="Medium" />
+									<Label Text="{Binding Unite}" FontSize="Medium" />
+								</StackLayout>
+							</StackLayout>
+						</ViewCell>
+					</DataTemplate>
+				</ListView.ItemTemplate>
+			</ListView>
+
+			<Label Text="{Binding MessageInformation}"
+					FontSize="Large"/>
+
+		</StackLayout>
+	</ContentPage.Content>
+</ContentPage>

@@ -13,6 +13,16 @@ namespace RackMobile.ViewModels
 	{
 		protected IRackService RackService => DependencyService.Get<IRackService>();
 
+		public string MessageInformation
+		{
+			get { return _messageInformation; }
+			set
+			{
+				_messageInformation = value;
+				OnNotifyPropertyChanged();
+			}
+		}
+		private string _messageInformation;
 
 
 		bool isBusy = false;

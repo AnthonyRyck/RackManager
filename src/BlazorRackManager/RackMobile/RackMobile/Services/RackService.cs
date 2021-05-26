@@ -164,10 +164,58 @@ namespace RackMobile.Services
 					throw new Exception();
 				}
 			}
-
-			return result;
 		}
 
+
+		#region STOCK
+
+		/// <summary>
+		/// Récupère tous les racks contenant du stock
+		/// </summary>
+		/// <returns></returns>
+		public async Task<List<StockView>> GetRackStock()
+		{
+			List<StockView> racksStock = new List<StockView>();
+			
+			if (!IsServerAdressOk)
+				return racksStock;
+
+			racksStock = await Get<List<StockView>>("api/stock/rackstock");
+
+			return racksStock;
+		}
+
+		/// <summary>
+		/// Récupère les racks contenant la référence du produit en stock.
+		/// </summary>
+		/// <param name="refProduit"></param>
+		/// <returns></returns>
+		public async Task<List<StockView>> GetRackStock(string refProduit)
+		{
+			List<StockView> racksStock = new List<StockView>();
+
+			if (!IsServerAdressOk)
+				return racksStock;
+
+			using (var content = new StringContent(JsonConvert.SerializeObject(refProduit), Encoding.UTF8, "application/json"))
+			{
+				HttpResponseMessage reponse = await ClientHttp.PostAsync("api/Stock/produitracks/", content);
+
+				if (reponse.StatusCode == System.Net.HttpStatusCode.OK)
+				{
+					string jsonHangarView = await reponse.Content.ReadAsStringAsync();
+					racksStock = JsonConvert.DeserializeObject<List<StockView>>(jsonHangarView);
+				}
+				else
+				{
+					throw new UnauthorizedAccessException();
+				}
+			}
+
+			return racksStock;
+		}
+
+		#endregion
 
 		/// <summary>
 		/// Pour toutes les méthodes Http GET
@@ -200,6 +248,11 @@ namespace RackMobile.Services
 				{
 					throw new UnauthorizedAccessException();
 				}
+
+				//if (response.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+				//{
+				//	throw new UnauthorizedAccessException();
+				//}
 			}
 			catch (Exception)
 			{
@@ -208,6 +261,7 @@ namespace RackMobile.Services
 
 			return result;
 		}
+
 
 	}
 }

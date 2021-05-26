@@ -1,4 +1,5 @@
 ﻿using RackMobile.Models;
+using RackMobile.Views.Stock;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,12 +7,14 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Xamarin.Forms;
+using Xamarin.Forms.Xaml;
 
 namespace RackMobile.Views
 {
-	public partial class HangarPage : ContentPage
+	[XamlCompilation(XamlCompilationOptions.Compile)]
+	public partial class StockPage : ContentPage
 	{
-		public HangarPage()
+		public StockPage()
 		{
 			InitializeComponent();
 		}
@@ -22,26 +25,22 @@ namespace RackMobile.Views
 			base.OnAppearing();
 		}
 
-
-
-
 		private async void OnChoixSelected(object sender, SelectedItemChangedEventArgs e)
 		{
 			var choixSelected = e.SelectedItem as ItemChoice;
 
 			switch (choixSelected.ChoixMenu)
 			{
-				case "RacksVide":
-					await Navigation.PushAsync(new RackVidePage());
+				case "RefProduit":
+					await Navigation.PushAsync(new ProduitStockPage());
 					break;
 
-				case "RacksOqp":
-					await Navigation.PushAsync(new RackOccupe());
+				case "RacksStock":
+					await Navigation.PushAsync(new RacksStockPage());
 					break;
 				default:
 					break;
 			}
 		}
-
 	}
 }

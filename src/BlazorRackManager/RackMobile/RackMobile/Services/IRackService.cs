@@ -27,7 +27,7 @@ namespace RackMobile.Services
 		/// <param name="motDePasse"></param>
 		/// <returns></returns>
 		Task<string> Connect(string login, string motDePasse);
-		
+
 		/// <summary>
 		/// Récupère les racks vides.
 		/// </summary>
@@ -46,5 +46,19 @@ namespace RackMobile.Services
 		/// <param name="idRack"></param>
 		/// <returns></returns>
 		Task<HangarView> GetInfoRack(int idRack);
+
+		/// <summary>
+		/// Récupère les racks pour le produit donnée, coté stock
+		/// </summary>
+		/// <param name="refProduit"></param>
+		/// <returns></returns>
+		Task<List<StockView>> GetRackStock(string refProduit);
+
+		/// <summary>
+		/// Charge tous les racks contenant du stock
+		/// </summary>
+		/// <returns></returns>
+		Task<List<StockView>> GetRackStock();
+
 	}
 }

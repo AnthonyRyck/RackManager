@@ -2,22 +2,21 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Windows.Input;
 
 namespace RackMobile.ViewModels
 {
-	public class HangarViewModel : BaseViewModel
+	class StockViewModel : BaseViewModel
 	{
-		public List<ItemChoice> HangarItems
+		public List<ItemChoice> Choix
 		{
-			get { return _hangarItems; }
+			get { return _choix; }
 			set
 			{
-				_hangarItems = value;
+				_choix = value;
 				OnNotifyPropertyChanged();
 			}
 		}
-		private List<ItemChoice> _hangarItems;
+		private List<ItemChoice> _choix;
 
 		/// <summary>
 		/// Indicateur si l'utilisateur a le rôle requis pour voir cette
@@ -49,24 +48,24 @@ namespace RackMobile.ViewModels
 		}
 		private bool _notGoodRole;
 
-		
-		public HangarViewModel()
-		{
-			Title = "Hangar";
 
-			HangarItems = new List<ItemChoice>()
+		public StockViewModel()
+		{
+			Title = "Stock";
+
+			Choix = new List<ItemChoice>()
 			{
 				new ItemChoice()
 				{
-					ChoixDisplay = "Liste des racks vides",
-					ChoixMenu = "RacksVide"
+					ChoixDisplay = "Chercher avec une référence",
+					ChoixMenu = "RefProduit"
 				},
 				new ItemChoice()
 				{
-					ChoixDisplay = "Liste des racks occupés",
-					ChoixMenu = "RacksOqp"
+					ChoixDisplay = "Choisir un rack de stock",
+					ChoixMenu = "RacksStock"
 				},
-			};			
+			};
 		}
 
 		public void Init()
@@ -74,7 +73,5 @@ namespace RackMobile.ViewModels
 			HasGoodRole = DetermineRole("Admin", "Manager", "Member");
 			NotGoodRole = !HasGoodRole;
 		}
-
-		
 	}
 }

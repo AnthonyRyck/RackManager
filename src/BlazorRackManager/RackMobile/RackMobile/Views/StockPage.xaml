@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+			 xmlns:vm="clr-namespace:RackMobile.ViewModels"
+			 x:Class="RackMobile.Views.StockPage"
+			 Title="{Binding Title}">
+
+	<ContentPage.BindingContext>
+		<vm:StockViewModel x:Name="ViewModel" />
+	</ContentPage.BindingContext>
+
+	<ContentPage.Content>
+		<Grid>
+			<ListView Margin="10"
+						RowHeight="40"
+						ItemsSource="{Binding Choix, Mode=OneWay}"
+						ItemSelected="OnChoixSelected"
+						IsVisible="{Binding HasGoodRole}">
+
+				<ListView.ItemTemplate>
+					<DataTemplate>
+						<ViewCell>
+							<Grid Margin="2">
+								<Label Text="{Binding ChoixDisplay}" 
+										FontSize="Large"
+										HorizontalTextAlignment="Center"/>
+							</Grid>
+						</ViewCell>
+					</DataTemplate>
+				</ListView.ItemTemplate>
+			</ListView>
+
+			<Label IsVisible="{Binding NotGoodRole}"
+					Margin="10"
+					Text="Il faut se connecter à un serveur et avoir un rôle qui permet de voir les informations. Aller sur Settings pour configurer l'adresse du serveur, et votre login et mot de passe."/>
+		</Grid>
+	</ContentPage.Content>
+</ContentPage>
