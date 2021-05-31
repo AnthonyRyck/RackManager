@@ -1,6 +1,8 @@
 ﻿using AccessData;
 using AccessData.Views;
+using MatBlazor;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using RackCore;
 using RackManager.ValidationModels;
 using Radzen;
@@ -8,6 +10,7 @@ using Radzen.Blazor;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -18,6 +21,10 @@ namespace RackManager.ViewModels
 		public bool IsLoaded { get;	private set; }
 
 		public bool CanOpenNewProduit { get; private set; }
+
+		public bool HaveImage { get; private set; }
+
+		public string ImageEnString { get; private set; }
 
 
 		public List<ProduitView> Produits { get; set; }
@@ -39,6 +46,7 @@ namespace RackManager.ViewModels
 			NouveauProduit = new ProduitValidation();
 			
 			IsLoaded = false;
+			HaveImage = false;
 		}
 
 
@@ -80,7 +88,6 @@ namespace RackManager.ViewModels
 
 				var produitView = await ContextSql.GetProduits(NouveauProduit.Reference);
 				Produits.Add(produitView);
-				await ProduitGrid.Reload();
 
 				string message = $"Nouveau produit - ref:{produitView.IdReference} - {produitView.Nom} ajouté";
 				NotificationMessage messNotif = new NotificationMessage()
@@ -101,8 +108,9 @@ namespace RackManager.ViewModels
 			}
 
 			NouveauProduit = new ProduitValidation();
+			ImageEnString = string.Empty;
+			HaveImage = false;
 		}
-
 
 
 		public void OnChangeMesure(ChangeEventArgs e)
@@ -122,5 +130,41 @@ namespace RackManager.ViewModels
 				Notification.Notify(NotificationSeverity.Error, "Erreur", "Erreur sur le changement d'unité de mesure");
 			}
 		}
+
+
+		public async Task UploadFiles(IMatFileUploadEntry[] files)
+		{
+			try
+			{
+				if (files.Count() == 1)
+				{
+					IMatFileUploadEntry fileMat = files.FirstOrDefault();
+
+					if (fileMat.Type.Contains("image/jpeg")
+						|| fileMat.Type.Contains("image/png"))
+					{
+						using (var streamTemp = new MemoryStream())
+						{
+							await fileMat.WriteToStreamAsync(streamTemp);
+							NouveauProduit.ImgContent = streamTemp.ToArray();
+						}
+
+						ImageEnString = "data:image/png;base64," + Convert.ToBase64String(NouveauProduit.ImgContent);
+						HaveImage = true;
+					}
+					else
+					{
+						Notification.Notify(NotificationSeverity.Warning, "Erreur", "Accepte format JPG ou PNG.");
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				Log.Error(ex, "UploadFiles - Erreur sur le changement de l'image");
+				Notification.Notify(NotificationSeverity.Error, "Erreur", "Erreur sur le changement de l'image");
+				HaveImage = false;
+			}
+		}
+
 	}
 }

@@ -21,41 +21,58 @@
 						<RadzenCard>
 
 							<DataAnnotationsValidator />
+							<div class="row">
+								<div class="col">
+									<div class="margin-5px">
+										<div>
+											<ValidationMessage For="@(() => ViewModel.NouveauProduit.Reference)" />
+										</div>
+										<RadzenTextBox Placeholder="Référence..."
+													   @bind-Value="ViewModel.NouveauProduit.Reference"
+													   Style="width 300px" />
+									</div>
 
-							<div class="margin-5px">
-								<div>
-									<ValidationMessage For="@(() => ViewModel.NouveauProduit.Reference)" />
+									<div class="margin-5px">
+										<div>
+											<ValidationMessage For="@(() => ViewModel.NouveauProduit.NomProduit)" />
+										</div>
+										<RadzenTextBox Placeholder="Nom..."
+													   @bind-Value="ViewModel.NouveauProduit.NomProduit"
+													   Style="width 300px" />
+									</div>
+
+									<div class="margin-5px">
+										<div>
+											<ValidationMessage For="@(() => ViewModel.NouveauProduit.IdMesure)" />
+										</div>
+										<select name="selectMesure"
+												@onchange="@(e =>  ViewModel.OnChangeMesure(e))">
+
+											<option value="noid"></option>
+
+											@foreach (var mesure in ViewModel.Mesures)
+											{
+											<option value="@mesure.IdMesure">@mesure.Unite</option>
+											}
+										</select>
+									</div>
+
+									<div class="margin-5px">
+										<MatFileUpload OnChange="@ViewModel.UploadFiles"
+													   title="Ajouter une image du produit"
+													   Label="Image du produit" />
+
+									</div>
 								</div>
-								<RadzenTextBox Placeholder="Référence..."
-											   @bind-Value="ViewModel.NouveauProduit.Reference"
-											   Style="width 300px" />
-							</div>
 
-							<div class="margin-5px">
-								<div>
-									<ValidationMessage For="@(() => ViewModel.NouveauProduit.NomProduit)" />
+								@if(ViewModel.HaveImage)
+								{
+								<div class="col">
+									<img src="@ViewModel.ImageEnString" style="height:200px;width:200px;" />
 								</div>
-								<RadzenTextBox Placeholder="Nom..."
-											   @bind-Value="ViewModel.NouveauProduit.NomProduit"
-											   Style="width 300px" />
+								}
+
 							</div>
-
-							<div class="margin-5px">
-								<div>
-									<ValidationMessage For="@(() => ViewModel.NouveauProduit.IdMesure)" />
-								</div>
-								<select name="selectMesure"
-										@onchange="@(e =>  ViewModel.OnChangeMesure(e))">
-
-									<option value="noid"></option>
-
-									@foreach (var mesure in ViewModel.Mesures)
-									{
-										<option value="@mesure.IdMesure">@mesure.Unite</option>
-									}
-								</select>
-							</div>
-
 						</RadzenCard>
 
 						<span class="margin-10px">
@@ -72,36 +89,29 @@
 			}
 		</div>
 	</div>
-	<div class="col-6">
-		<RadzenGrid AllowFiltering="true"
-					FilterCaseSensitivity="FilterCaseSensitivity.Default"
-					AllowPaging="true"
-					PageSize="30"
-					AllowSorting="true"
-					Data="@ViewModel.Produits"
-					TItem="ProduitView"
-					EmptyText="Aucun produit"
-					@ref="ViewModel.ProduitGrid">
-			<Columns>
-				<RadzenGridColumn TItem="ProduitView"
-								  Property="IdReference"
-								  Title="Référence"
-								  Width="100px" />
 
-				<RadzenGridColumn TItem="ProduitView"
-								  Property="Nom"
-								  Title="Intitulé"
-								  Width="150px" />
-
-				<RadzenGridColumn TItem="ProduitView"
-								  Property="UniteMesure"
-								  Title="Unité de mesure"
-								  Width="150px"/>
-			</Columns>
-		</RadzenGrid>
-
+	<div>
+		<RadzenDataList WrapItems="true" AllowPaging="true" Data="@ViewModel.Produits" TItem="ProduitView">
+			<Template Context="produit">
+				<div class="rackcard grow-rack">
+					<div>
+						<div>Référence :  <b>@produit.IdReference</b></div>
+						<div>Nom : <b>@produit.Nom</b></div>
+						<div>Unité de mesure : <b>@produit.UniteMesure</b></div>
+						@if(!string.IsNullOrEmpty(produit.Base64String))
+						{
+							<img src="@produit.Base64String" 
+									Style="width: 100px; height: 100px; border: 2px solid black" />
+						}
+						else{
+							<img src="/Images/No_image_available_400_x_600.svg.png" 
+								Style="width:100px;height:100px;border:2px solid black"/>
+						}
+					</div>
+				</div>
+			</Template>
+		</RadzenDataList>
 	</div>
-
 }
 else
 {

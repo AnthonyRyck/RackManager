@@ -1,11 +1,10 @@
 ﻿using AccessData.Views;
+using MatBlazor;
 using Microsoft.AspNetCore.Components;
 using RackCore;
 using RackManager.ValidationModels;
 using Radzen.Blazor;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace RackManager.ViewModels
@@ -14,6 +13,16 @@ namespace RackManager.ViewModels
 	{
 		bool IsLoaded { get; }
 		bool CanOpenNewProduit { get; }
+
+		/// <summary>
+		/// Utilisateur à mis une image.
+		/// </summary>
+		bool HaveImage { get; }
+
+		/// <summary>
+		/// Image du produit en string base 64
+		/// </summary>
+		string ImageEnString { get; }
 
 		/// <summary>
 		/// Liste de tous les produits
@@ -60,8 +69,17 @@ namespace RackManager.ViewModels
 		/// <returns></returns>
 		Task OnValidSubmitProduit();
 
+		/// <summary>
+		/// Pour recevoir le fichier envoyé pour l'image d'un produit.
+		/// </summary>
+		/// <param name="files"></param>
+		/// <returns></returns>
+		Task UploadFiles(IMatFileUploadEntry[] files);
 
-
+		/// <summary>
+		/// Pour changer la "mesure" du produit.
+		/// </summary>
+		/// <param name="e"></param>
 		void OnChangeMesure(ChangeEventArgs e);
 	}
 }

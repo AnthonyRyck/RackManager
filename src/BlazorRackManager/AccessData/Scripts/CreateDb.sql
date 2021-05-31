@@ -18,6 +18,8 @@ CREATE TABLE Produit
 (IdProduit VARCHAR(25) NOT NULL,
 Nom VARCHAR(50) NOT NULL,
 MesureId int NOT NULL,
+ImgName varchar(30) NULL,
+ImgProduit LONGBLOB NULL,
 FOREIGN KEY(MesureId) REFERENCES Mesure(IdMesure),
 PRIMARY KEY(IdProduit));
 

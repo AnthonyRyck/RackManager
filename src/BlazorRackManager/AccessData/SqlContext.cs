@@ -1071,7 +1071,7 @@ namespace AccessData
         /// <returns></returns>
         public async Task<List<ProduitView>> GetProduits()
         {
-            var commandText = @"SELECT prod.IdProduit, prod.Nom, mes.Unite, mes.IdMesure"
+            var commandText = @"SELECT prod.IdProduit, prod.Nom, mes.Unite, mes.IdMesure, prod.ImgProduit"
                                 + " FROM Produit prod"
                                 + " INNER JOIN mesure mes ON mes.IdMesure = prod.MesureId;";
 
@@ -1088,7 +1088,8 @@ namespace AccessData
                             IdReference = reader.GetString(0),
                             Nom = reader.GetString(1),
                             UniteMesure = reader.GetString(2),
-                            IdMesure = reader.GetInt32(3)
+                            IdMesure = reader.GetInt32(3),
+                            ImageProduit = ConvertFromDBVal<byte[]>(reader[4])
                         };
 
                         produits.Add(produit);
@@ -1119,7 +1120,7 @@ namespace AccessData
         /// <returns></returns>
         public async Task<ProduitView> GetProduits(string reference)
         {
-            var commandText = @"SELECT prod.IdProduit, prod.Nom, mes.Unite, mes.IdMesure"
+            var commandText = @"SELECT prod.IdProduit, prod.Nom, mes.Unite, mes.IdMesure, prod.ImgProduit"
                                 + " FROM Produit prod"
                                 + " INNER JOIN mesure mes ON mes.IdMesure = prod.MesureId"
                                 + $" WHERE prod.IdProduit = '{reference}';";
@@ -1137,7 +1138,8 @@ namespace AccessData
                             IdReference = reader.GetString(0),
                             Nom = reader.GetString(1),
                             UniteMesure = reader.GetString(2),
-                            IdMesure = reader.GetInt32(3)
+                            IdMesure = reader.GetInt32(3),
+                            ImageProduit = ConvertFromDBVal<byte[]>(reader[4])
                         };
                     }
                 }
@@ -1170,14 +1172,16 @@ namespace AccessData
             {
                 using (var conn = new MySqlConnection(ConnectionString))
                 {
-                    string command = "INSERT INTO Produit (IdProduit, Nom, MesureId)"
-                                    + " VALUES(@id, @nom, @unite);";
+                    string command = "INSERT INTO Produit (IdProduit, Nom, MesureId, ImgName, ImgProduit)"
+                                    + " VALUES(@id, @nom, @unite, @imgName, @imgContent);";
 
                     using (var cmd = new MySqlCommand(command, conn))
                     {
                         cmd.Parameters.AddWithValue("@id", nouveauProduit.IdReference);
                         cmd.Parameters.AddWithValue("@nom", nouveauProduit.Nom);
                         cmd.Parameters.AddWithValue("@unite", nouveauProduit.UniteId);
+                        cmd.Parameters.AddWithValue("@imgName", nouveauProduit.ImageName);
+                        cmd.Parameters.AddWithValue("@imgContent", nouveauProduit.ImageContent);
 
                         conn.Open();
                         int result = await cmd.ExecuteNonQueryAsync();

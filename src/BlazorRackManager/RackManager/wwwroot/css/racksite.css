@@ -13,3 +13,21 @@
 .margin-10px {
 	margin: 10px 10px 10px 10px;
 }
+
+
+.grow-rack {
+	transition: all .2s ease-in-out;
+}
+
+.grow-rack:hover {
+	transform: scale(1.1);
+}
+
+.rackcard {
+	height: 200px;
+	width: 200px;
+	box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+	background-color: #fff;
+	align-items: center;
+	margin: 16px;
+}
