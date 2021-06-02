@@ -25,7 +25,6 @@ namespace RackManager.ValidationModels
 				IdReference = Reference,
 				Nom = NomProduit,
 				UniteId = IdMesure.Value,
-				ImageName = Reference + ".png",
 				ImageContent = ImgContent
 			};
 		}

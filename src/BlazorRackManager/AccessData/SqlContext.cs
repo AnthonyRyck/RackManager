@@ -98,6 +98,7 @@ namespace AccessData
             }
         }
 
+
 		#endregion
 
 		#region Commandes
@@ -1172,15 +1173,14 @@ namespace AccessData
             {
                 using (var conn = new MySqlConnection(ConnectionString))
                 {
-                    string command = "INSERT INTO Produit (IdProduit, Nom, MesureId, ImgName, ImgProduit)"
-                                    + " VALUES(@id, @nom, @unite, @imgName, @imgContent);";
+                    string command = "INSERT INTO Produit (IdProduit, Nom, MesureId, ImgProduit)"
+                                    + " VALUES(@id, @nom, @unite, @imgContent);";
 
                     using (var cmd = new MySqlCommand(command, conn))
                     {
                         cmd.Parameters.AddWithValue("@id", nouveauProduit.IdReference);
                         cmd.Parameters.AddWithValue("@nom", nouveauProduit.Nom);
                         cmd.Parameters.AddWithValue("@unite", nouveauProduit.UniteId);
-                        cmd.Parameters.AddWithValue("@imgName", nouveauProduit.ImageName);
                         cmd.Parameters.AddWithValue("@imgContent", nouveauProduit.ImageContent);
 
                         conn.Open();
@@ -1195,9 +1195,42 @@ namespace AccessData
             }
         }
 
-		#endregion
+        /// <summary>
+        /// Met à jour un produit.
+        /// </summary>
+        /// <param name="reference"></param>
+        /// <param name="produit"></param>
+        /// <returns></returns>
+        public async Task UpdateProduit(string reference, Produit produit)
+        {
+            try
+            {
+                string cmdUpdate = @"UPDATE produit SET Nom=@nomproduit, MesureId=@mesure, ImgProduit=@imgContent "
+                                + $" WHERE IdProduit='{reference}';";
 
-		#region Inventaire
+                using (var conn = new MySqlConnection(ConnectionString))
+                {
+                    using (var cmd = new MySqlCommand(cmdUpdate, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@nomproduit", produit.Nom);
+                        cmd.Parameters.AddWithValue("@mesure", produit.UniteId);
+                        cmd.Parameters.AddWithValue("@imgContent", produit.ImageContent);
+
+                        conn.Open();
+                        await cmd.ExecuteNonQueryAsync();
+                        conn.Close();
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        #endregion
+
+        #region Inventaire
 
         /// <summary>
         /// Fait l'inventaire des stocks présents.

@@ -5,82 +5,80 @@ using Microsoft.AspNetCore.Components;
 using RackCore;
 using RackManager.ValidationModels;
 using Radzen;
+using Radzen.Blazor;
 using Serilog;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Drawing;
 
 namespace RackManager.ViewModels
 {
-	public class ProduitViewModel : IProduitViewModel
+	public class ProduitGestionViewModel : IGestionProduitViewModel
 	{
+		public bool IsLoaded { get;	private set; }
 
-		/// <see cref="IProduitViewModel.IsLoaded"/>
-		public bool IsLoaded { get; private set; }
+		public bool CanOpenNewProduit { get; private set; }
 
-		/// <see cref="IProduitViewModel.ProduitName"/>
-		public string ProduitName { get; private set; }
+		public bool HaveImage { get; private set; }
 
-		/// <see cref="IProduitViewModel.Produit"/>
-		public ProduitView Produit { get; private set;  }
+		public string ImageEnString { get; private set; }
 
-		public ProduitValidation UpdateProduit { get; set; }
 
-		/// <see cref="IProduitViewModel.HaveUpdateImage"/>
-		public bool HaveUpdateImage { get; private set; }
+		public List<ProduitView> Produits { get; set; }
 
-		/// <see cref="IProduitViewModel.ImageUpdateEnString"/>
-		public string ImageUpdateEnString { get; private set; }
+		public IEnumerable<UniteMesure> Mesures { get; set; }
 
-		/// <see cref="IProduitViewModel.IsModified"/>
-		public bool IsModified { get; private set; }
+		public RadzenGrid<ProduitView> ProduitGrid { get; set; }
 
-		/// <see cref="IProduitViewModel.Mesures"/>
-		public IEnumerable<UniteMesure> Mesures { get; private set; }
+		public ProduitValidation NouveauProduit { get; set; }
 
 		private SqlContext ContextSql;
 		private NotificationService Notification;
+		private NavigationManager NavManager;
 
-		public ProduitViewModel(SqlContext sqlContext, NotificationService notificationService)
+		public ProduitGestionViewModel(SqlContext sqlContext, NotificationService notificationService, NavigationManager navigationManager)
 		{
 			ContextSql = sqlContext;
 			Notification = notificationService;
+			NavManager = navigationManager;
 
-			UpdateProduit = new ProduitValidation();
+			NouveauProduit = new ProduitValidation();
+			
+			IsLoaded = false;
+			HaveImage = false;
 		}
 
-		/// <see cref="IProduitViewModel.LoadProduit(string)"/>
-		public async Task LoadProduit(string referenceProduit)
+
+
+		public async Task LoadProduits()
 		{
 			try
 			{
-				Produit = await ContextSql.GetProduits(referenceProduit);
+				Produits = await ContextSql.GetProduits();
 				Mesures = await ContextSql.GetUniteMesure();
-				LoadValidation();
+
+				IsLoaded = true;
 			}
 			catch (Exception ex)
 			{
-				string message = $"Erreur sur LoadProduit pour la référence {referenceProduit}";
-				Log.Error(ex, message);
-				Notification.Notify(NotificationSeverity.Error, "Erreur", message);
+				Log.Error(ex, "ProduitViewModel - LoadProduits");
+				Notification.Notify(NotificationSeverity.Error, "Erreur", "Erreur sur le chargement");
 			}
 		}
 
-		private void LoadValidation()
+
+		public void OpenNewProduit()
 		{
-			UpdateProduit.Reference = Produit.IdReference;
-			UpdateProduit.ImgContent = Produit.ImageProduit;
-			UpdateProduit.IdMesure = Produit.IdMesure;
-			UpdateProduit.NomProduit = Produit.Nom;
+			CanOpenNewProduit = true;
 		}
 
-		/// <see cref="IProduitViewModel.ModifierProduit"/>
-		public void ModifierProduit()
+		public void CloseNewProduit()
 		{
-			IsModified = true;
+			CanOpenNewProduit = false;
+			NouveauProduit = new ProduitValidation();
 		}
 
 		public async Task OnValidSubmitProduit()
@@ -88,21 +86,22 @@ namespace RackManager.ViewModels
 			try
 			{
 				// Ajout dans la base de donnée.
-				await ContextSql.UpdateProduit(UpdateProduit.Reference, UpdateProduit.ToProduit());
-				Produit = await ContextSql.GetProduits(UpdateProduit.Reference);
-				LoadValidation();
+				await ContextSql.AddProduit(NouveauProduit.ToProduit());
 
-				string message = $"Mise à jour des informations du produit {Produit.IdReference}";
+				var produitView = await ContextSql.GetProduits(NouveauProduit.Reference);
+				Produits.Add(produitView);
+
+				string message = $"Nouveau produit - ref:{produitView.IdReference} - {produitView.Nom} ajouté";
 				NotificationMessage messNotif = new NotificationMessage()
 				{
-					Summary = "Mise à jour OK",
+					Summary = "Sauvegarde OK",
 					Detail = message,
 					Duration = 3000,
 					Severity = NotificationSeverity.Success
 				};
 				Notification.Notify(messNotif);
 
-				Log.Information("UPDATE PRODUIT - " + message);
+				Log.Information("PRODUIT - " + message);
 			}
 			catch (Exception ex)
 			{
@@ -110,28 +109,21 @@ namespace RackManager.ViewModels
 				Notification.Notify(NotificationSeverity.Error, "Erreur", "Erreur sur la sauvegarde");
 			}
 
-			ImageUpdateEnString = string.Empty;
-			HaveUpdateImage = false;
-			
-			IsModified = false;
+			NouveauProduit = new ProduitValidation();
+			ImageEnString = string.Empty;
+			HaveImage = false;
 		}
 
-
-		public void CloseUpdateProduit()
-		{
-			IsModified = false;
-			LoadValidation();
-		}
 
 		public void OnChangeMesure(ChangeEventArgs e)
 		{
 			try
 			{
-				if (e.Value.ToString() != "noid")
-					UpdateProduit.IdMesure = Convert.ToInt32(e.Value);
+				if(e.Value.ToString() != "noid")
+					NouveauProduit.IdMesure = Convert.ToInt32(e.Value);
 				else
 				{
-					UpdateProduit.IdMesure = null;
+					NouveauProduit.IdMesure = null;
 				}
 			}
 			catch (Exception ex)
@@ -141,7 +133,7 @@ namespace RackManager.ViewModels
 			}
 		}
 
-		public async Task UploadFile(IMatFileUploadEntry[] files)
+		public async Task UploadFiles(IMatFileUploadEntry[] files)
 		{
 			try
 			{
@@ -162,14 +154,14 @@ namespace RackManager.ViewModels
 								using (MemoryStream thumbStream = new MemoryStream())
 								{
 									newImgThumbnail.Save(thumbStream, System.Drawing.Imaging.ImageFormat.Png);
-									UpdateProduit.ImgContent = thumbStream.ToArray();
+									NouveauProduit.ImgContent = thumbStream.ToArray();
 
-									ImageUpdateEnString = "data:image/png;base64," + Convert.ToBase64String(UpdateProduit.ImgContent);
-								}
+									ImageEnString = "data:image/png;base64," + Convert.ToBase64String(NouveauProduit.ImgContent);
+								}	
 							}
 						}
 
-						HaveUpdateImage = true;
+						HaveImage = true;
 					}
 					else
 					{
@@ -181,10 +173,18 @@ namespace RackManager.ViewModels
 			{
 				Log.Error(ex, "UploadFiles - Erreur sur le changement de l'image");
 				Notification.Notify(NotificationSeverity.Error, "Erreur", "Erreur sur le changement de l'image");
-				HaveUpdateImage = false;
+				HaveImage = false;
 			}
 		}
 
+
+		public void OpenProduitPage(string idReference)
+		{
+			NavManager.NavigateTo($"/produit/{idReference}");
+		}
+
+
+		
 		private Image GetReducedImage(int width, int height, Stream resourceImage)
 		{
 			try

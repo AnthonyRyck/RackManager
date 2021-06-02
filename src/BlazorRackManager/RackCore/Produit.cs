@@ -12,8 +12,6 @@ namespace RackCore
 
 		public int UniteId { get; set; }
 
-		public string ImageName { get; set; }
-
 		public byte[] ImageContent { get; set; }
 	}
 }

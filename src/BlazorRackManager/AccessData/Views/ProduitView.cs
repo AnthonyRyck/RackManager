@@ -18,7 +18,6 @@ namespace AccessData.Views
 
 		public byte[] ImageProduit { get; set; }
 
-
 		public string Base64String { 
 			get
 			{
@@ -29,5 +28,6 @@ namespace AccessData.Views
 				return string.Empty;
 			}
 		}
+
 	}
 }
