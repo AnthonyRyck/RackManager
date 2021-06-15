@@ -159,9 +159,10 @@ namespace RackManager.ViewModels
 				HangarView newEntry = await SqlContext.GetHangar(nouvelleEntreHangar.CommandeId, nouvelleEntreHangar.RackId);
 
 				Notification.Notify(NotificationSeverity.Success, "Sauvegarde OK", "Sauvegarde OK");
-				Log.Information("HANGAR ENTREE - {date} : commande- {commande} - RackId-{rack}",
+				Log.Information("HANGAR ENTREE - {date} : commande- {commande} - Gisement-{rack}",
 										nouvelleEntreHangar.DateEntree.ToString("d"),
-										cmd.IdCommande, nouvelleEntreHangar.RackId);
+										cmd.IdCommande, 
+										EntreHangarValidation.GisementRack);
 
 				// remise à zéro
 				EntreHangarValidation = new EntreHangarValidation();
