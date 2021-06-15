@@ -114,7 +114,7 @@ namespace AccessData
 			{
                 using (var conn = new MySqlConnection(ConnectionString))
                 {
-                    string command = "INSERT IGNORE INTO SuiviCommande (IdCommande, ClientId, DescriptionCmd)"
+                    string command = "INSERT IGNORE INTO suivicommande (IdCommande, ClientId, DescriptionCmd)"
                                     + " VALUES(@idcmd, @idclient, @descriptionCmd);";
 
                     using (var cmd = new MySqlCommand(command, conn))
@@ -139,7 +139,7 @@ namespace AccessData
         {
             using (var conn = new MySqlConnection(ConnectionString))
             {
-                var commandUpdateCompetence = @$"UPDATE SuiviCommande SET DateSortie=@date"
+                var commandUpdateCompetence = @$"UPDATE suivicommande SET DateSortie=@date"
                                       + $" WHERE IdCommande={idcommande};";
 
                 using (var cmd = new MySqlCommand(commandUpdateCompetence, conn))
