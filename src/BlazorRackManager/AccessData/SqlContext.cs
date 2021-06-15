@@ -26,7 +26,7 @@ namespace AccessData
         /// <returns></returns>
 		public async Task<IEnumerable<Client>> LoadClients()
 		{
-            var commandText = @"SELECT IdClient, NomClient FROM Clients;";
+            var commandText = @"SELECT IdClient, NomClient FROM clients;";
 
             Func<MySqlCommand, Task<List<Client>>> funcCmd = async (cmd) =>
             {
@@ -74,7 +74,7 @@ namespace AccessData
             {
                 using (var conn = new MySqlConnection(ConnectionString))
                 {
-                    string command = "INSERT INTO Clients (NomClient)"
+                    string command = "INSERT INTO clients (NomClient)"
                                     + " VALUES(@client);";
 
                     using (var cmd = new MySqlCommand(command, conn))
@@ -255,7 +255,7 @@ namespace AccessData
         /// <returns></returns>
         public async Task<List<Rack>> LoadRacks()
         {
-            var commandText = @"SELECT IdRack, Gisement, PosRack FROM Rack;";
+            var commandText = @"SELECT IdRack, Gisement, PosRack FROM rack;";
             return await GetRacks(commandText);
         }
 
@@ -271,7 +271,7 @@ namespace AccessData
             {
                 using (var conn = new MySqlConnection(ConnectionString))
                 {
-                    string command = "INSERT INTO Rack (Gisement, PosRack)"
+                    string command = "INSERT INTO rack (Gisement, PosRack)"
                                     + " VALUES(@gisement, @position);";
 
                     using (var cmd = new MySqlCommand(command, conn))
@@ -506,7 +506,7 @@ namespace AccessData
             {
                 using (var conn = new MySqlConnection(ConnectionString))
                 {
-                    string command = "INSERT INTO GeoCommande (RackId, CommandeId, DateEntre)"
+                    string command = "INSERT INTO geocommande (RackId, CommandeId, DateEntre)"
                                     + " VALUES(@rackid, @cmdId, @dateEntree);";
 
                     using (var cmd = new MySqlCommand(command, conn))
@@ -537,7 +537,7 @@ namespace AccessData
         {
 			try
 			{
-                string commandDelete = $"DELETE FROM GeoCommande"
+                string commandDelete = $"DELETE FROM geocommande"
                                    + $" WHERE RackId={idRack} AND CommandeId={idCommande};";
 
                 await ExecuteCoreAsync(commandDelete);
@@ -558,7 +558,7 @@ namespace AccessData
         {
 			try
 			{
-                string cmdUpdate = $"UPDATE GeoCommande SET RackId={idrackArrivant}"
+                string cmdUpdate = $"UPDATE geocommande SET RackId={idrackArrivant}"
                                    + $" WHERE RackId={idrackPartant};";
 
                 await ExecuteCoreAsync(cmdUpdate);
@@ -580,7 +580,7 @@ namespace AccessData
         {
             try
             {
-                string cmdUpdate = $"UPDATE GeoCommande SET RackId={idrackArrivant}"
+                string cmdUpdate = $"UPDATE geocommande SET RackId={idrackArrivant}"
                                    + $" WHERE RackId={idrackPartant}" 
                                    + $" AND CommandeId={idCommande};";
 
@@ -603,7 +603,7 @@ namespace AccessData
         public async Task<List<StockView>> GetStocks()
         {
             var commandText = @"SELECT stoc.RackId, rac.Gisement, rac.PosRack, stoc.ProduitId, prod.Nom, stoc.Quantite, mes.Unite"
-                            + " FROM Stock stoc"
+                            + " FROM stock stoc"
                             + " INNER JOIN rack rac ON rac.IdRack = stoc.RackId"
                             + " INNER JOIN produit prod ON prod.IdProduit = stoc.ProduitId"
                             + " INNER JOIN mesure mes ON prod.MesureId = mes.IdMesure;";
@@ -655,7 +655,7 @@ namespace AccessData
         public async Task<List<StockView>> GetStocks(string refProduit)
         {
             var commandText = @"SELECT stoc.RackId, rac.Gisement, rac.PosRack, stoc.ProduitId, prod.Nom, stoc.Quantite, mes.Unite"
-                            + " FROM Stock stoc"
+                            + " FROM stock stoc"
                             + " INNER JOIN rack rac ON rac.IdRack = stoc.RackId"
                             + " INNER JOIN produit prod ON prod.IdProduit = stoc.ProduitId"
                             + " INNER JOIN mesure mes ON prod.MesureId = mes.IdMesure"
@@ -708,7 +708,7 @@ namespace AccessData
         public async Task<StockView> GetStocks(int rackId, string produitId)
         {
             var commandText = @"SELECT stoc.RackId, rac.Gisement, rac.PosRack, stoc.ProduitId, prod.Nom, stoc.Quantite, mes.Unite"
-                            + " FROM Stock stoc"
+                            + " FROM stock stoc"
                             + " INNER JOIN rack rac ON rac.IdRack = stoc.RackId"
                             + " INNER JOIN produit prod ON prod.IdProduit = stoc.ProduitId"
                             + " INNER JOIN mesure mes ON prod.MesureId = mes.IdMesure"
@@ -763,7 +763,7 @@ namespace AccessData
             {
                 using (var conn = new MySqlConnection(ConnectionString))
                 {
-                    string command = "INSERT INTO Stock (RackId, ProduitId, Quantite)"
+                    string command = "INSERT INTO stock (RackId, ProduitId, Quantite)"
                                     + " VALUES(@rack, @produit, @quantite);";
 
                     using (var cmd = new MySqlCommand(command, conn))
@@ -831,7 +831,7 @@ namespace AccessData
             {
                 using (var conn = new MySqlConnection(ConnectionString))
                 {
-                    string command = "INSERT INTO SortieStock (ProduitId, Quantite, DateSortie)"
+                    string command = "INSERT INTO sortiestock (ProduitId, Quantite, DateSortie)"
                                     + " VALUES(@produit, @quantite, @date);";
 
                     using (var cmd = new MySqlCommand(command, conn))
@@ -990,7 +990,7 @@ namespace AccessData
         /// <returns></returns>
         public async Task<List<UniteMesure>> GetUniteMesure()
         {
-            var commandText = @"SELECT IdMesure, Unite FROM Mesure;";
+            var commandText = @"SELECT IdMesure, Unite FROM mesure;";
 
             Func<MySqlCommand, Task<List<UniteMesure>>> funcCmd = async (cmd) =>
             {
@@ -1038,7 +1038,7 @@ namespace AccessData
             {
                 using (var conn = new MySqlConnection(ConnectionString))
                 {
-                    string command = "INSERT INTO Mesure (Unite)"
+                    string command = "INSERT INTO mesure (Unite)"
                                     + " VALUES(@unite);";
 
                     using (var cmd = new MySqlCommand(command, conn))
@@ -1073,7 +1073,7 @@ namespace AccessData
         public async Task<List<ProduitView>> GetProduits()
         {
             var commandText = @"SELECT prod.IdProduit, prod.Nom, mes.Unite, mes.IdMesure, prod.ImgProduit"
-                                + " FROM Produit prod"
+                                + " FROM produit prod"
                                 + " INNER JOIN mesure mes ON mes.IdMesure = prod.MesureId;";
 
             Func<MySqlCommand, Task<List<ProduitView>>> funcCmd = async (cmd) =>
@@ -1122,7 +1122,7 @@ namespace AccessData
         public async Task<ProduitView> GetProduits(string reference)
         {
             var commandText = @"SELECT prod.IdProduit, prod.Nom, mes.Unite, mes.IdMesure, prod.ImgProduit"
-                                + " FROM Produit prod"
+                                + " FROM produit prod"
                                 + " INNER JOIN mesure mes ON mes.IdMesure = prod.MesureId"
                                 + $" WHERE prod.IdProduit = '{reference}';";
 
@@ -1173,7 +1173,7 @@ namespace AccessData
             {
                 using (var conn = new MySqlConnection(ConnectionString))
                 {
-                    string command = "INSERT INTO Produit (IdProduit, Nom, MesureId, ImgProduit)"
+                    string command = "INSERT INTO produit (IdProduit, Nom, MesureId, ImgProduit)"
                                     + " VALUES(@id, @nom, @unite, @imgContent);";
 
                     using (var cmd = new MySqlCommand(command, conn))
