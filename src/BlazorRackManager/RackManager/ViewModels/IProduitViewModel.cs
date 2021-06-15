@@ -1,8 +1,8 @@
 ﻿using AccessData.Views;
+using MatBlazor;
 using Microsoft.AspNetCore.Components;
 using RackCore;
 using RackManager.ValidationModels;
-using Radzen.Blazor;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,56 +12,67 @@ namespace RackManager.ViewModels
 {
 	public interface IProduitViewModel
 	{
+		/// <summary>
+		/// Indique si le produit est chargé en mémoire.
+		/// </summary>
 		bool IsLoaded { get; }
-		bool CanOpenNewProduit { get; }
 
 		/// <summary>
-		/// Liste de tous les produits
+		/// Nom du produit
 		/// </summary>
-		List<ProduitView> Produits { get; }
+		string ProduitName { get; }
+
+		/// <summary>
+		/// C'est le produit à afficher
+		/// </summary>
+		ProduitView Produit { get; }
+
+		/// <summary>
+		/// Indicateur qu'il faut modifier le produit.
+		/// </summary>
+		bool IsModified { get; }
+
+		/// <summary>
+		/// Objet de validation d'un produit.
+		/// </summary>
+		ProduitValidation UpdateProduit { get; }
+
+		/// <summary>
+		/// Indicateur s'il y a une image de mise à jour.
+		/// </summary>
+		bool HaveUpdateImage { get; }
+
+		/// <summary>
+		/// Est la mise à jour de l'image en string base 64
+		/// </summary>
+		string ImageUpdateEnString { get; }
 
 		/// <summary>
 		/// Liste des unités de mesure
 		/// </summary>
-		IEnumerable<UniteMesure> Mesures { get; set; }
+		IEnumerable<UniteMesure> Mesures { get; }
 
 		/// <summary>
-		/// Référence au tableau Radzen
+		/// Charge le produit donnée en paramètre
 		/// </summary>
-		RadzenGrid<ProduitView> ProduitGrid { get; set; }
-
-		/// <summary>
-		/// Nouveau produit avec validation
-		/// </summary>
-		ProduitValidation NouveauProduit { get; set; }
-
-
-		/// <summary>
-		/// Charge tous les produits
-		/// </summary>
+		/// <param name="referenceProduit"></param>
 		/// <returns></returns>
-		Task LoadProduits();
+		Task LoadProduit(string referenceProduit);
 
 		/// <summary>
-		/// Ouvre la boite de dialogue pour ajouter
-		/// un nouveau produit.
+		/// Permet de modifier le produit.
 		/// </summary>
-		void OpenNewProduit();
+		void ModifierProduit();
 
-		/// <summary>
-		/// Ferme le panel.
-		/// </summary>
-		void CloseNewProduit();
 
-		/// <summary>
-		/// Méthode pour la validation d'un nouveau
-		/// produit.
-		/// </summary>
-		/// <returns></returns>
+
 		Task OnValidSubmitProduit();
 
-
+		void CloseUpdateProduit();
 
 		void OnChangeMesure(ChangeEventArgs e);
+
+
+		Task UploadFile(IMatFileUploadEntry[] files);
 	}
 }

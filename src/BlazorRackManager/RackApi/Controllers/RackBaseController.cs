@@ -34,7 +34,7 @@ namespace RackApi.Controllers
 		/// <param name="messageError"></param>
 		protected void LogError(Exception exception, string messageError)
 		{
-			Log.Error(exception, MESSAGE_API + messageError);
+			Log.Error(exception, MESSAGE_API + GetUserName() + " - " + messageError);
 		}
 
 		/// <summary>
@@ -43,7 +43,7 @@ namespace RackApi.Controllers
 		/// <param name="message"></param>
 		protected void LogInfo(string message)
 		{
-			Log.Information(MESSAGE_API + message);
+			Log.Information(MESSAGE_API + GetUserName() + " - " + message);
 		}
 
 		/// <summary>
@@ -52,7 +52,7 @@ namespace RackApi.Controllers
 		/// <param name="messageWarn"></param>
 		protected void LogWarning(string messageWarn)
 		{
-			Log.Warning(MESSAGE_API + messageWarn);
+			Log.Warning(MESSAGE_API + GetUserName() + " - " + messageWarn);
 		}
 	}
 }

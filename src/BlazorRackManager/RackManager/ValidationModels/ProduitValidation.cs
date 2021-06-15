@@ -1,9 +1,5 @@
 ﻿using RackCore;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace RackManager.ValidationModels
 {
@@ -20,6 +16,7 @@ namespace RackManager.ValidationModels
 		[Required(ErrorMessage = "Il faut une unité de mesure")]
 		public int? IdMesure { get; set; }
 
+		public byte[] ImgContent { get; set; }
 
 		public Produit ToProduit()
 		{
@@ -27,7 +24,8 @@ namespace RackManager.ValidationModels
 			{
 				IdReference = Reference,
 				Nom = NomProduit,
-				UniteId = IdMesure.Value
+				UniteId = IdMesure.Value,
+				ImageContent = ImgContent
 			};
 		}
 	}

@@ -1,0 +1,137 @@
+﻿@page "/produit/{ReferenceProduit}"
+
+@attribute [Authorize(Roles = "Admin, Manager")]
+
+@inject IProduitViewModel ViewModel
+
+@if (ViewModel.IsLoaded)
+{
+	<div>Chargement du produit ...</div>
+}
+else
+{
+	<div>
+		<div class="padding-10">
+			@if (!ViewModel.IsModified)
+			{
+				<RadzenButton Text="Modifier"
+							  ButtonStyle="ButtonStyle.Secondary"
+							  Click="ViewModel.ModifierProduit" />
+			}
+			else
+			{
+				<div class="col-xl-6">
+
+					<EditForm OnValidSubmit="@ViewModel.OnValidSubmitProduit"
+							  Model="@ViewModel.UpdateProduit">
+						<RadzenCard>
+
+							<DataAnnotationsValidator />
+							<div class="row">
+								<div class="col">
+									<div class="margin-5px">
+										<span><u>Référence du produit</u> : <b>@ViewModel.UpdateProduit.Reference</b></span>
+									</div>
+
+									<div class="margin-5px">
+										<div>
+											<ValidationMessage For="@(() => ViewModel.UpdateProduit.NomProduit)" />
+										</div>
+										<RadzenTextBox Placeholder="Nom..."
+													   @bind-Value="ViewModel.UpdateProduit.NomProduit"
+													   Style="width 300px" />
+									</div>
+
+									<div class="margin-5px">
+										<div>
+											<ValidationMessage For="@(() => ViewModel.UpdateProduit.IdMesure)" />
+										</div>
+										<select name="selectMesure"
+												@onchange="@(e =>  ViewModel.OnChangeMesure(e))">
+
+											<option value="noid"></option>
+
+											@foreach (var mesure in ViewModel.Mesures)
+											{
+												<option value="@mesure.IdMesure">@mesure.Unite</option>
+											}
+										</select>
+									</div>
+
+									<div class="margin-5px">
+										<MatFileUpload OnChange="@ViewModel.UploadFile"
+													   title="Ajouter une image du produit"
+													   Label="Image du produit" />
+									</div>
+								</div>
+
+								@if (ViewModel.HaveUpdateImage)
+								{
+									<div class="col">
+										<img src="@ViewModel.ImageUpdateEnString" style="height:200px;width:200px;" />
+									</div>
+								}
+
+							</div>
+						</RadzenCard>
+
+						<span class="margin-10px">
+							<button type="submit" class="padding-5">Ajouter</button>
+
+							<button type="reset"
+									class="padding-5"
+									@onclick="ViewModel.CloseUpdateProduit">
+								Terminer
+							</button>
+						</span>
+					</EditForm>
+				</div>
+			}
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-3">
+			<div>
+				@if (string.IsNullOrEmpty(ViewModel.Produit.Base64String))
+				{
+					<img src="/Images/No_image_available_400_x_600.svg.png"
+						 Style="width:250px;height:250px;border:2px solid black" />
+				}
+				else
+				{
+					<img src="@ViewModel.Produit.Base64String"
+						 Style="width: 250px; height: 250px; border: 2px solid black" />
+				}
+			</div>
+		</div>
+
+		<div class="col-9">
+			<div>
+				<span><u>Référence du produit</u> : <b>@ViewModel.Produit.IdReference</b></span>
+			</div>
+			<div>
+				<span><u>Nom du produit</u> : <b>@ViewModel.Produit.Nom</b></span>
+			</div>
+
+			<div>
+				<span><u>Unité de mesure </u> : <b>@ViewModel.Produit.UniteMesure</b></span>
+			</div>
+		</div>
+	</div>
+}
+
+@code {
+
+	[Parameter]
+	public string ReferenceProduit { get; set; }
+
+	/// <summary>
+	/// Appelé une fois que les Parametres sont tous récupérés du composant parent.
+	/// </summary>
+	protected override void OnParametersSet()
+	{
+		ViewModel.LoadProduit(ReferenceProduit);
+		base.OnParametersSet();
+	}
+}
