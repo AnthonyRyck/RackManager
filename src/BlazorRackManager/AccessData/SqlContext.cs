@@ -196,11 +196,13 @@ namespace AccessData
             return commandeView;
         }
 
-		/// <summary>
-		/// Récupère la liste des commandes qui sont "terminées"/sorties. 
-		/// </summary>
-		/// <returns></returns>
-		public async Task<IEnumerable<CommandeSortieView>> GetSorties()
+
+
+        /// <summary>
+        /// Récupère la liste des commandes qui sont "terminées"/sorties. 
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IEnumerable<CommandeSortieView>> GetSorties()
         {
             string cmd = "SELECT sc.IdCommande, sc.ClientId, cli.NomClient, sc.DescriptionCmd, sc.DateSortie"
                             + " FROM suivicommande sc"
@@ -814,6 +816,36 @@ namespace AccessData
 			{
 				throw;
 			}
+        }
+
+        /// <summary>
+        /// Supprime la ligne de stock.
+        /// </summary>
+        /// <param name="idRack"></param>
+        /// <param name="referenceProduit"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public async Task DeleteStockLine(int idRack, string referenceProduit)
+        {
+            try
+            {
+                string cmdUpdate = @"DELETE FROM stock"
+                                + $" WHERE RackId={idRack} AND ProduitId='{referenceProduit}'";
+
+                using (var conn = new MySqlConnection(ConnectionString))
+                {
+                    using (var cmd = new MySqlCommand(cmdUpdate, conn))
+                    {
+                        conn.Open();
+                        await cmd.ExecuteNonQueryAsync();
+                        conn.Close();
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         #endregion

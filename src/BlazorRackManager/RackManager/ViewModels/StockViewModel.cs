@@ -197,20 +197,30 @@ namespace RackManager.ViewModels
 		{
 			try
 			{
-				await ContextSql.UpdateStock(stock.IdRack, stock.ReferenceProduit, stock.Quantite);
-				
-				// Si ce n'est pas un ajout de stock
-				if(EstAjoutStock)
+				// Suppression du stock
+				if (stock.Quantite == 0)
 				{
-					var quantiteEntre = stock.Quantite - backup.Quantite;
-					Log.Information($"STOCK - Ajout : {stock.ReferenceProduit} - quantité : {quantiteEntre} {stock.Unite} sur {stock.GisementPos}");
+					await ContextSql.DeleteStockLine(stock.IdRack, stock.ReferenceProduit);
+					Log.Information($"STOCK - Sortie : {stock.ReferenceProduit} - quantité mis à ZERO de {stock.GisementPos}");
+					AllStock = await ContextSql.GetStocks();
 				}
 				else
 				{
-					var quantiteSortie = backup.Quantite - stock.Quantite;
-					await ContextSql.AddNewSortieStock(stock.ReferenceProduit, quantiteSortie, DateTime.Now);
+					await ContextSql.UpdateStock(stock.IdRack, stock.ReferenceProduit, stock.Quantite);
 
-					Log.Information($"STOCK - Sortie : {stock.ReferenceProduit} - quantité : {quantiteSortie} {stock.Unite} de {stock.GisementPos}");
+					// Si ce n'est pas un ajout de stock
+					if (EstAjoutStock)
+					{
+						var quantiteEntre = stock.Quantite - backup.Quantite;
+						Log.Information($"STOCK - Ajout : {stock.ReferenceProduit} - quantité : {quantiteEntre} {stock.Unite} sur {stock.GisementPos}");
+					}
+					else
+					{
+						var quantiteSortie = backup.Quantite - stock.Quantite;
+						await ContextSql.AddNewSortieStock(stock.ReferenceProduit, quantiteSortie, DateTime.Now);
+
+						Log.Information($"STOCK - Sortie : {stock.ReferenceProduit} - quantité : {quantiteSortie} {stock.Unite} de {stock.GisementPos}");
+					}
 				}
 
 				RowOnUpdate = false;
