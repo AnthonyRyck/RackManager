@@ -9,6 +9,7 @@ namespace RackManager.Data
 	{
 		SansRole,
 		Member,
+		Commercial,
 		Manager,
 		Admin
 	}

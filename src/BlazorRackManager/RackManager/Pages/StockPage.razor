@@ -1,7 +1,6 @@
 ﻿@page "/stock"
-@attribute [Authorize(Roles = "Admin, Manager, Member")]
+@attribute [Authorize(Roles = "Admin, Manager, Member, Commercial")]
 @inject IStockViewModel ViewModel
-
 
 <h3>Stock</h3>
 
