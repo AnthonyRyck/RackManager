@@ -1,8 +1,7 @@
 # RackManager
-*(Développement en cours)*
 
 ## A quoi elle sert ?
-C'est une application en .Net Core Blazor, pour la gestion d'un entrepot. Elle permet de situer ou ce trouve chaque palette (*gisement*) par client et par commande.
+C'est une application en .Net Core Blazor, pour la gestion d'un entrepot. Elle permet de situer ou se trouve chaque palette (*gisement*) par client et par commande.
 
 Une image Docker est disponible sur [DockerHub](https://hub.docker.com/repository/docker/anthonyryck/rackmanager).  
 Pour avoir la dernière version pour tester, il faut prendre l'image avec le tag **ci**.
